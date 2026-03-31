@@ -158,26 +158,43 @@
             // Championship data
             const CHAMPIONSHIP_DATA = {
                 driver: {
-                    rounds: ['Australia', 'China'],
-                    georgeRussell: { name: 'George Russell', team: 'Mercedes', color: '#27F4D2', points: [25, 51] },
-                    kimiAntonelli: { name: 'Kimi Antonelli', team: 'Mercedes', color: '#27F4D2', points: [18, 47] },
-                    charlesLeclerc: { name: 'Charles Leclerc', team: 'Ferrari', color: '#F91536', points: [15, 34] },
-                    lewisHamilton: { name: 'Lewis Hamilton', team: 'Ferrari', color: '#F91536', points: [12, 33] },
-                    oliverBearman: { name: 'Oliver Bearman', team: 'Haas', color: '#B6BABD', points: [10, 17] },
-                    landoNorris: { name: 'Lando Norris', team: 'McLaren', color: '#FF8700', points: [10, 15] }
+                    rounds: ['Australia', 'China', 'Japan'],
+                    georgeRussell: { name: 'George Russell', team: 'Mercedes', color: '#27F4D2', points: [25, 51, 63] },
+                    kimiAntonelli: { name: 'Kimi Antonelli', team: 'Mercedes', color: '#27F4D2', points: [18, 47, 72] },
+                    charlesLeclerc: { name: 'Charles Leclerc', team: 'Ferrari', color: '#F91536', points: [15, 34, 49] },
+                    lewisHamilton: { name: 'Lewis Hamilton', team: 'Ferrari', color: '#F91536', points: [12, 33, 41] },
+                    landoNorris: { name: 'Lando Norris', team: 'McLaren', color: '#FF8700', points: [10, 15, 25] },
+                    oscarPiastri: { name: 'Oscar Piastri', team: 'McLaren', color: '#FF8700', points: [0, 0, 21] },
+                    oliverBearman: { name: 'Oliver Bearman', team: 'Haas', color: '#B6BABD', points: [10, 17, 17] },
+                    pierreGasly: { name: 'Pierre Gasly', team: 'Alpine', color: '#0090FF', points: [0, 0, 15] },
+                    maxVerstappen: { name: 'Max Verstappen', team: 'Red Bull Racing', color: '#3671C6', points: [0, 0, 12] },
+                    liamLawson: { name: 'Liam Lawson', team: 'Racing Bulls', color: '#6692FF', points: [0, 0, 10] },
+                    arvidLindblad: { name: 'Arvid Lindblad', team: 'Racing Bulls', color: '#6692FF', points: [0, 0, 4] },
+                    isackHadjar: { name: 'Isack Hadjar', team: 'Racing Bulls', color: '#6692FF', points: [0, 0, 4] },
+                    gabrielBortoleto: { name: 'Gabriel Bortoleto', team: 'Audi', color: '#C8102E', points: [0, 0, 2] },
+                    carlosSainz: { name: 'Carlos Sainz', team: 'Williams', color: '#64C4FF', points: [0, 0, 2] },
+                    estebanOcon: { name: 'Esteban Ocon', team: 'Alpine', color: '#0090FF', points: [0, 0, 1] },
+                    francoColapinto: { name: 'Franco Colapinto', team: 'Williams', color: '#64C4FF', points: [0, 0, 1] }
                 },
                 constructor: {
-                    rounds: ['Australia', 'China'],
-                    mercedes: { name: 'Mercedes', color: '#27F4D2', points: [43, 98] },
-                    ferrari: { name: 'Ferrari', color: '#F91536', points: [27, 67] },
-                    haas: { name: 'Haas F1 Team', color: '#B6BABD', points: [12, 17] },
-                    mclaren: { name: 'McLaren', color: '#FF8700', points: [18, 18] }
+                    rounds: ['Australia', 'China', 'Japan'],
+                    mercedes: { name: 'Mercedes', color: '#27F4D2', points: [43, 98, 135] },
+                    ferrari: { name: 'Ferrari', color: '#F91536', points: [27, 67, 90] },
+                    mclaren: { name: 'McLaren', color: '#FF8700', points: [18, 18, 46] },
+                    haas: { name: 'Haas F1 Team', color: '#B6BABD', points: [12, 17, 18] },
+                    alpine: { name: 'Alpine', color: '#0090FF', points: [0, 0, 16] },
+                    redBullRacing: { name: 'Red Bull Racing', color: '#3671C6', points: [0, 0, 16] },
+                    racingBulls: { name: 'Racing Bulls', color: '#6692FF', points: [0, 0, 14] },
+                    audi: { name: 'Audi', color: '#C8102E', points: [0, 0, 2] },
+                    williams: { name: 'Williams', color: '#64C4FF', points: [0, 0, 2] },
+                    astonMartin: { name: 'Aston Martin', color: '#229971', points: [0, 0, 0] },
+                    cadillac: { name: 'Cadillac', color: '#E41E3C', points: [0, 0, 0] }
                 }
             };
 
             let currentGraphType = 'driver';
-            let selectedDrivers = ['georgeRussell', 'kimiAntonelli', 'charlesLeclerc', 'lewisHamilton'];
-            let selectedConstructors = ['mercedes', 'ferrari', 'mclaren'];
+            let selectedDrivers = ['georgeRussell', 'kimiAntonelli', 'charlesLeclerc', 'lewisHamilton', 'landoNorris', 'oscarPiastri'];
+            let selectedConstructors = ['mercedes', 'ferrari', 'mclaren', 'haas', 'alpine', 'redBullRacing', 'racingBulls'];
 
             function renderGraph() {
                 const svg = document.getElementById('championshipSvg');

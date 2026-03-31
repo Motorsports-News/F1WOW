@@ -75,10 +75,10 @@ const teamShortNames = {
 const RACE_SCHEDULE_2026 = [
     { round: 1, name: 'Australia', location: 'Melbourne', date: 'Mar 6-8', completed: true, winner: 'George Russell', sprint: false },
     { round: 2, name: 'China', location: 'Shanghai', date: 'Mar 13-15', completed: true, winner: 'Kimi Antonelli', sprintWinner: 'George Russell' },
-    { round: 3, name: 'Japan', location: 'Suzuka', date: 'Mar 27-29', completed: false, next: true, sprint: false },
+    { round: 3, name: 'Japan', location: 'Suzuka', date: 'Mar 27-29', completed: true, winner: 'Kimi Antonelli', sprint: false },
     { round: 4, name: 'Bahrain', location: 'Sakhir', date: 'Apr 10-12', completed: false, cancelled: true },
     { round: 5, name: 'Saudi Arabia', location: 'Jeddah', date: 'Apr 17-19', completed: false, cancelled: true },
-    { round: 6, name: 'Miami', location: 'Miami', date: 'May 1-3', completed: false },
+    { round: 6, name: 'Miami', location: 'Miami', date: 'May 1-3', completed: false, next: true },
     { round: 7, name: 'Canada', location: 'Montreal', date: 'May 22-24', completed: false },
     { round: 8, name: 'Monaco', location: 'Monte Carlo', date: 'Jun 5-7', completed: false },
     { round: 9, name: 'Spain', location: 'Barcelona', date: 'Jun 12-14', completed: false },
@@ -244,31 +244,32 @@ function displayConstructorStandings(standings) {
     container.innerHTML = html;
 }
 
-// Fallback standings when API fails - Official 2026 standings after China GP (including Sprint)
-// Australia GP Results (Race only, no sprint): 1.Russell 25, 2.Antonelli 18, 3.Leclerc 15, 4.Hamilton 12, 5.Norris 10, 6.Piastri 8, 7.Verstappen 6, 8.Sainz 4, 9.Albon 2, 10.Alonso 1
+// Fallback standings when API fails - Official 2026 standings after Japan GP
+// Australia GP Results: 1.Russell 25, 2.Antonelli 18, 3.Leclerc 15, 4.Hamilton 12, 5.Norris 10, 6.Piastri 8, 7.Verstappen 6, 8.Sainz 4, 9.Albon 2, 10.Alonso 1
 // China GP Sprint Results: 1.Russell 8, 2.Antonelli 7, 3.Norris 6, 4.Leclerc 5, 5.Hamilton 4, 6.Verstappen 3, 7.Piastri 2, 8.Sainz 1
 // China GP Race Results: 1.Antonelli 25, 2.Russell 18, 3.Hamilton 15, 4.Norris 10, 5.Piastri 8, 6.Leclerc 6, 7.Hulkenberg 4, 8.Ocon 2, 9.Bearman 1
+// Japan GP Race Results: 1.Antonelli 25, 2.Piastri 18, 3.Leclerc 15, 4.Russell 12, 5.Norris 10, 6.Hamilton 8, 7.Gasly 6, 8.Verstappen 4, 9.Lawson 2, 10.Ocon 1
 function displayFallbackStandings(container, type) {
     if (!container) return;
 
     const fallbackData = {
         driver: [
-            { position: 1, name: 'George Russell', team: 'Mercedes', points: 51 },
-            { position: 2, name: 'Kimi Antonelli', team: 'Mercedes', points: 47 },
-            { position: 3, name: 'Charles Leclerc', team: 'Ferrari', points: 34 },
-            { position: 4, name: 'Lewis Hamilton', team: 'Ferrari', points: 33 },
-            { position: 5, name: 'Oliver Bearman', team: 'Haas F1 Team', points: 17 },
-            { position: 6, name: 'Lando Norris', team: 'McLaren', points: 15 },
-            { position: 7, name: 'Pierre Gasly', team: 'Alpine', points: 9 },
-            { position: 8, name: 'Max Verstappen', team: 'Red Bull Racing', points: 8 },
-            { position: 9, name: 'Liam Lawson', team: 'Racing Bulls', points: 8 },
-            { position: 10, name: 'Arvid Lindblad', team: 'Racing Bulls', points: 4 },
-            { position: 11, name: 'Isack Hadjar', team: 'Red Bull Racing', points: 4 },
-            { position: 12, name: 'Oscar Piastri', team: 'McLaren', points: 3 },
-            { position: 13, name: 'Carlos Sainz', team: 'Williams', points: 2 },
-            { position: 14, name: 'Gabriel Bortoleto', team: 'Audi', points: 2 },
-            { position: 15, name: 'Franco Colapinto', team: 'Alpine', points: 1 },
-            { position: 16, name: 'Esteban Ocon', team: 'Haas F1 Team', points: 0 },
+            { position: 1, name: 'Kimi Antonelli', team: 'Mercedes', points: 72 },
+            { position: 2, name: 'George Russell', team: 'Mercedes', points: 63 },
+            { position: 3, name: 'Charles Leclerc', team: 'Ferrari', points: 49 },
+            { position: 4, name: 'Lewis Hamilton', team: 'Ferrari', points: 41 },
+            { position: 5, name: 'Lando Norris', team: 'McLaren', points: 25 },
+            { position: 6, name: 'Oscar Piastri', team: 'McLaren', points: 21 },
+            { position: 7, name: 'Oliver Bearman', team: 'Haas F1 Team', points: 17 },
+            { position: 8, name: 'Pierre Gasly', team: 'Alpine', points: 15 },
+            { position: 9, name: 'Max Verstappen', team: 'Red Bull Racing', points: 12 },
+            { position: 10, name: 'Liam Lawson', team: 'Racing Bulls', points: 10 },
+            { position: 11, name: 'Arvid Lindblad', team: 'Racing Bulls', points: 4 },
+            { position: 12, name: 'Isack Hadjar', team: 'Racing Bulls', points: 4 },
+            { position: 13, name: 'Gabriel Bortoleto', team: 'Audi', points: 2 },
+            { position: 14, name: 'Carlos Sainz', team: 'Williams', points: 2 },
+            { position: 15, name: 'Franco Colapinto', team: 'Williams', points: 1 },
+            { position: 16, name: 'Esteban Ocon', team: 'Alpine', points: 1 },
             { position: 17, name: 'Nico Hulkenberg', team: 'Audi', points: 0 },
             { position: 18, name: 'Alexander Albon', team: 'Williams', points: 0 },
             { position: 19, name: 'Valtteri Bottas', team: 'Cadillac', points: 0 },
@@ -277,13 +278,13 @@ function displayFallbackStandings(container, type) {
             { position: 22, name: 'Lance Stroll', team: 'Aston Martin', points: 0 }
         ],
         constructor: [
-            { position: 1, name: 'Mercedes', points: 98 },
-            { position: 2, name: 'Ferrari', points: 67 },
-            { position: 3, name: 'McLaren', points: 18 },
-            { position: 4, name: 'Haas F1 Team', points: 17 },
-            { position: 5, name: 'Red Bull Racing', points: 12 },
-            { position: 6, name: 'Racing Bulls', points: 12 },
-            { position: 7, name: 'Alpine', points: 10 },
+            { position: 1, name: 'Mercedes', points: 135 },
+            { position: 2, name: 'Ferrari', points: 90 },
+            { position: 3, name: 'McLaren', points: 46 },
+            { position: 4, name: 'Haas F1 Team', points: 18 },
+            { position: 5, name: 'Red Bull Racing', points: 16 },
+            { position: 6, name: 'Alpine', points: 16 },
+            { position: 7, name: 'Racing Bulls', points: 14 },
             { position: 8, name: 'Audi', points: 2 },
             { position: 9, name: 'Williams', points: 2 },
             { position: 10, name: 'Cadillac', points: 0 },

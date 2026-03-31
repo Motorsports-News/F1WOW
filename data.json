@@ -1,14 +1,14 @@
 {
   "latestPost": {
-    "title": "VCARB Unveils Spring Edition Livery for Japanese Grand Prix",
-    "quote": "Cherry-picked just for you 🍒 Introducing the Red Bull Spring Edition inspired livery for the Japanese Grand Prix 🇯🇵",
-    "driver": "Visa Cash App RB F1 Team",
-    "source": "@visacashapprb",
-    "sourceLink": "https://x.com/visacashapprb/status/2035303445624771015?s=46",
-    "image": "images/rb-spring-livery-1.jpg",
-    "date": "March 21, 2026",
+    "title": "Japanese Grand Prix 2026: Kimi Antonelli Wins at Suzuka",
+    "quote": "Statement win! 🏆 Kimi Antonelli takes victory at Suzuka and leads the championship with 72 points after Round 3 🇯🇵",
+    "driver": "Kimi Antonelli",
+    "source": "@F1",
+    "sourceLink": "https://www.formula1.com/en/results.html/2026/races/1311/japan.html",
+    "image": "images/antonelli-suzuka-win.jpg",
+    "date": "March 29, 2026",
     "event": "Japanese GP 2026",
-    "articleLink": "rb-spring-edition-japanese-gp.html",
-    "tags": ["f1", "f12026", "formula1", "vcarb", "rb", "japanesegp", "suzuka", "livery", "springedition", "cherryblossom"]
+    "articleLink": "japan-gp-2026.html",
+    "tags": ["f1", "f12026", "formula1", "japanesegp", "suzuka", "kimi", "antonelli", "mercedes", "race", "winner"]
   }
 }
