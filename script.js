@@ -1288,7 +1288,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchDriverStandings();
     fetchConstructorStandings();
     loadRaceSchedule();
-    fetchInstagramFollowers();
     startCountdown();
     initSearch();
     initBackToTop();
