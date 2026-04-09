@@ -1294,7 +1294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initBackToTop();
     initScrollAnimations();
     initCategoryTabs();
-    initPredictorGame();
     initChampionshipGraph();
     initSubscribeForms();
     updateSubscriberCount();
@@ -1884,7 +1883,7 @@ function loadInstagramEmbedScript() {
 async function loadInstagramEmbed() {
     // Only run on article pages (not index, calendar, etc.)
     const articleFile = window.location.pathname.split('/').pop();
-    const excludedPages = ['index.html', 'calendar.html', 'predictor.html', 'championship.html', 'news.html', '', 'index.php'];
+    const excludedPages = ['index.html', 'calendar.html', 'championship.html', 'news.html', '', 'index.php'];
 
 
     if (!articleFile || excludedPages.includes(articleFile)) {

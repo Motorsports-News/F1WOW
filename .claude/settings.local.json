@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Smart Joules/.claude/plugins/**)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm install:*)",
+      "WebSearch",
+      "Bash(curl -s -L \"https://www.instagram.com/p/DW53R8Blxfq/media/?size=l\" --output /tmp/insta_image.jpg)",
+      "Read(//tmp/**)"
+    ]
+  }
+}
