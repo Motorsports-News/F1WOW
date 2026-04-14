@@ -146,7 +146,8 @@
     </style>
 </head>
 <body>
-    <div class="subscribe-container">
+
+    <div class="subscribe-container" id="main">
         <div class="subscribe-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -156,16 +157,18 @@
         <h1>Subscribe to F1wow News</h1>
         <p>Get the latest F1 news, race results, and analysis delivered to your inbox. No spam, unsubscribe anytime.</p>
 
-        <form id="subscribeForm">
+        <form id="subscribeForm" aria-labelledby="subscribeFormTitle">
             <div class="form-group">
-                <input type="email" id="email" placeholder="Enter your email address" required>
+                <label for="email" class="visually-hidden">Email address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required aria-required="true" aria-describedby="emailHint">
+                <span id="emailHint" class="sr-only">We'll send you F1 news and updates</span>
             </div>
-            <button type="submit" id="submitBtn">
+            <button type="submit" id="submitBtn" aria-label="Subscribe to F1 news updates">
                 <span id="btnText">Subscribe Now</span>
             </button>
         </form>
 
-        <div id="message" class="message"></div>
+        <div id="message" class="message" role="alert" aria-live="polite"></div>
 
         <a href="index.html" class="back-link">← Back to Home</a>
     </div>

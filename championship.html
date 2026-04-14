@@ -41,12 +41,24 @@
     </script>
 </head>
 <body>
+
     <header class="header">
         <div class="container">
             <div class="brand">
                 <h1>F1wow News</h1>
                 <span class="subtitle">Powered by F1wow</span>
             </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu" aria-expanded="false">
+                <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
             <nav class="nav">
                 <a href="index.html" class="nav-link">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -58,13 +70,13 @@
         </div>
     </header>
 
-    <main class="main">
+    <main class="main" id="main">
         <div class="container content-section">
             <!-- Page Header -->
             <section class="hero-section" style="min-height: 200px;">
                 <div class="container">
                     <div class="hero-content" style="text-align: center;">
-                        <span class="hero-badge">🏆 2026 Season</span>
+                        <span class="hero-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> 2026 Season</span>
                         <h1 class="hero-title">Championship Standings</h1>
                         <p class="hero-subtitle">Driver and Constructor Championship Battle</p>
                     </div>
@@ -115,7 +127,7 @@
             <section class="championship-graph-section" id="graphSection">
                 <div class="championship-graph-card">
                     <div class="championship-graph-header">
-                        <h3>📈 Championship Battle Graph</h3>
+                        <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Championship Battle Graph</h3>
                         <div class="graph-type-toggle">
                             <button class="graph-type-btn active" data-type="driver">Driver</button>
                             <button class="graph-type-btn" data-type="constructor">Constructor</button>

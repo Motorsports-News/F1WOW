@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+Onefamily=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700family=Chakra+Petch:wght@300;400;500;600;700family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700family=Orbitron:wght@400;700;900family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&family=Chakra+Petch:wght@300;400;500;600;700&family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta name="description" content="Fernando Alonso retires from Chinese GP due to severe Aston Martin vibrations. 'I couldn't feel my hands and feet,' says the two-time world champion.">
 
     <!-- Canonical URL -->
@@ -64,12 +64,24 @@
     </script>
 </head>
 <body>
+
     <header class="header">
         <div class="container">
             <div class="brand">
                 <h1>F1wow News</h1>
                 <span class="subtitle">Powered by F1wow</span>
             </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu" aria-expanded="false">
+                <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
             <nav class="nav">
                 <a href="index.html" class="nav-link">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -81,7 +93,7 @@
         </div>
     </header>
 
-    <main class="main">
+    <main class="main" id="main">
         <article class="article-full">
             <!-- Article Hero -->
             <div class="article-hero">
@@ -113,7 +125,7 @@
                 <!-- The Retirement -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">🏴</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
                         <h2>Sudden Retirement</h2>
                     </div>
 
@@ -163,7 +175,7 @@
                 <!-- The "Artificial" Measures Quote -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">💬</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
                         <h2>"Artificial" Measures</h2>
                     </div>
 
@@ -177,7 +189,7 @@
                 <!-- Aston Martin Response -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">🔧</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
                         <h2>Technical Investigation</h2>
                     </div>
 
@@ -189,7 +201,7 @@
                 <!-- Expert Analysis -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">🎙️</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
                         <h2>Expert Analysis</h2>
                     </div>
 
@@ -214,7 +226,7 @@
                 <!-- Context: 2026 Regulations -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">⚙️</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m5.3-14.3l-4.2 4.2m0 6l4.2 4.2M1 12h6m6 0h6M4.7 4.7l4.2 4.2m0 6l-4.2 4.2"/></svg></div>
                         <h2>New Regulation Challenges</h2>
                     </div>
 
@@ -226,7 +238,7 @@
                 <!-- Impact on Race -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">📊</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
                         <h2>Championship Impact</h2>
                     </div>
 
@@ -238,7 +250,7 @@
                 <!-- What's Next -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">🗓️</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                         <h2>Up Next</h2>
                     </div>
 
@@ -290,10 +302,11 @@
                         </div>
                         <h3>Never Miss a Race Update</h3>
                         <p>Get the latest F1 news, race results, and analysis delivered to your inbox. Join thousands of F1 fans!</p>
-                        <form class="subscribe-form" onsubmit="handleSubscribe(event)">
+                        <form class="subscribe-form" onsubmit="handleSubscribe(event)" aria-labelledby="subscribeFormTitle">
                             <div class="subscribe-input-group">
-                                <input type="email" id="subscribeEmail" placeholder="Enter your email" required class="subscribe-input">
-                                <button type="submit" class="subscribe-btn">
+                                <label for="subscribeEmail" class="visually-hidden">Email address</label>
+                                <input type="email" id="subscribeEmail" name="email" placeholder="Enter your email" required aria-required="true" class="subscribe-input">
+                                <button type="submit" class="subscribe-btn" aria-label="Subscribe to F1 news updates">
                                     <span class="btn-text">Subscribe</span>
                                     <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <line x1="5" y1="12" x2="19" y2="12"/>

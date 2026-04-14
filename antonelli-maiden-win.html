@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+Onefamily=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700family=Chakra+Petch:wght@300;400;500;600;700family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700family=Orbitron:wght@400;700;900family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&family=Chakra+Petch:wght@300;400;500;600;700&family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta name="description" content="Kimi Antonelli claims his first Formula 1 victory at the 2026 Chinese Grand Prix. Lewis Hamilton secures first Ferrari podium.">
 
     <!-- Canonical URL -->
@@ -82,12 +82,24 @@
     </script>
 </head>
 <body>
+
     <header class="header">
         <div class="container">
             <div class="brand">
                 <h1>F1wow News</h1>
                 <span class="subtitle">Powered by F1wow</span>
             </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu" aria-expanded="false">
+                <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
             <nav class="nav">
                 <a href="index.html" class="nav-link">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -99,7 +111,7 @@
         </div>
     </header>
 
-    <main class="main">
+    <main class="main" id="main">
         <article class="article-full">
             <!-- Article Hero -->
             <div class="article-hero">
@@ -131,7 +143,7 @@
                 <!-- Race Summary -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">🏁</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
                         <h2>Race Summary</h2>
                     </div>
 
@@ -220,22 +232,22 @@
                 <!-- Key Moments -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">⚡</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
                         <h2>Key Moments</h2>
                     </div>
 
                     <div class="moment-card">
-                        <h4>🟢 Lights Out</h4>
+                        <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> Lights Out</h4>
                         <p>Antonelli made a perfect start from pole position, fending off an aggressive challenge from Russell into Turn 1. The Mercedes duo established a gap immediately.</p>
                     </div>
 
                     <div class="moment-card">
-                        <h4>🔄 Pit Stop Battles</h4>
+                        <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Pit Stop Battles</h4>
                         <p>Mercedes executed perfect pit stops under the first safety car period, allowing both cars to maintain track position. Ferrari's Hamilton jumped Leclerc through strategy.</p>
                     </div>
 
                     <div class="moment-card">
-                        <h4>🏆 Final Stint</h4>
+                        <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> Final Stint</h4>
                         <p>Antonelli managed his fresher tires expertly, opening a gap to Russell while maintaining enough pace to secure the fastest lap bonus point.</p>
                     </div>
                 </div>
@@ -243,7 +255,7 @@
                 <!-- Hamilton's Ferrari Podium -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">🔴</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></div>
                         <h2>Hamilton's Historic Ferrari Podium</h2>
                     </div>
 
@@ -255,7 +267,7 @@
                 <!-- Championship Implications -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">📊</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
                         <h2>Championship Standings</h2>
                     </div>
 
@@ -276,7 +288,7 @@
                 <!-- What's Next -->
                 <div class="article-section">
                     <div class="section-header-article">
-                        <div class="section-icon">🗓️</div>
+                        <div class="section-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                         <h2>Up Next</h2>
                     </div>
 
@@ -338,10 +350,11 @@
                         </div>
                         <h3>Never Miss a Race Update</h3>
                         <p>Get the latest F1 news, race results, and analysis delivered to your inbox. Join thousands of F1 fans!</p>
-                        <form class="subscribe-form" onsubmit="handleSubscribe(event)">
+                        <form class="subscribe-form" onsubmit="handleSubscribe(event)" aria-labelledby="subscribeFormTitle">
                             <div class="subscribe-input-group">
-                                <input type="email" id="subscribeEmail" placeholder="Enter your email" required class="subscribe-input">
-                                <button type="submit" class="subscribe-btn">
+                                <label for="subscribeEmail" class="visually-hidden">Email address</label>
+                                <input type="email" id="subscribeEmail" name="email" placeholder="Enter your email" required aria-required="true" class="subscribe-input">
+                                <button type="submit" class="subscribe-btn" aria-label="Subscribe to F1 news updates">
                                     <span class="btn-text">Subscribe</span>
                                     <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <line x1="5" y1="12" x2="19" y2="12"/>
