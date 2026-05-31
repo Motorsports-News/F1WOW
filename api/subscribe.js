@@ -65,10 +65,9 @@ export default async function handler(req, res) {
     if (method === 'POST' && req.url === '/api/notify') {
         const { articleTitle, articleUrl, adminKey } = body;
 
-        // Simple admin key check (prevent abuse)
-        // Use environment variable for admin key (set in Vercel/production)
-        const VALID_KEY = process.env.ADMIN_KEY || 'f1wow-2026-newsletter';
-        if (adminKey !== VALID_KEY) {
+        // Admin key must be configured via environment variable; fail closed if missing
+        const VALID_KEY = process.env.ADMIN_KEY;
+        if (!VALID_KEY || adminKey !== VALID_KEY) {
             return res.status(403).json({ error: 'Invalid admin key' });
         }
 
