@@ -1,144 +1,97 @@
 # F1wow News Website
 
-A Formula 1 news and analysis website featuring the latest F1 news, race results, championship standings, calendar, and race predictor.
+A Formula 1 news and analysis website featuring live standings, race calendar, championship graphs, and in-depth race reports — all auto-updating from the official F1 API.
 
 ## 🌐 Live Site
 
 [https://motorsports-news.github.io/F1WOW/](https://motorsports-news.github.io/F1WOW/)
 
+## ✨ Features
+
+- **Live Data** — Driver/constructor standings, race calendar, countdown, and championship graph all pull from the [Jolpica F1 API](https://api.jolpi.ca) automatically after each race
+- **Animated Hero** — F1 car silhouette racing across a track with 3D mouse-parallax tilt
+- **Race Reports** — Detailed articles for each Grand Prix with results, analysis, and expert quotes
+- **Championship Graph** — Interactive SVG chart showing points progression across the season
+- **Newsletter** — Email collection via [Formspree](https://formspree.io)
+- **SEO Optimized** — Canonical URLs, Open Graph, Twitter Cards, structured data, XML sitemap
+- **Performance** — Only 2 Google Fonts (Chakra Petch + Orbitron), optimized assets, no heavy frameworks
+
 ## 📁 Project Structure
 
 ```
-E:\Insta/
-├── index.html              # Homepage with featured articles and news grid
+├── index.html              # Homepage with hero, featured article, news grid
+├── championship.html       # Live standings + championship graph
+├── calendar.html           # Live race calendar with results
+├── subscribe.html          # Newsletter subscription (Formspree)
 ├── styles.css              # Main stylesheet
-├── script.min.js           # JavaScript functionality
-├── sitemap.xml             # XML sitemap for SEO
-├── favicon1.svg            # Website favicon
-├── F1 Car Scatch.png       # Hero section background image
+├── script.js               # All JS (API fetching, countdown, search, UI)
+├── sitemap.xml             # Auto-generated XML sitemap
+├── favicon1.svg            # Site favicon
+├── ARTICLE_TEMPLATE.html   # Template for new articles
 │
-├── Articles/               # F1 News and Race Reports
-│   ├── piastri-unwanted-record.html
+├── Articles (race reports & news)
+│   ├── canada-gp-2026.html
 │   ├── japan-gp-2026.html
 │   ├── antonelli-maiden-win.html
-│   ├── alonso-vibrations-retirement.html
-│   ├── verstappen-article.html
-│   ├── regulations-2026-article.html
-│   ├── cancellation-article.html
-│   └── f1-33-day-break-japan-miami.html
+│   ├── lambiase-mclaren-2028.html
+│   ├── wheatley-departs-audi-f1.html
+│   └── ... (12 total)
 │
-└── Pages/
-    ├── calendar.html       # F1 2026 Race Calendar
-    ├── championship.html   # Drivers' & Constructors' Standings
-    ├── predictor.html      # Race Result Predictor
-    ├── subscribe.html      # Newsletter Subscription
-    ├── australia-gp.html   # Australian GP Info
-    └── china-gp.html       # Chinese GP Info
+├── images/                 # Article images
+├── api/                    # Serverless function (Vercel, optional)
+└── scripts/                # Build tools (sitemap generator)
 ```
 
 ## 🚀 Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Motorsports-News/F1WOW.git
-   cd F1WOW
-   ```
-
-2. **Open locally**
-   - Simply open `index.html` in your browser
-   - Or use a local server:
-     ```bash
-     # Python
-     python -m http.server 8000
-
-     # Node.js
-     npx serve
-     ```
-
-3. **Visit** `http://localhost:8000`
+```bash
+git clone https://github.com/Motorsports-News/F1WOW.git
+cd F1WOW
+python -m http.server 8080
+# Open http://localhost:8080
+```
 
 ## 📝 Adding New Articles
 
-When creating a new article:
+1. Copy `ARTICLE_TEMPLATE.html` → `your-article.html`
+2. Fill in content, meta tags, and structured data
+3. Add article card to `index.html` articles grid (with `data-team` attribute for team-colored accent)
+4. Regenerate sitemap: `node scripts/generate-sitemap.js`
+5. Commit and push to `main`
 
-1. **Create the article HTML file**
-   - Use `ARTICLE_TEMPLATE.html` as a starting point
-   - Include proper SEO meta tags, Open Graph, and structured data
-   - Name it descriptively (e.g., `driver-event.html`)
+## 🔄 Auto-Updating Data
 
-2. **Add to homepage**
-   - Add article card to `<div class="articles-grid">` in `index.html`
-   - Update the **Featured Story** section (line ~210)
+The site fetches live data on every page load — **no manual updates needed** after races:
 
-3. **Update sitemap**
-   - Add entry to `sitemap.xml`
-   - Include proper `<lastmod>` date
+| Data | Source | Updates |
+|------|--------|---------|
+| Driver standings | Jolpica API | After each race |
+| Constructor standings | Jolpica API | After each race |
+| Race calendar + winners | Jolpica API | After each race |
+| Next race countdown | Jolpica API | Automatic |
+| Championship graph | Jolpica API (results + sprints) | After each race |
 
-4. **Add internal links** (for SEO)
-   - Link to 2-3 related articles within content
-   - Use `<a href="article.html" class="article-link">` format
-
-5. **Commit and push**
-   ```bash
-   git add .
-   git commit -m "Add article: Title"
-   git push
-   ```
-
-## 🎨 Customization
-
-### Hero Image Visibility
-Edit `styles.css` line ~353:
-```css
-.hero-car-gif {
-    opacity: 0.8;           /* 0-1 scale */
-    filter: brightness(1.3) contrast(1.2);
-}
-```
-
-### Featured Story
-Edit `index.html` line ~211:
-```html
-<a href="your-article.html" class="featured-article">
-    <!-- Update content here -->
-</a>
-```
-
-## 📊 SEO Features
-
-- Canonical URLs
-- Open Graph meta tags
-- Twitter Card support
-- Structured data (Schema.org NewsArticle)
-- XML Sitemap
-- Internal linking strategy
+Hardcoded fallback data is included in case the API is unreachable.
 
 ## 🛠️ Tech Stack
 
-- **HTML5** - Structure
-- **CSS3** - Styling (custom framework)
-- **JavaScript** - Interactivity
-- **Google Analytics** - Traffic tracking
+- **HTML5 / CSS3 / Vanilla JS** — No frameworks, no build step
+- **Jolpica F1 API** — Live race data (free, no auth required)
+- **Formspree** — Newsletter email collection
+- **GitHub Pages** — Hosting
+- **Google Analytics** — Traffic tracking
 
 ## 📱 Browser Support
 
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+- Chrome / Edge / Firefox / Safari (latest)
+- Mobile responsive
 
 ## 📄 License
 
 All F1 related content belongs to their respective owners.
+F1 car silhouette icon: [game-icons.net](https://game-icons.net) (CC BY 3.0).
 
-## 🔗 Social Media
+## 🔗 Social
 
 - **Instagram**: [@f1wow](https://instagram.com/f1wow)
 
