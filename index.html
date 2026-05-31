@@ -70,6 +70,96 @@
       gtag('js', new Date());
       gtag('config', 'G-HWLHEWCYP2');
     </script>
+
+    <!-- Animated F1 Hero (car silhouette: game-icons.net, CC BY 3.0) -->
+    <style>
+        .hero-section { perspective: 1100px; }
+        .hero-speed-lines, .hero-content, .car-layer {
+            transition: transform 0.15s ease-out;
+            will-change: transform;
+        }
+        .hero-speed-lines { transform: translateZ(-30px) scale(1.04); }
+        .hero-content { transform: translateZ(50px); }
+        /* Drop CTA buttons down onto the track */
+        .hero-cta { margin-top: 64px; }
+
+        /* Race track the car drives on */
+        .track {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 34%;
+            z-index: -2;
+            background: linear-gradient(180deg, #2a2a31 0%, #18181d 100%);
+            overflow: hidden;
+        }
+        .track::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -10%; right: -10%;
+            height: 9px;
+            background: repeating-linear-gradient(90deg, #e10600 0 26px, #f4f4f4 26px 52px);
+            animation: kerbScroll 0.45s linear infinite;
+        }
+        .track::after {
+            content: '';
+            position: absolute;
+            top: 46%; left: -10%; right: -10%;
+            height: 6px;
+            background: repeating-linear-gradient(90deg, rgba(255,255,255,0.9) 0 56px, transparent 56px 120px);
+            animation: dashScroll 0.32s linear infinite;
+        }
+        @keyframes kerbScroll { to { background-position-x: -52px; } }
+        @keyframes dashScroll { to { background-position-x: -120px; } }
+
+        /* Animated car */
+        .car-layer {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .car-wrap {
+            position: absolute;
+            top: 58%;
+            width: 480px;
+            transform: translateY(-50%);
+            animation: raceBy 3.4s linear infinite;
+        }
+        .speed-trail {
+            position: absolute;
+            top: 50%;
+            right: 72%;
+            transform: translateY(-50%);
+            width: 60vw;
+            height: 34px;
+            border-radius: 34px;
+            background: linear-gradient(90deg, transparent 0%, rgba(225,6,0,0.06) 30%, rgba(225,6,0,0.5) 82%, rgba(255,120,110,0.95) 100%);
+            filter: blur(4px);
+        }
+        .race-car {
+            display: block;
+            width: 100%;
+            height: auto;
+            color: #e10600;
+            filter: drop-shadow(0 0 18px rgba(225,6,0,0.9)) drop-shadow(0 10px 12px rgba(0,0,0,0.6));
+        }
+        @keyframes raceBy {
+            0%   { left: -40vw; opacity: 0; }
+            8%   { opacity: 1; }
+            92%  { opacity: 1; }
+            100% { left: 104vw; opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .car-wrap { width: 270px; }
+            .speed-trail { width: 50vw; height: 24px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .car-wrap { animation: none; left: 50%; transform: translate(-50%, -50%); }
+            .track::before, .track::after { animation: none; }
+            .hero-speed-lines, .hero-content, .car-layer { transition: none; }
+        }
+    </style>
 </head>
 <body>
 
@@ -107,9 +197,16 @@
     <main class="main" id="main">
         <!-- Hero Section -->
         <section class="hero-section">
-            <!-- F1 Car Background -->
-            <div class="hero-car-bg">
-                <img src="f1-car-hero-sketch.webp" alt="Formula 1 racing car in action on track" class="hero-car-gif">
+            <!-- Race Track -->
+            <div class="track"></div>
+            <!-- Animated F1 Car -->
+            <div class="car-layer">
+                <div class="car-wrap">
+                    <div class="speed-trail"></div>
+                    <svg class="race-car" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
+                        <path fill="currentColor" d="M355.975 292.25a24.82 24.82 0 1 0 24.82-24.81a24.84 24.84 0 0 0-24.82 24.81m-253-24.81a24.81 24.81 0 1 1-24.82 24.81a24.84 24.84 0 0 1 24.81-24.81zm-76.67-71.52h67.25l-13.61 49.28l92-50.28h57.36l1.26 34.68l32 14.76l11.74-14.44h15.62l3.16 16c137.56-13 192.61 29.17 192.61 29.17s-7.52 5-25.93 8.39c-3.88 3.31-3.66 14.44-3.66 14.44h24.2v16h-52v-27.48c-1.84.07-4.45.41-7.06.47a40.81 40.81 0 1 0-77.25 23h-204.24a40.81 40.81 0 1 0-77.61-17.67c0 1.24.06 2.46.17 3.67h-36z"/>
+                    </svg>
+                </div>
             </div>
             <!-- Speed Lines Overlay -->
             <div class="hero-speed-lines">
@@ -511,5 +608,34 @@
     </button>
 
     <script src="script.js"></script>
+    <script>
+        // Hero 3D parallax tilt
+        (function () {
+            const hero = document.querySelector('.hero-section');
+            if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const speed = hero.querySelector('.hero-speed-lines');
+            const content = hero.querySelector('.hero-content');
+            const carLayer = hero.querySelector('.car-layer');
+            let raf = null;
+            hero.addEventListener('mousemove', (e) => {
+                const r = hero.getBoundingClientRect();
+                const cx = (e.clientX - r.left) / r.width - 0.5;
+                const cy = (e.clientY - r.top) / r.height - 0.5;
+                if (raf) cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(() => {
+                    if (carLayer) carLayer.style.transform = `translate(${cx * 30}px, ${cy * 30}px)`;
+                    if (speed) speed.style.transform = `translateZ(-30px) scale(1.04) translate(${cx * 18}px, ${cy * 18}px)`;
+                    if (content) content.style.transform = `translateZ(50px) translate(${cx * -22}px, ${cy * -22}px)`;
+                    hero.style.transform = `rotateY(${cx * 4}deg) rotateX(${-cy * 4}deg)`;
+                });
+            });
+            hero.addEventListener('mouseleave', () => {
+                if (carLayer) carLayer.style.transform = '';
+                if (speed) speed.style.transform = 'translateZ(-30px) scale(1.04)';
+                if (content) content.style.transform = 'translateZ(50px)';
+                hero.style.transform = 'rotateY(0) rotateX(0)';
+            });
+        })();
+    </script>
 </body>
 </html>
