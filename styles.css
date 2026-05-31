@@ -1499,6 +1499,15 @@ body::before {
     transform: scaleY(1);
 }
 
+/* Team Color Accents - recolor the racing-line accent per team */
+.article-preview-card[data-team="mercedes"]::before { background: linear-gradient(180deg, var(--team-mercedes) 0%, #1a9c8a 100%); }
+.article-preview-card[data-team="ferrari"]::before { background: linear-gradient(180deg, var(--team-ferrari) 0%, #b80f28 100%); }
+.article-preview-card[data-team="mclaren"]::before { background: linear-gradient(180deg, var(--team-mclaren) 0%, #cc6c00 100%); }
+.article-preview-card[data-team="redbull"]::before { background: linear-gradient(180deg, var(--team-redbull) 0%, #244a8a 100%); }
+.article-preview-card[data-team="astonmartin"]::before { background: linear-gradient(180deg, var(--team-astonmartin) 0%, #18634a 100%); }
+.article-preview-card[data-team="alpine"]::before { background: linear-gradient(180deg, var(--team-alpine) 0%, #cc6c95 100%); }
+.article-preview-card[data-team="racingbulls"]::before { background: linear-gradient(180deg, #6692FF 0%, #244a8a 100%); }
+
 .article-preview-card:hover::after {
     left: 100%;
 }
