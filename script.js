@@ -1648,44 +1648,38 @@ function handleSubscribe(event) {
     const btnText = btn.querySelector('.btn-text');
     const originalText = btnText.textContent;
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         showNotification('Please enter a valid email address', 'error');
         return;
     }
 
-    // Check if already subscribed
-    let subscribers = JSON.parse(localStorage.getItem('f1wow_subscribers') || '[]');
-    const exists = subscribers.some(sub => sub.email === email);
-    if (exists) {
-        showNotification('You are already subscribed! 🏁', 'info');
-        emailInput.value = '';
-        return;
-    }
+    btnText.textContent = 'Subscribing...';
+    btn.disabled = true;
 
-    // Store subscriber locally
-    subscribers.push({
-        email: email,
-        date: new Date().toISOString()
-    });
-    localStorage.setItem('f1wow_subscribers', JSON.stringify(subscribers));
-
-    // Update count
-    updateSubscriberCount();
-
-    // Show success
-    btnText.textContent = 'Subscribed! ✓';
-    btn.style.background = '#22c55e';
-    emailInput.value = '';
-    showNotification('Successfully subscribed! 🏁 You\'ll receive notifications for new articles.');
-
-    // Reset button after delay
-    setTimeout(() => {
-        btnText.textContent = originalText;
-        btn.style.background = '';
+    fetch('https://formspree.io/f/mzdwqjwq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email })
+    }).then(res => {
+        if (res.ok) {
+            btnText.textContent = 'Subscribed! ✓';
+            btn.style.background = '#22c55e';
+            emailInput.value = '';
+            showNotification('Successfully subscribed! 🏁 You\'ll receive F1 news updates.');
+        } else {
+            throw new Error('fail');
+        }
+    }).catch(() => {
+        showNotification('Something went wrong. Please try again.', 'error');
         btn.disabled = false;
-    }, 3000);
+    }).finally(() => {
+        setTimeout(() => {
+            btnText.textContent = originalText;
+            btn.style.background = '';
+            btn.disabled = false;
+        }, 3000);
+    });
 }
 
 // Notify all subscribers about new article

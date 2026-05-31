@@ -14,7 +14,7 @@
     <meta property="og:url" content="https://motorsports-news.github.io/F1WOW/subscribe.html">
     <meta property="og:title" content="F1wow Newsletter - Subscribe">
     <meta property="og:description" content="Subscribe to F1wow News newsletter - Get the latest Formula 1 news, race results, and analysis delivered to your inbox.">
-    <meta property="og:image" content="https://motorsports-news.github.io/F1WOW/f1-car-hero.webp">
+    <meta property="og:image" content="https://motorsports-news.github.io/F1WOW/favicon1.svg">
     <meta property="og:site_name" content="F1wow News">
     <meta property="og:locale" content="en_US">
 
@@ -23,7 +23,7 @@
     <meta name="twitter:url" content="https://motorsports-news.github.io/F1WOW/subscribe.html">
     <meta name="twitter:title" content="F1wow Newsletter - Subscribe">
     <meta name="twitter:description" content="Subscribe to F1wow News newsletter - Get the latest Formula 1 news, race results, and analysis delivered to your inbox.">
-    <meta name="twitter:image" content="https://motorsports-news.github.io/F1WOW/f1-car-hero.webp">
+    <meta name="twitter:image" content="https://motorsports-news.github.io/F1WOW/favicon1.svg">
     <meta name="twitter:site" content="@f1wow">
 
     <link rel="stylesheet" href="styles.css">
@@ -180,44 +180,31 @@
             const email = document.getElementById('email').value.trim();
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('btnText');
-            const messageDiv = document.getElementById('message');
 
-            // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showMessage('Please enter a valid email address', 'error');
                 return;
             }
 
-            // Check if already subscribed
-            const subscribers = JSON.parse(localStorage.getItem('f1wow_subscribers') || '[]');
-            if (subscribers.includes(email)) {
-                showMessage('You are already subscribed!', 'error');
-                return;
-            }
-
-            // Show loading
             submitBtn.disabled = true;
             btnText.textContent = 'Subscribing...';
 
             try {
-                // Store locally
-                subscribers.push({
-                    email: email,
-                    date: new Date().toISOString()
+                const res = await fetch('https://formspree.io/f/mzdwqjwq', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ email })
                 });
-                localStorage.setItem('f1wow_subscribers', JSON.stringify(subscribers));
 
-                // Show success
-                showMessage('Success! You\'ve been subscribed to F1wow News. Check your inbox to confirm.', 'success');
-                btnText.textContent = 'Subscribed!';
-                submitBtn.style.background = '#22c55e';
-                document.getElementById('email').value = '';
-
-                // Log for admin (in production, this would send to a backend)
-                console.log('New subscriber:', email);
-                console.log('Total subscribers:', subscribers.length);
-
+                if (res.ok) {
+                    showMessage('Success! You\'ve been subscribed to F1wow News.', 'success');
+                    btnText.textContent = 'Subscribed!';
+                    submitBtn.style.background = '#22c55e';
+                    document.getElementById('email').value = '';
+                } else {
+                    throw new Error('Submission failed');
+                }
             } catch (error) {
                 showMessage('Something went wrong. Please try again.', 'error');
                 submitBtn.disabled = false;
