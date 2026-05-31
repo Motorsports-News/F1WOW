@@ -25,7 +25,7 @@ async function generateSitemap() {
     // Get all HTML files except in node_modules
     const files = glob.sync('*.html', {
         cwd: __dirname + '/..',
-        ignore: ['node_modules/**', 'test-*.html', 'debug-*.html', '*-demo.html']
+        ignore: ['node_modules/**', 'test-*.html', 'debug-*.html', '*-demo.html', 'ARTICLE_TEMPLATE.html']
     });
 
     const urls = files.map(file => {
