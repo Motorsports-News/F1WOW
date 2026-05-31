@@ -165,49 +165,130 @@
 
     <script src="script.js"></script>
     <script>
-        // Inline graph rendering for championship page
+        // Inline graph rendering for championship page - fetches live data
         (function() {
-            // Championship data
-            const CHAMPIONSHIP_DATA = {
-                driver: {
-                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada'],
-                    georgeRussell: { name: 'George Russell', team: 'Mercedes', color: '#27F4D2', points: [25, 51, 63, 80, 88] },
-                    kimiAntonelli: { name: 'Kimi Antonelli', team: 'Mercedes', color: '#27F4D2', points: [18, 47, 72, 100, 131] },
-                    charlesLeclerc: { name: 'Charles Leclerc', team: 'Ferrari', color: '#F91536', points: [15, 34, 49, 59, 75] },
-                    lewisHamilton: { name: 'Lewis Hamilton', team: 'Ferrari', color: '#F91536', points: [12, 33, 41, 51, 72] },
-                    landoNorris: { name: 'Lando Norris', team: 'McLaren', color: '#FF8700', points: [10, 15, 25, 51, 58] },
-                    oscarPiastri: { name: 'Oscar Piastri', team: 'McLaren', color: '#FF8700', points: [0, 0, 21, 43, 48] },
-                    maxVerstappen: { name: 'Max Verstappen', team: 'Red Bull Racing', color: '#3671C6', points: [0, 0, 12, 26, 43] },
-                    oliverBearman: { name: 'Oliver Bearman', team: 'Haas', color: '#B6BABD', points: [10, 17, 17, 17, 18] },
-                    pierreGasly: { name: 'Pierre Gasly', team: 'Alpine', color: '#0090FF', points: [0, 0, 15, 16, 20] },
-                    liamLawson: { name: 'Liam Lawson', team: 'Racing Bulls', color: '#6692FF', points: [0, 0, 10, 10, 16] },
-                    francoColapinto: { name: 'Franco Colapinto', team: 'Alpine', color: '#0090FF', points: [0, 0, 1, 7, 15] },
-                    isackHadjar: { name: 'Isack Hadjar', team: 'Red Bull Racing', color: '#3671C6', points: [0, 0, 4, 4, 14] },
-                    carlosSainz: { name: 'Carlos Sainz', team: 'Williams', color: '#64C4FF', points: [0, 0, 2, 4, 6] },
-                    arvidLindblad: { name: 'Arvid Lindblad', team: 'Racing Bulls', color: '#6692FF', points: [0, 0, 4, 4, 5] },
-                    gabrielBortoleto: { name: 'Gabriel Bortoleto', team: 'Audi', color: '#C8102E', points: [0, 0, 2, 2, 2] },
-                    estebanOcon: { name: 'Esteban Ocon', team: 'Haas', color: '#B6BABD', points: [0, 0, 1, 1, 1] },
-                    alexanderAlbon: { name: 'Alexander Albon', team: 'Williams', color: '#64C4FF', points: [0, 0, 0, 1, 1] }
-                },
-                constructor: {
-                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada'],
-                    mercedes: { name: 'Mercedes', color: '#27F4D2', points: [43, 98, 135, 180, 219] },
-                    ferrari: { name: 'Ferrari', color: '#F91536', points: [27, 67, 90, 110, 147] },
-                    mclaren: { name: 'McLaren', color: '#FF8700', points: [18, 18, 46, 94, 106] },
-                    redBullRacing: { name: 'Red Bull Racing', color: '#3671C6', points: [0, 0, 16, 30, 57] },
-                    alpine: { name: 'Alpine', color: '#0090FF', points: [0, 0, 16, 23, 35] },
-                    racingBulls: { name: 'Racing Bulls', color: '#6692FF', points: [0, 0, 14, 14, 21] },
-                    haas: { name: 'Haas F1 Team', color: '#B6BABD', points: [12, 17, 18, 18, 19] },
-                    williams: { name: 'Williams', color: '#64C4FF', points: [0, 0, 2, 5, 7] },
-                    audi: { name: 'Audi', color: '#C8102E', points: [0, 0, 2, 2, 2] },
-                    cadillac: { name: 'Cadillac', color: '#E41E3C', points: [0, 0, 0, 0, 0] },
-                    astonMartin: { name: 'Aston Martin', color: '#229971', points: [0, 0, 0, 0, 0] }
-                }
+            const API = 'https://api.jolpi.ca/ergast/f1/2026';
+            const teamColors = {
+                'Mercedes': '#27F4D2', 'Ferrari': '#F91536', 'McLaren': '#FF8700',
+                'Red Bull': '#3671C6', 'Alpine': '#0090FF', 'Racing Bulls': '#6692FF',
+                'Haas': '#B6BABD', 'Williams': '#64C4FF', 'Audi': '#C8102E',
+                'Cadillac': '#E41E3C', 'Aston Martin': '#229971', 'Sauber': '#C8102E',
+                'Kick Sauber': '#C8102E'
             };
 
+            function getColor(name) {
+                for (const [key, color] of Object.entries(teamColors)) {
+                    if (name.includes(key)) return color;
+                }
+                return '#888';
+            }
+
+            function toKey(str) { return str.replace(/[^a-zA-Z]/g, '').replace(/^./, c => c.toLowerCase()); }
+
+            let CHAMPIONSHIP_DATA = { driver: { rounds: [] }, constructor: { rounds: [] } };
             let currentGraphType = 'driver';
-            let selectedDrivers = ['kimiAntonelli', 'georgeRussell', 'charlesLeclerc', 'lewisHamilton', 'landoNorris', 'oscarPiastri', 'maxVerstappen'];
-            let selectedConstructors = ['mercedes', 'ferrari', 'mclaren', 'redBullRacing', 'alpine', 'racingBulls', 'haas'];
+            let selectedDrivers = [];
+            let selectedConstructors = [];
+
+            async function fetchChampionshipData() {
+                try {
+                    // Fetch results for all rounds
+                    const res = await fetch(`${API}/results.json?limit=600`);
+                    if (!res.ok) throw new Error('Failed');
+                    const data = await res.json();
+                    const races = data?.MRData?.RaceTable?.Races || [];
+
+                    // Also fetch sprint results
+                    let sprintRaces = [];
+                    try {
+                        const sRes = await fetch(`${API}/sprint.json?limit=200`);
+                        if (sRes.ok) { const sd = await sRes.json(); sprintRaces = sd?.MRData?.RaceTable?.Races || []; }
+                    } catch(e) {}
+
+                    // Build cumulative points per driver and constructor
+                    const driverCumulative = {};
+                    const constructorCumulative = {};
+                    const rounds = [];
+
+                    // Points systems
+                    const racePoints = [25,18,15,12,10,8,6,4,2,1];
+                    const sprintPoints = [8,7,6,5,4,3,2,1];
+
+                    // Process each round
+                    races.forEach((race, rIdx) => {
+                        const roundName = race.raceName.replace(' Grand Prix', '');
+                        rounds.push(roundName);
+
+                        // Add race points
+                        (race.Results || []).forEach((r, i) => {
+                            if (i >= 10) return;
+                            const dName = `${r.Driver.givenName} ${r.Driver.familyName}`;
+                            const cName = r.Constructor.name;
+                            const pts = racePoints[i] || 0;
+                            const dKey = toKey(dName);
+                            const cKey = toKey(cName);
+
+                            if (!driverCumulative[dKey]) driverCumulative[dKey] = { name: dName, team: cName, color: getColor(cName), points: [] };
+                            if (!constructorCumulative[cKey]) constructorCumulative[cKey] = { name: cName, color: getColor(cName), points: [] };
+
+                            // Ensure array length matches rounds
+                            while (driverCumulative[dKey].points.length < rIdx) driverCumulative[dKey].points.push(driverCumulative[dKey].points[driverCumulative[dKey].points.length-1] || 0);
+                            while (constructorCumulative[cKey].points.length < rIdx) constructorCumulative[cKey].points.push(constructorCumulative[cKey].points[constructorCumulative[cKey].points.length-1] || 0);
+
+                            const prevD = driverCumulative[dKey].points[rIdx - 1] || 0;
+                            driverCumulative[dKey].points[rIdx] = (driverCumulative[dKey].points[rIdx] || prevD) + pts;
+
+                            const prevC = constructorCumulative[cKey].points[rIdx - 1] || 0;
+                            constructorCumulative[cKey].points[rIdx] = (constructorCumulative[cKey].points[rIdx] || prevC) + pts;
+                        });
+
+                        // Add sprint points for this round
+                        const sprint = sprintRaces.find(s => s.round === race.round);
+                        if (sprint) {
+                            (sprint.SprintResults || []).forEach((r, i) => {
+                                if (i >= 8) return;
+                                const dName = `${r.Driver.givenName} ${r.Driver.familyName}`;
+                                const cName = r.Constructor.name;
+                                const pts = sprintPoints[i] || 0;
+                                const dKey = toKey(dName);
+                                const cKey = toKey(cName);
+
+                                if (!driverCumulative[dKey]) driverCumulative[dKey] = { name: dName, team: cName, color: getColor(cName), points: [] };
+                                if (!constructorCumulative[cKey]) constructorCumulative[cKey] = { name: cName, color: getColor(cName), points: [] };
+
+                                while (driverCumulative[dKey].points.length <= rIdx) driverCumulative[dKey].points.push(driverCumulative[dKey].points[driverCumulative[dKey].points.length-1] || 0);
+                                while (constructorCumulative[cKey].points.length <= rIdx) constructorCumulative[cKey].points.push(constructorCumulative[cKey].points[constructorCumulative[cKey].points.length-1] || 0);
+
+                                driverCumulative[dKey].points[rIdx] += pts;
+                                constructorCumulative[cKey].points[rIdx] += pts;
+                            });
+                        }
+
+                        // Fill in drivers/constructors that didn't score this round
+                        Object.values(driverCumulative).forEach(d => {
+                            while (d.points.length <= rIdx) d.points.push(d.points[d.points.length-1] || 0);
+                        });
+                        Object.values(constructorCumulative).forEach(c => {
+                            while (c.points.length <= rIdx) c.points.push(c.points[c.points.length-1] || 0);
+                        });
+                    });
+
+                    // Build CHAMPIONSHIP_DATA
+                    CHAMPIONSHIP_DATA.driver = { rounds };
+                    Object.entries(driverCumulative).forEach(([key, val]) => { CHAMPIONSHIP_DATA.driver[key] = val; });
+                    CHAMPIONSHIP_DATA.constructor = { rounds };
+                    Object.entries(constructorCumulative).forEach(([key, val]) => { CHAMPIONSHIP_DATA.constructor[key] = val; });
+
+                    // Select top 7 drivers and constructors by final points
+                    const sortedDrivers = Object.entries(driverCumulative).sort((a,b) => (b[1].points.at(-1)||0) - (a[1].points.at(-1)||0));
+                    selectedDrivers = sortedDrivers.slice(0, 7).map(d => d[0]);
+                    const sortedConstructors = Object.entries(constructorCumulative).sort((a,b) => (b[1].points.at(-1)||0) - (a[1].points.at(-1)||0));
+                    selectedConstructors = sortedConstructors.slice(0, 7).map(c => c[0]);
+
+                } catch(e) {
+                    console.error('Championship data fetch failed:', e);
+                }
+            }
 
             function renderGraph() {
                 const svg = document.getElementById('championshipSvg');
@@ -338,7 +419,8 @@
             }
 
             // Initialize
-            function initGraph() {
+            async function initGraph() {
+                await fetchChampionshipData();
 
                 // Button handlers
                 const typeBtns = document.querySelectorAll('.graph-type-btn');

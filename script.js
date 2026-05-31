@@ -8,7 +8,7 @@ function sanitizeHTML(str) {
 }
 
 // F1 API Endpoints - Primary and backup
-const API_BASE = 'https://jolpica-f1.vercel.app/api/f1';
+const API_BASE = 'https://api.jolpi.ca/ergast/f1';
 const ERGAST_API = 'https://ergast.com/api/f1';
 const CURRENT_YEAR = 2026;
 
@@ -158,11 +158,11 @@ const constructorMapping = {
 async function fetchDriverStandings() {
     const container = document.getElementById('driverStandings');
     try {
-        const response = await fetch(`${API_BASE}/${CURRENT_YEAR}/driverStandings.json`);
+        const response = await fetch(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
         if (!response.ok) throw new Error('API request failed');
         const data = await response.json();
 
-        const standings = data?.mrData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
+        const standings = data?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
         if (!standings) {
             throw new Error('Invalid data structure');
         }
@@ -205,11 +205,11 @@ function displayDriverStandings(standings) {
 async function fetchConstructorStandings() {
     const container = document.getElementById('constructorStandings');
     try {
-        const response = await fetch(`${API_BASE}/${CURRENT_YEAR}/constructorStandings.json`);
+        const response = await fetch(`${API_BASE}/${CURRENT_YEAR}/constructorstandings.json`);
         if (!response.ok) throw new Error('API request failed');
         const data = await response.json();
 
-        const standings = data?.mrData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings;
+        const standings = data?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings;
         if (!standings) {
             throw new Error('Invalid data structure');
         }
@@ -327,54 +327,91 @@ function displayFallbackStandings(container, type) {
     `;
 }
 
-// Load and display race schedule
-function loadRaceSchedule() {
+// Load and display race schedule from live API
+async function loadRaceSchedule() {
     const container = document.getElementById('raceSchedule');
     if (!container) return;
 
-    const html = RACE_SCHEDULE_2026.map(race => {
-        let statusClass = '';
-        let badgeClass = '';
-        let badgeText = '';
+    try {
+        // Fetch schedule and results in parallel
+        const [schedRes, resultsRes] = await Promise.all([
+            fetch(`${API_BASE}/${CURRENT_YEAR}.json`),
+            fetch(`${API_BASE}/${CURRENT_YEAR}/results.json?limit=500`)
+        ]);
+        if (!schedRes.ok) throw new Error('Schedule fetch failed');
+        const schedData = await schedRes.json();
+        const races = schedData?.MRData?.RaceTable?.Races || [];
 
-        if (race.cancelled) {
-            statusClass = 'cancelled';
-            badgeClass = 'cancelled';
-            badgeText = 'CANCELLED';
-        } else if (race.completed) {
-            statusClass = 'completed';
-            badgeClass = 'completed';
-            if (race.sprintWinner && race.winner) {
-                badgeText = `Sprint: ${race.sprintWinner} | Race: ${race.winner}`;
-            } else if (race.winner) {
-                badgeText = `Winner: ${race.winner}`;
-            } else {
-                badgeText = 'Completed';
-            }
-        } else if (race.next) {
-            statusClass = 'next-race';
-            badgeClass = 'next';
-            badgeText = 'NEXT RACE';
-        } else {
-            statusClass = 'upcoming';
-            badgeClass = 'upcoming';
-            badgeText = 'Round ' + race.round;
+        let resultsMap = {};
+        if (resultsRes.ok) {
+            const resData = await resultsRes.json();
+            const raceResults = resData?.MRData?.RaceTable?.Races || [];
+            raceResults.forEach(r => {
+                const winner = r.Results?.[0];
+                if (winner) resultsMap[r.round] = winner.Driver.familyName;
+            });
         }
 
-        const clickAction = race.completed ? `href="${race.name.toLowerCase().replace(' ', '-')}-gp.html"` : '';
+        const now = new Date();
+        let nextFound = false;
 
+        const html = races.map(race => {
+            const raceDate = new Date(race.date + 'T' + (race.time || '14:00:00Z'));
+            const round = parseInt(race.round);
+            const winner = resultsMap[race.round];
+            const completed = !!winner;
+            const isNext = !completed && !nextFound && raceDate > now;
+            if (isNext) nextFound = true;
+
+            let statusClass = '', badgeClass = '', badgeText = '';
+            if (completed) {
+                statusClass = 'completed'; badgeClass = 'completed';
+                badgeText = `Winner: ${winner}`;
+            } else if (isNext) {
+                statusClass = 'next-race'; badgeClass = 'next';
+                badgeText = 'NEXT RACE';
+            } else {
+                statusClass = 'upcoming'; badgeClass = 'upcoming';
+                badgeText = `Round ${round}`;
+            }
+
+            const dateStr = raceDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            return `
+                <a class="race-card ${statusClass}" style="${!completed ? 'cursor:default;' : ''}">
+                    <div class="race-round">R${round}</div>
+                    <div class="race-info">
+                        <div class="race-name">${race.raceName}</div>
+                        <div class="race-date">${dateStr}</div>
+                    </div>
+                    <span class="race-badge ${badgeClass}">${badgeText}</span>
+                </a>
+            `;
+        }).join('');
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading schedule:', error);
+        loadFallbackSchedule(container);
+    }
+}
+
+// Fallback if API fails
+function loadFallbackSchedule(container) {
+    if (!container) return;
+    const html = RACE_SCHEDULE_2026.map(race => {
+        let statusClass = '', badgeClass = '', badgeText = '';
+        if (race.cancelled) { statusClass = 'cancelled'; badgeClass = 'cancelled'; badgeText = 'CANCELLED'; }
+        else if (race.completed) { statusClass = 'completed'; badgeClass = 'completed'; badgeText = race.winner ? `Winner: ${race.winner}` : 'Completed'; }
+        else if (race.next) { statusClass = 'next-race'; badgeClass = 'next'; badgeText = 'NEXT RACE'; }
+        else { statusClass = 'upcoming'; badgeClass = 'upcoming'; badgeText = 'Round ' + race.round; }
         return `
-            <a ${clickAction} class="race-card ${statusClass}" ${!clickAction ? 'style="cursor: default;"' : ''}>
+            <a class="race-card ${statusClass}" style="cursor:default;">
                 <div class="race-round">R${race.round}</div>
-                <div class="race-info">
-                    <div class="race-name">${race.name} GP</div>
-                    <div class="race-date">${race.date}</div>
-                </div>
+                <div class="race-info"><div class="race-name">${race.name} GP</div><div class="race-date">${race.date}</div></div>
                 <span class="race-badge ${badgeClass}">${badgeText}</span>
-            </a>
-        `;
+            </a>`;
     }).join('');
-
     container.innerHTML = html;
 }
 
@@ -557,120 +594,86 @@ function initSearch() {
     }
 }
 
-// Countdown Timer for Next Race - Automatically advances to next race
-// Parses race dates from RACE_SCHEDULE_2026 dynamically
+// Countdown Timer for Next Race - fetches from live API
 function startCountdown() {
-    // Helper function to parse date string like "Mar 27-29" to Date object
-    function parseRaceDate(dateStr, year = 2026) {
-        const months = {
-            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-        };
+    const flags = {
+        'australia': '🇦🇺', 'china': '🇨🇳', 'japan': '🇯🇵', 'bahrain': '🇧🇭',
+        'saudi': '🇸🇦', 'miami': '🇺🇸', 'canada': '🇨🇦', 'monaco': '🇲🇨',
+        'spain': '🇪🇸', 'austria': '🇦🇹', 'britain': '🇬🇧', 'belgium': '🇧🇪',
+        'hungary': '🇭🇺', 'netherlands': '🇳🇱', 'italy': '🇮🇹', 'azerbaijan': '🇦🇿',
+        'singapore': '🇸🇬', 'united states': '🇺🇸', 'mexico': '🇲🇽', 'brazil': '🇧🇷',
+        'las vegas': '🇺🇸', 'qatar': '🇶🇦', 'abu dhabi': '🇦🇪', 'madrid': '🇪🇸'
+    };
 
-        // Parse "Mar 27-29" format
-        const match = dateStr.match(/([A-Za-z]{3})\s+(\d+)(?:-\d+)?/);
-        if (match) {
-            const month = months[match[1]];
-            const day = parseInt(match[2]);
-            // Race day at 06:00 UTC
-            return new Date(Date.UTC(year, month, day, 6, 0, 0));
+    function getFlag(raceName) {
+        const lower = raceName.toLowerCase();
+        for (const [key, flag] of Object.entries(flags)) {
+            if (lower.includes(key)) return flag;
         }
-        return null;
+        return '🏁';
     }
 
-    // Find next race (marked with next: true and not cancelled)
-    function getNextRace() {
-        return RACE_SCHEDULE_2026.find(race => race.next && !race.cancelled);
-    }
+    let nextRaceName = null;
+    let nextRaceDate = null;
 
-    // Move to next race when current one ends
-    function advanceToNextRace() {
-        const currentRace = getNextRace();
-        if (!currentRace) return;
-
-        // Mark current race as completed
-        currentRace.completed = true;
-        currentRace.next = false;
-
-        // Find next non-cancelled race and mark as next
-        const nextRace = RACE_SCHEDULE_2026.find(race =>
-            !race.completed && !race.cancelled && race.round > currentRace.round
-        );
-        if (nextRace) {
-            nextRace.next = true;
+    async function fetchNextRace() {
+        try {
+            const res = await fetch(`${API_BASE}/${CURRENT_YEAR}.json`);
+            if (!res.ok) throw new Error('Failed');
+            const data = await res.json();
+            const races = data?.MRData?.RaceTable?.Races || [];
+            const now = new Date();
+            const next = races.find(r => new Date(r.date + 'T' + (r.time || '14:00:00Z')) > now);
+            if (next) {
+                nextRaceName = next.raceName;
+                nextRaceDate = new Date(next.date + 'T' + (next.time || '14:00:00Z'));
+            }
+        } catch (e) {
+            // Fallback to hardcoded schedule
+            const next = RACE_SCHEDULE_2026.find(r => r.next && !r.cancelled);
+            if (next) {
+                nextRaceName = next.name + ' GP';
+                const months = { 'Jan':0,'Feb':1,'Mar':2,'Apr':3,'May':4,'Jun':5,'Jul':6,'Aug':7,'Sep':8,'Oct':9,'Nov':10,'Dec':11 };
+                const m = next.date.match(/([A-Za-z]{3})\s+(\d+)/);
+                if (m) nextRaceDate = new Date(Date.UTC(2026, months[m[1]], parseInt(m[2]), 6, 0, 0));
+            }
         }
-    }
-
-    // Get race flag emoji based on country
-    function getRaceFlag(name) {
-        const flags = {
-            'Australia': '🇦🇺', 'China': '🇨🇳', 'Japan': '🇯🇵', 'Bahrain': '🇧🇭',
-            'Saudi Arabia': '🇸🇦', 'Miami': '🇺🇸', 'Canada': '🇨🇦', 'Monaco': '🇲🇨',
-            'Spain': '🇪🇸', 'Austria': '🇦🇹', 'Great Britain': '🇬🇧',
-            'Belgium': '🇧🇪', 'Hungary': '🇭🇺', 'Netherlands': '🇳🇱',
-            'Italy': '🇮🇹', 'Azerbaijan': '🇦🇿', 'Singapore': '🇸🇬',
-            'United States': '🇺🇸', 'Mexico': '🇲🇽', 'Brazil': '🇧🇷',
-            'Las Vegas': '🇺🇸', 'Qatar': '🇶🇦', 'Abu Dhabi': '🇦🇪'
-        };
-        return flags[name] || '🏁';
     }
 
     function updateCountdown() {
-        const nextRace = getNextRace();
-        const raceNameElement = document.querySelector('.next-race-name');
+        const raceNameEl = document.querySelector('.next-race-name');
+        const countdownEl = document.getElementById('countdown');
+        if (!nextRaceDate) return;
 
-        if (!nextRace) {
-            // Season over
-            if (raceNameElement) {
-                raceNameElement.textContent = '🏁 2026 Season Complete';
-            }
-            document.getElementById('countdown').innerHTML = '<div class="hero-badge">See you in 2027!</div>';
-            return;
-        }
+        if (raceNameEl) raceNameEl.textContent = `${getFlag(nextRaceName)} ${nextRaceName} - Next Race`;
 
-        const raceDate = parseRaceDate(nextRace.date);
-        if (!raceDate) return;
-
-        const now = new Date().getTime();
-        const raceTime = raceDate.getTime();
-        const distance = raceTime - now;
-
-        // Update race name display
-        if (raceNameElement) {
-            raceNameElement.textContent = `${getRaceFlag(nextRace.name)} ${nextRace.name} GP - Next Race`;
-        }
-
-        // Race weekend underway or ended
+        const distance = nextRaceDate.getTime() - Date.now();
         if (distance < 0) {
-            document.getElementById('countdown').innerHTML = '<div class="hero-badge">🏁 Race Weekend Underway!</div>';
-            // Advance to next race after race ends (24 hours after start)
-            if (distance < -86400000) { // 24 hours in milliseconds
-                advanceToNextRace();
-            }
+            if (countdownEl) countdownEl.innerHTML = '<div class="hero-badge">🏁 Race Weekend Underway!</div>';
             return;
         }
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const days = Math.floor(distance / 86400000);
+        const hours = Math.floor((distance % 86400000) / 3600000);
+        const minutes = Math.floor((distance % 3600000) / 60000);
+        const seconds = Math.floor((distance % 60000) / 1000);
 
-        const daysElement = document.getElementById('days');
-        const hoursElement = document.getElementById('hours');
-        const minutesElement = document.getElementById('minutes');
-        const secondsElement = document.getElementById('seconds');
+        const d = document.getElementById('days');
+        const h = document.getElementById('hours');
+        const mi = document.getElementById('minutes');
+        const s = document.getElementById('seconds');
+        if (!d || !h || !mi || !s) return;
 
-        // Only update if countdown elements exist
-        if (!daysElement || !hoursElement || !minutesElement || !secondsElement) return;
-
-        daysElement.textContent = String(days).padStart(2, '0');
-        hoursElement.textContent = String(hours).padStart(2, '0');
-        minutesElement.textContent = String(minutes).padStart(2, '0');
-        secondsElement.textContent = String(seconds).padStart(2, '0');
+        d.textContent = String(days).padStart(2, '0');
+        h.textContent = String(hours).padStart(2, '0');
+        mi.textContent = String(minutes).padStart(2, '0');
+        s.textContent = String(seconds).padStart(2, '0');
     }
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    fetchNextRace().then(() => {
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    });
 }
 
 // Fetch Instagram follower count for @f1wow

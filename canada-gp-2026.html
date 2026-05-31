@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&family=Chakra+Petch:wght@300;400;500;600;700&family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <meta name="description" content="Kimi Antonelli wins the 2026 Canadian Grand Prix for his fifth consecutive victory as George Russell retires with a power unit failure.">
 
     <!-- Canonical URL -->
@@ -452,6 +452,54 @@
             line-height: 1.8;
             color: var(--text-muted);
             margin-bottom: 15px;
+        }
+
+        /* Standings Tables */
+        .standings-container {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .standings-container h3 {
+            color: var(--f1-white);
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+
+        .standings-table {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .standings-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 1fr 60px;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .standings-row.header {
+            font-weight: 600;
+            color: var(--f1-white);
+            border-bottom: 2px solid rgba(225, 6, 0, 0.3);
+        }
+
+        .standings-row span {
+            color: var(--text-muted);
+        }
+
+        .standings-row .position {
+            color: var(--f1-red);
+            font-weight: 600;
+        }
+
+        .standings-row .points {
+            color: #27F4D2;
+            font-weight: 600;
         }
 
         /* Article Quote Styles */
