@@ -80,9 +80,9 @@ const RACE_SCHEDULE_2026 = [
     { round: 5, name: 'Saudi Arabia', location: 'Jeddah', date: 'Apr 17-19', completed: false, cancelled: true },
     { round: 6, name: 'Miami', location: 'Miami', date: 'May 1-3', completed: true, winner: 'Kimi Antonelli', sprintWinner: 'Lando Norris' },
     { round: 7, name: 'Canada', location: 'Montreal', date: 'May 22-24', completed: true, winner: 'Kimi Antonelli', sprintWinner: 'George Russell' },
-    { round: 8, name: 'Monaco', location: 'Monte Carlo', date: 'Jun 5-7', completed: false, next: true },
-    { round: 9, name: 'Spain', location: 'Barcelona', date: 'Jun 12-14', completed: false },
-    { round: 10, name: 'Austria', location: 'Spielberg', date: 'Jun 26-28', completed: false },
+    { round: 8, name: 'Monaco', location: 'Monte Carlo', date: 'Jun 5-7', completed: false },
+    { round: 9, name: 'Spain', location: 'Barcelona', date: 'Jun 12-14', completed: true, winner: 'Lewis Hamilton' },
+    { round: 10, name: 'Austria', location: 'Spielberg', date: 'Jun 26-28', completed: false, next: true },
     { round: 11, name: 'Great Britain', location: 'Silverstone', date: 'Jul 3-5', completed: false },
     { round: 12, name: 'Belgium', location: 'Spa', date: 'Jul 17-19', completed: false },
     { round: 13, name: 'Hungary', location: 'Budapest', date: 'Jul 24-26', completed: false },
@@ -352,13 +352,23 @@ async function loadRaceSchedule() {
             });
         }
 
+        // Create fallback map from hardcoded schedule data for races not in API
+        const fallbackMap = {};
+        RACE_SCHEDULE_2026.forEach(race => {
+            if (race.completed && race.winner) {
+                fallbackMap[race.round] = race.winner;
+            }
+        });
+
         const now = new Date();
         let nextFound = false;
 
         const html = races.map(race => {
             const raceDate = new Date(race.date + 'T' + (race.time || '14:00:00Z'));
             const round = parseInt(race.round);
-            const winner = resultsMap[race.round];
+
+            // Use API result if available, otherwise fall back to hardcoded data
+            const winner = resultsMap[race.round] || fallbackMap[race.round];
             const completed = !!winner;
             const isNext = !completed && !nextFound && raceDate > now;
             if (isNext) nextFound = true;
