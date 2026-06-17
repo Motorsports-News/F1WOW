@@ -78,7 +78,7 @@ const RACE_SCHEDULE_2026 = [
     { round: 3, name: 'Japan', location: 'Suzuka', date: 'Mar 27-29', completed: true, winner: 'Kimi Antonelli', sprint: false },
     { round: 4, name: 'Miami', location: 'Miami', date: 'May 1-3', completed: true, winner: 'Kimi Antonelli', sprintWinner: 'Lando Norris' },
     { round: 5, name: 'Canada', location: 'Montreal', date: 'May 22-24', completed: true, winner: 'Kimi Antonelli', sprintWinner: 'George Russell' },
-    { round: 6, name: 'Monaco', location: 'Monte Carlo', date: 'Jun 5-7', completed: false },
+    { round: 6, name: 'Monaco', location: 'Monte Carlo', date: 'Jun 5-7', completed: true, winner: 'Kimi Antonelli' },
     { round: 7, name: 'Spain', location: 'Barcelona', date: 'Jun 12-14', completed: true, winner: 'Lewis Hamilton' },
     { round: 8, name: 'Austria', location: 'Spielberg', date: 'Jun 26-28', completed: false, next: true },
     { round: 9, name: 'Great Britain', location: 'Silverstone', date: 'Jul 3-5', completed: false },
