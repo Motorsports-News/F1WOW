@@ -4114,7 +4114,13 @@ body::before {
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: stroke-dashoffset 1s ease;
+    transition: stroke-dashoffset 1s ease, stroke-width 0.3s ease, filter 0.3s ease;
+    cursor: pointer;
+}
+
+.graph-line:hover {
+    stroke-width: 5;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
 }
 
 .graph-line.animate {
@@ -4413,6 +4419,22 @@ body::before {
     font-weight: 700;
     color: var(--f1-red);
     margin-left: auto;
+}
+
+.graph-tooltip-header {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 8px;
+}
+
+.graph-tooltip-team {
+    color: var(--f1-light-gray);
+    font-size: 0.85rem;
+}
+
+.graph-tooltip-label {
+    color: var(--f1-light-gray);
+    font-size: 0.8rem;
 }
 
 .graph-legend {

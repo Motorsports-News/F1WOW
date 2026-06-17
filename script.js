@@ -1472,6 +1472,12 @@ function renderGraph() {
         path.setAttribute('class', 'graph-line animate');
         path.setAttribute('style', `stroke: ${color}`);
         path.setAttribute('data-name', item.name);
+        path.setAttribute('data-team', item.team || item.name);
+
+        // Add hover event to line
+        path.addEventListener('mouseenter', (e) => showGraphLineTooltip(e, item.name, item.team || item.name, rounds, points, color));
+        path.addEventListener('mouseleave', hideGraphTooltip);
+
         svg.appendChild(path);
 
         // Draw points
@@ -1536,6 +1542,36 @@ function showGraphTooltip(event) {
 
     tooltip.style.left = (rect.left - containerRect.left + rect.width / 2 - 75) + 'px';
     tooltip.style.top = (rect.top - containerRect.top - 60) + 'px';
+    tooltip.classList.add('visible');
+}
+
+function showGraphLineTooltip(event, name, team, rounds, points, color) {
+    const tooltip = document.getElementById('graphTooltip');
+    if (!tooltip) return;
+
+    const currentPoints = points[points.length - 1]; // Get latest points
+
+    tooltip.innerHTML = `
+        <div class="graph-tooltip-header" style="border-left: 3px solid ${color}; padding-left: 8px;">
+            <div class="graph-tooltip-name" style="font-weight: 700; font-size: 14px;">${name}</div>
+            <div class="graph-tooltip-team" style="font-size: 12px; opacity: 0.8;">${team}</div>
+        </div>
+        <div class="graph-tooltip-entries" style="margin-top: 8px;">
+            <div class="graph-tooltip-entry">
+                <span class="graph-tooltip-label">Current Points:</span>
+                <span class="graph-tooltip-points" style="font-weight: 600;">${currentPoints} pts</span>
+            </div>
+        </div>
+    `;
+
+    // Position tooltip near mouse
+    const container = document.getElementById('graphContainer');
+    const containerRect = container.getBoundingClientRect();
+    const mouseX = event.clientX - containerRect.left;
+    const mouseY = event.clientY - containerRect.top;
+
+    tooltip.style.left = (mouseX + 15) + 'px';
+    tooltip.style.top = (mouseY - 40) + 'px';
     tooltip.classList.add('visible');
 }
 
