@@ -214,6 +214,65 @@
                     <p>Mercedes and Antonelli will undoubtedly respond strongly, but the script for the 2026 championship has been completely rewritten. The battle is now truly on, and Formula 1 has one of its most compelling storylines in years.</p>
                 </div>
 
+                <!-- Race Strategy Analysis -->
+                <div class="article-section">
+                    <div class="section-header-article">
+                        <div class="section-icon">🎯</div>
+                        <h2>Race Strategy Analysis</h2>
+                    </div>
+                    <p>Hamilton's victory was built on a masterful two-stop strategy that perfectly utilized the medium-hard tire compound. Ferrari's strategic call to box early on lap 18 proved crucial, allowing Hamilton to capitalize on fresher rubber while his rivals struggled with tire degradation.</p>
+
+                    <div class="strategy-breakdown">
+                        <div class="strategy-item">
+                            <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Lap 12 - The Overtake</h4>
+                            <p>Hamilton's decisive move around the outside of turn 1 shocked competitors and set up his race-winning strategy.</p>
+                        </div>
+                        <div class="strategy-item">
+                            <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width-2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Lap 18 - First Stop</h4>
+                            <p>Ferrari's bold strategy call to pit early gave Hamilton the advantage he needed to control the race.</p>
+                        </div>
+                        <div class="strategy-item">
+                            <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> Final Stint</h4>
+                            <p>Hamilton managed his final stint perfectly, maintaining enough pace to secure fastest lap and bonus point.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Updated Championship Standings -->
+                <div class="article-section">
+                    <div class="section-header-article">
+                        <div class="section-icon">📊</div>
+                        <h2>Updated Championship Standings</h2>
+                    </div>
+                    <p>The Barcelona victory has dramatically altered the 2026 championship landscape. Here are the updated standings:</p>
+
+                    <div class="standings-compact">
+                        <h4>Driver Championship Top 5</h4>
+                        <ul>
+                            <li><strong>1. Kimi Antonelli</strong> (Mercedes) - 131 points</li>
+                            <li><strong>2. George Russell</strong> (Mercedes) - 88 points</li>
+                            <li><strong>3. Charles Leclerc</strong> (Ferrari) - 75 points</li>
+                            <li><strong>4. Lewis Hamilton</strong> (Ferrari) - 72 points</li>
+                            <li><strong>5. Lando Norris</strong> (McLaren) - 58 points</li>
+                        </ul>
+
+                        <h4>Constructors' Championship Top 3</h4>
+                        <ul>
+                            <li><strong>1. Mercedes</strong> - 219 points</li>
+                            <li><strong>2. Ferrari</strong> - 147 points</li>
+                            <li><strong>3. McLaren</strong> - 106 points</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>Key Championship Notes:</strong></p>
+                    <ul>
+                        <li>Hamilton jumps to fourth, just 19 points behind championship leader Antonelli</li>
+                        <li>Ferrari closes to within 72 points of Mercedes in the constructors' battle</li>
+                        <li>The Mercedes dominance faces its first serious challenge of the season</li>
+                        <li>With 13 races remaining, the championship is far from decided</li>
+                    </ul>
+                </div>
+
                 <!-- Share Section -->
                 <div class="article-share">
                     <h3>Share this Article</h3>
@@ -432,6 +491,79 @@
             background: transparent;
         }
 
+        .strategy-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .strategy-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #e10600;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .strategy-item h4 {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .strategy-item svg {
+            color: #e10600;
+        }
+
+        .strategy-item p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .standings-compact {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .standings-compact h4 {
+            color: #e10600;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+
+        .standings-compact h4:first-child {
+            margin-top: 0;
+        }
+
+        .standings-compact ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .standings-compact li {
+            color: rgba(255,255,255,0.7);
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .standings-compact li:last-child {
+            border-bottom: none;
+        }
+
+        .standings-compact li strong {
+            color: #ffffff;
+        }
+
         @media (max-width: 768px) {
             .article-title-full {
                 font-size: 1.5rem;
@@ -443,6 +575,10 @@
 
             .article-intro {
                 font-size: 1rem;
+            }
+
+            .strategy-breakdown {
+                grid-template-columns: 1fr;
             }
         }
     </style>
