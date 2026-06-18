@@ -127,20 +127,38 @@
             <section class="championship-graph-section" id="graphSection">
                 <div class="championship-graph-card">
                     <div class="championship-graph-header">
-                        <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Championship Battle Graph</h3>
+                        <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Championship Progression Graph</h3>
                         <div class="graph-type-toggle">
                             <button class="graph-type-btn active" data-type="driver">Driver</button>
                             <button class="graph-type-btn" data-type="constructor">Constructor</button>
                         </div>
                     </div>
                     <div class="championship-graph-body">
-                        <div class="graph-container" id="graphContainer">
-                            <svg class="championship-svg" id="championshipSvg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+                        <div class="graph-wrapper" id="graphWrapper">
+                            <svg class="championship-svg" id="championshipSvg" viewBox="0 0 1000 450" preserveAspectRatio="xMidYMid meet">
                                 <!-- Graph will be rendered here -->
                             </svg>
-                            <div class="graph-tooltip" id="graphTooltip"></div>
+                            <div class="graph-tooltip-enhanced" id="graphTooltipEnhanced">
+                                <div class="tooltip-header">
+                                    <div class="team-logo" id="tooltipLogo"></div>
+                                    <div>
+                                        <div class="tooltip-name" id="tooltipName"></div>
+                                        <div class="tooltip-team" id="tooltipTeam"></div>
+                                    </div>
+                                </div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-stat">
+                                        <div class="tooltip-stat-label">Total Points</div>
+                                        <div class="tooltip-stat-value" id="tooltipPoints">0</div>
+                                    </div>
+                                    <div class="tooltip-stat">
+                                        <div class="tooltip-stat-label">Position</div>
+                                        <div class="tooltip-stat-value" id="tooltipPosition">0</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="graph-legend" id="graphLegend"></div>
+                        <div class="graph-legend-enhanced" id="graphLegendEnhanced"></div>
                     </div>
                 </div>
             </section>
@@ -163,77 +181,341 @@
         </svg>
     </button>
 
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Enhanced Championship Graph Styles */
+        .graph-wrapper {
+            position: relative;
+            height: 450px;
+            margin: 30px 0;
+        }
+
+        .championship-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .graph-grid-line {
+            stroke: var(--f1-dark, #38383F);
+            stroke-width: 1;
+            stroke-dasharray: 5,5;
+        }
+
+        .graph-axis-text {
+            fill: var(--f1-light-gray, #D1D5DB);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .graph-axis-title {
+            fill: var(--f1-white, #FFFFFF);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .line-path {
+            fill: none;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: all 0.4s ease;
+        }
+
+        .line-path:hover {
+            stroke-width: 6;
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+
+        .line-path.hidden {
+            opacity: 0.2;
+            stroke-width: 2;
+        }
+
+        .data-point {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .data-point:hover {
+            r: 10;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+
+        .data-point.hidden {
+            opacity: 0.2;
+        }
+
+        .graph-tooltip-enhanced {
+            position: absolute;
+            background: var(--f1-dark, #1F1F2B);
+            border: 1px solid var(--f1-red, #E10600);
+            border-radius: 12px;
+            padding: 20px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            min-width: 250px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .graph-tooltip-enhanced.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--f1-dark, #38383F);
+        }
+
+        .team-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .tooltip-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--f1-white, #FFFFFF);
+        }
+
+        .tooltip-team {
+            font-size: 0.85rem;
+            color: var(--f1-light-gray, #D1D5DB);
+            margin-bottom: 5px;
+        }
+
+        .tooltip-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .tooltip-stat {
+            background: var(--f1-black, #15151E);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .tooltip-stat-label {
+            font-size: 0.75rem;
+            color: var(--f1-light-gray, #D1D5DB);
+            margin-bottom: 5px;
+        }
+
+        .tooltip-stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--f1-red, #E10600);
+        }
+
+        .graph-legend-enhanced {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .legend-item-enhanced {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--f1-gray, #38383F);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .legend-item-enhanced:hover {
+            background: var(--f1-dark, #1F1F2B);
+            transform: translateY(-2px);
+        }
+
+        .legend-item-enhanced.hidden {
+            opacity: 0.3;
+        }
+
+        .legend-color-enhanced {
+            width: 25px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .legend-text-enhanced {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--f1-white, #FFFFFF);
+        }
+
+        .championship-svg .axis-line {
+            stroke: var(--f1-dark, #38383F);
+            stroke-width: 2;
+        }
+    </style>
     <script src="script.js?v=20260615"></script>
     <script>
-        // Inline graph rendering for championship page
+        // Enhanced Championship Graph
         (function() {
-            let CHAMPIONSHIP_DATA = {
+            const CHAMPIONSHIP_DATA = {
                 driver: {
-                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Spain'],
-                    kimiAntonelli: { name: 'Kimi Antonelli', team: 'Mercedes', color: '#27F4D2', points: [18, 50, 80, 108, 139, 156] },
-                    georgeRussell: { name: 'George Russell', team: 'Mercedes', color: '#27F4D2', points: [25, 51, 66, 83, 91, 106] },
-                    lewisHamilton: { name: 'Lewis Hamilton', team: 'Ferrari', color: '#F91536', points: [12, 31, 50, 60, 78, 115] },
-                    charlesLeclerc: { name: 'Charles Leclerc', team: 'Ferrari', color: '#F91536', points: [15, 36, 56, 67, 83, 95] },
-                    landoNorris: { name: 'Lando Norris', team: 'McLaren', color: '#FF8700', points: [10, 26, 41, 59, 74, 82] }
+                    teams: [
+                        {
+                            name: 'Kimi Antonelli',
+                            team: 'Mercedes',
+                            color: '#27F4D2',
+                            short: 'MER',
+                            position: 1,
+                            points: 156,
+                            progression: [18, 50, 80, 108, 139, 156]
+                        },
+                        {
+                            name: 'George Russell',
+                            team: 'Mercedes',
+                            color: '#27F4D2',
+                            short: 'MER',
+                            position: 2,
+                            points: 106,
+                            progression: [25, 51, 66, 83, 91, 106]
+                        },
+                        {
+                            name: 'Lewis Hamilton',
+                            team: 'Ferrari',
+                            color: '#F91536',
+                            short: 'FER',
+                            position: 3,
+                            points: 115,
+                            progression: [12, 31, 50, 60, 78, 115]
+                        },
+                        {
+                            name: 'Charles Leclerc',
+                            team: 'Ferrari',
+                            color: '#F91536',
+                            short: 'FER',
+                            position: 4,
+                            points: 95,
+                            progression: [15, 36, 56, 67, 83, 95]
+                        },
+                        {
+                            name: 'Lando Norris',
+                            team: 'McLaren',
+                            color: '#FF8700',
+                            short: 'MCL',
+                            position: 5,
+                            points: 82,
+                            progression: [10, 26, 41, 59, 74, 82]
+                        },
+                        {
+                            name: 'Oscar Piastri',
+                            team: 'McLaren',
+                            color: '#FF8700',
+                            short: 'MCL',
+                            position: 6,
+                            points: 81,
+                            progression: [8, 23, 41, 63, 73, 81]
+                        }
+                    ],
+                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Spain']
                 },
                 constructor: {
-                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Spain'],
-                    mercedes: { name: 'Mercedes', color: '#27F4D2', points: [43, 101, 146, 191, 230, 262] },
-                    ferrari: { name: 'Ferrari', color: '#F91536', points: [27, 62, 106, 127, 161, 210] },
-                    mclaren: { name: 'McLaren', color: '#FF8700', points: [18, 44, 82, 122, 147, 163] },
-                    redBull: { name: 'Red Bull Racing', color: '#3671C6', points: [10, 16, 22, 41, 68, 91] },
-                    alpine: { name: 'Alpine', color: '#FF87BC', points: [10, 19, 39, 58, 70, 79] }
+                    teams: [
+                        {
+                            name: 'Mercedes',
+                            color: '#27F4D2',
+                            short: 'MER',
+                            position: 1,
+                            points: 262,
+                            progression: [43, 101, 146, 191, 230, 262]
+                        },
+                        {
+                            name: 'Ferrari',
+                            color: '#F91536',
+                            short: 'FER',
+                            position: 2,
+                            points: 210,
+                            progression: [27, 62, 106, 127, 161, 210]
+                        },
+                        {
+                            name: 'McLaren',
+                            color: '#FF8700',
+                            short: 'MCL',
+                            position: 3,
+                            points: 163,
+                            progression: [18, 44, 82, 122, 147, 163]
+                        },
+                        {
+                            name: 'Red Bull Racing',
+                            color: '#3671C6',
+                            short: 'RBR',
+                            position: 4,
+                            points: 91,
+                            progression: [10, 16, 22, 41, 68, 91]
+                        },
+                        {
+                            name: 'Alpine',
+                            color: '#FF87BC',
+                            short: 'ALP',
+                            position: 5,
+                            points: 79,
+                            progression: [10, 19, 39, 58, 70, 79]
+                        }
+                    ],
+                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Spain']
                 }
             };
-            let currentGraphType = 'driver';
-            let selectedDrivers = ['kimiAntonelli', 'lewisHamilton', 'georgeRussell', 'charlesLeclerc', 'landoNorris'];
-            let selectedConstructors = ['mercedes', 'ferrari', 'mclaren', 'redBull', 'alpine'];
 
+            let currentGraphType = 'driver';
+            let hiddenLines = new Set();
 
             function renderGraph() {
                 const svg = document.getElementById('championshipSvg');
-                const legend = document.getElementById('graphLegend');
-                if (!svg) {
-                    return;
-                }
+                const tooltip = document.getElementById('graphTooltipEnhanced');
+                const legend = document.getElementById('graphLegendEnhanced');
+
+                if (!svg || !tooltip || !legend) return;
 
                 const data = CHAMPIONSHIP_DATA[currentGraphType];
-                if (!data) {
-                    return;
-                }
+                if (!data) return;
 
+                const teams = data.teams;
                 const rounds = data.rounds;
-                const selected = currentGraphType === 'driver' ? selectedDrivers : selectedConstructors;
 
-                // Clear previous
+                // Clear SVG and legend
                 svg.innerHTML = '';
                 legend.innerHTML = '';
 
-                // Graph dimensions
-                const width = 800;
-                const height = 400;
-                const padding = { top: 30, right: 30, bottom: 50, left: 60 };
-                const graphWidth = width - padding.left - padding.right;
-                const graphHeight = height - padding.top - padding.bottom;
+                // Chart dimensions
+                const width = 1000;
+                const height = 450;
+                const padding = { top: 50, right: 50, bottom: 70, left: 80 };
+                const chartWidth = width - padding.left - padding.right;
+                const chartHeight = height - padding.top - padding.bottom;
 
                 // Find max points
-                let maxPoints = 0;
-                Object.keys(data).forEach(key => {
-                    if (key !== 'rounds') {
-                        data[key].points.forEach(p => {
-                            maxPoints = Math.max(maxPoints, p);
-                        });
-                    }
-                });
-                maxPoints = Math.ceil(maxPoints / 10) * 10;
-                if (maxPoints < 50) maxPoints = 50;
+                const maxPoints = Math.max(...teams.flatMap(t => t.progression));
 
                 // Draw grid lines
-                const gridLines = 5;
-                for (let i = 0; i <= gridLines; i++) {
-                    const y = padding.top + (graphHeight / gridLines) * i;
-                    const value = maxPoints - (maxPoints / gridLines) * i;
+                for (let i = 0; i <= 4; i++) {
+                    const y = padding.top + (chartHeight / 4) * i;
+                    const value = Math.round(maxPoints - (maxPoints / 4) * i);
 
+                    // Grid line
                     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                     line.setAttribute('x1', padding.left);
                     line.setAttribute('y1', y);
@@ -242,42 +524,67 @@
                     line.setAttribute('class', 'graph-grid-line');
                     svg.appendChild(line);
 
+                    // Y-axis text
                     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', padding.left - 10);
-                    text.setAttribute('y', y + 4);
+                    text.setAttribute('x', padding.left - 15);
+                    text.setAttribute('y', y + 5);
                     text.setAttribute('text-anchor', 'end');
                     text.setAttribute('class', 'graph-axis-text');
-                    text.setAttribute('fill', '#fff');
-                    text.textContent = Math.round(value);
+                    text.textContent = value;
                     svg.appendChild(text);
                 }
 
-                // Draw X-axis labels
+                // Y-axis title
+                const yAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                yAxisTitle.setAttribute('x', -height / 2);
+                yAxisTitle.setAttribute('y', 25);
+                yAxisTitle.setAttribute('transform', `rotate(-90)`);
+                yAxisTitle.setAttribute('text-anchor', 'middle');
+                yAxisTitle.setAttribute('class', 'graph-axis-title');
+                yAxisTitle.textContent = 'CHAMPIONSHIP POINTS';
+                svg.appendChild(yAxisTitle);
+
+                // X-axis
+                const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                xAxis.setAttribute('x1', padding.left);
+                xAxis.setAttribute('y1', height - padding.bottom);
+                xAxis.setAttribute('x2', width - padding.right);
+                xAxis.setAttribute('y2', height - padding.bottom);
+                xAxis.setAttribute('class', 'axis-line');
+                svg.appendChild(xAxis);
+
+                // X-axis labels
                 rounds.forEach((round, index) => {
-                    const x = padding.left + (graphWidth / (rounds.length - 1)) * index;
+                    const x = padding.left + (chartWidth / (rounds.length - 1)) * index;
 
                     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                     text.setAttribute('x', x);
-                    text.setAttribute('y', height - padding.bottom + 20);
+                    text.setAttribute('y', height - padding.bottom + 25);
                     text.setAttribute('text-anchor', 'middle');
                     text.setAttribute('class', 'graph-axis-text');
-                    text.setAttribute('fill', '#fff');
                     text.textContent = round;
                     svg.appendChild(text);
                 });
 
-                // Draw lines
-                selected.forEach((key) => {
-                    if (!data[key]) return;
+                // X-axis title
+                const xAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                xAxisTitle.setAttribute('x', width / 2);
+                xAxisTitle.setAttribute('y', height - 15);
+                xAxisTitle.setAttribute('text-anchor', 'middle');
+                xAxisTitle.setAttribute('class', 'graph-axis-title');
+                xAxisTitle.textContent = 'RACES';
+                svg.appendChild(xAxisTitle);
 
-                    const item = data[key];
-                    const points = item.points;
-                    const color = item.color;
+                // Draw lines and points
+                teams.forEach((team, teamIndex) => {
+                    const progression = team.progression;
+                    const color = team.color;
 
+                    // Create path
                     let pathD = '';
-                    points.forEach((point, i) => {
-                        const x = padding.left + (graphWidth / (rounds.length - 1)) * i;
-                        const y = padding.top + graphHeight - (point / maxPoints) * graphHeight;
+                    progression.forEach((points, i) => {
+                        const x = padding.left + (chartWidth / (rounds.length - 1)) * i;
+                        const y = padding.top + chartHeight - (points / maxPoints) * chartHeight;
 
                         if (i === 0) {
                             pathD += `M ${x} ${y}`;
@@ -286,131 +593,97 @@
                         }
                     });
 
+                    // Draw line
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.setAttribute('d', pathD);
-                    path.setAttribute('class', 'graph-line animate');
-                    path.setAttribute('style', `stroke: ${color}; cursor: pointer;`);
-                    path.setAttribute('data-name', item.name);
-                    path.setAttribute('data-team', item.team || item.name);
-                    path.setAttribute('data-points', points[points.length - 1]);
+                    path.setAttribute('class', 'line-path');
+                    path.setAttribute('stroke', color);
+                    path.setAttribute('data-team-index', teamIndex);
+                    path.setAttribute('data-name', team.name);
                     path.setAttribute('data-color', color);
-
-                    // Add hover functionality to show driver name
-                    path.addEventListener('mouseenter', (e) => {
-                        const tooltip = document.getElementById('graphTooltip');
-                        if (!tooltip) return;
-
-                        tooltip.innerHTML = `
-                            <div class="graph-tooltip-header" style="border-left: 3px solid ${color}; padding-left: 8px;">
-                                <div class="graph-tooltip-name" style="font-weight: 700; font-size: 14px; color: white;">${item.name}</div>
-                                <div class="graph-tooltip-team" style="font-size: 12px; opacity: 0.8; color: rgba(255,255,255,0.7);">${item.team || ''}</div>
-                            </div>
-                            <div class="graph-tooltip-entries" style="margin-top: 8px;">
-                                <div class="graph-tooltip-entry">
-                                    <span class="graph-tooltip-label" style="color: rgba(255,255,255,0.7);">Current Points:</span>
-                                    <span class="graph-tooltip-points" style="font-weight: 600; color: #e10600;">${points[points.length - 1]} pts</span>
-                                </div>
-                            </div>
-                        `;
-
-                        tooltip.classList.add('visible');
-                    });
-
-                    path.addEventListener('mousemove', (e) => {
-                        const tooltip = document.getElementById('graphTooltip');
-                        if (!tooltip || !tooltip.classList.contains('visible')) return;
-
-                        const container = document.getElementById('graphContainer');
-                        const containerRect = container.getBoundingClientRect();
-                        const mouseX = e.clientX - containerRect.left;
-                        const mouseY = e.clientY - containerRect.top;
-
-                        tooltip.style.left = (mouseX + 15) + 'px';
-                        tooltip.style.top = (mouseY - 40) + 'px';
-                    });
-
-                    path.addEventListener('mouseleave', () => {
-                        const tooltip = document.getElementById('graphTooltip');
-                        if (tooltip) {
-                            tooltip.classList.remove('visible');
-                        }
-                    });
-
                     svg.appendChild(path);
 
                     // Draw points
-                    points.forEach((point, i) => {
-                        const x = padding.left + (graphWidth / (rounds.length - 1)) * i;
-                        const y = padding.top + graphHeight - (point / maxPoints) * graphHeight;
+                    progression.forEach((points, i) => {
+                        const x = padding.left + (chartWidth / (rounds.length - 1)) * i;
+                        const y = padding.top + chartHeight - (points / maxPoints) * chartHeight;
 
                         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                         circle.setAttribute('cx', x);
                         circle.setAttribute('cy', y);
                         circle.setAttribute('r', '5');
-                        circle.setAttribute('class', 'graph-point');
-                        circle.setAttribute('style', `stroke: ${color}; fill: #1a1a2e; cursor: pointer;`);
-                        circle.setAttribute('data-race', rounds[i]);
-                        circle.setAttribute('data-points', point);
-                        circle.setAttribute('data-name', item.name);
-                        circle.setAttribute('data-team', item.team || item.name);
+                        circle.setAttribute('class', 'data-point');
+                        circle.setAttribute('fill', color);
+                        circle.setAttribute('stroke', '#15151E');
+                        circle.setAttribute('stroke-width', '2');
+                        circle.setAttribute('data-team-index', teamIndex);
+                        circle.setAttribute('data-round', rounds[i]);
+                        circle.setAttribute('data-points', points);
+                        circle.setAttribute('data-position', team.position);
+                        circle.setAttribute('data-name', team.name);
+                        circle.setAttribute('data-team', team.team || team.name);
                         circle.setAttribute('data-color', color);
 
-                        // Add hover functionality to points
-                        circle.addEventListener('mouseenter', (e) => {
-                            const tooltip = document.getElementById('graphTooltip');
-                            if (!tooltip) return;
-
-                            tooltip.innerHTML = `
-                                <div class="graph-tooltip-header" style="border-left: 3px solid ${color}; padding-left: 8px;">
-                                    <div class="graph-tooltip-name" style="font-weight: 700; font-size: 14px; color: white;">${item.name}</div>
-                                    <div class="graph-tooltip-team" style="font-size: 12px; opacity: 0.8; color: rgba(255,255,255,0.7);">${item.team || ''}</div>
-                                </div>
-                                <div class="graph-tooltip-entries" style="margin-top: 8px;">
-                                    <div class="graph-tooltip-entry">
-                                        <span class="graph-tooltip-label" style="color: rgba(255,255,255,0.7);">${rounds[i]}:</span>
-                                        <span class="graph-tooltip-points" style="font-weight: 600; color: #e10600;">${point} pts</span>
-                                    </div>
-                                </div>
-                            `;
-
-                            tooltip.classList.add('visible');
-                        });
-
-                        circle.addEventListener('mousemove', (e) => {
-                            const tooltip = document.getElementById('graphTooltip');
-                            if (!tooltip || !tooltip.classList.contains('visible')) return;
-
-                            const container = document.getElementById('graphContainer');
-                            const containerRect = container.getBoundingClientRect();
-                            const mouseX = e.clientX - containerRect.left;
-                            const mouseY = e.clientY - containerRect.top;
-
-                            tooltip.style.left = (mouseX + 15) + 'px';
-                            tooltip.style.top = (mouseY - 40) + 'px';
-                        });
-
-                        circle.addEventListener('mouseleave', () => {
-                            const tooltip = document.getElementById('graphTooltip');
-                            if (tooltip) {
-                                tooltip.classList.remove('visible');
-                            }
-                        });
+                        // Add events
+                        circle.addEventListener('mouseenter', (e) => showTooltip(e, team, rounds[i], points, color));
+                        circle.addEventListener('mouseleave', hideTooltip);
 
                         svg.appendChild(circle);
                     });
 
                     // Legend
                     const legendItem = document.createElement('div');
-                    legendItem.className = 'graph-legend-item';
+                    legendItem.className = 'legend-item-enhanced';
+                    legendItem.setAttribute('data-team-index', teamIndex);
                     legendItem.innerHTML = `
-                        <div class="graph-legend-color" style="background: ${color}"></div>
-                        <span class="graph-legend-name">${item.name}</span>
+                        <div class="legend-color-enhanced" style="background: ${color}"></div>
+                        <div class="legend-text-enhanced">${team.name}</div>
                     `;
+                    legendItem.addEventListener('click', () => toggleLine(teamIndex));
                     legend.appendChild(legendItem);
                 });
+
+                function showTooltip(event, team, round, points, color) {
+                    document.getElementById('tooltipLogo').style.background = color;
+                    document.getElementById('tooltipLogo').textContent = team.short;
+                    document.getElementById('tooltipName').textContent = team.name;
+                    document.getElementById('tooltipTeam').textContent = team.team || '';
+                    document.getElementById('tooltipPoints').textContent = points + ' pts';
+                    document.getElementById('tooltipPosition').textContent = '#' + team.position;
+
+                    const container = document.getElementById('graphWrapper');
+                    const rect = container.getBoundingClientRect();
+                    const x = event.clientX - rect.left + 20;
+                    const y = event.clientY - rect.top - 90;
+
+                    tooltip.style.left = `${x}px`;
+                    tooltip.style.top = `${y}px`;
+                    tooltip.classList.add('visible');
+                }
+
+                function hideTooltip() {
+                    tooltip.classList.remove('visible');
+                }
             }
 
-            // Initialize
+            function toggleLine(teamIndex) {
+                const lines = document.querySelectorAll(`.line-path[data-team-index="${teamIndex}"]`);
+                const points = document.querySelectorAll(`.data-point[data-team-index="${teamIndex}"]`);
+                const legendItem = document.querySelector(`.legend-item-enhanced[data-team-index="${teamIndex}"]`);
+
+                if (hiddenLines.has(teamIndex)) {
+                    hiddenLines.delete(teamIndex);
+                    lines.forEach(line => line.classList.remove('hidden'));
+                    points.forEach(point => point.classList.remove('hidden'));
+                    legendItem.classList.remove('hidden');
+                } else {
+                    hiddenLines.add(teamIndex);
+                    lines.forEach(line => line.classList.add('hidden'));
+                    points.forEach(point => point.classList.add('hidden'));
+                    legendItem.classList.add('hidden');
+                }
+            }
+
             function initGraph() {
                 // Button handlers
                 const typeBtns = document.querySelectorAll('.graph-type-btn');
@@ -420,6 +693,7 @@
                         typeBtns.forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         currentGraphType = btn.dataset.type;
+                        hiddenLines.clear();
                         renderGraph();
                     });
                 });
