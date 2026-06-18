@@ -165,130 +165,30 @@
 
     <script src="script.js"></script>
     <script>
-        // Inline graph rendering for championship page - fetches live data
+        // Inline graph rendering for championship page
         (function() {
-            const API = 'https://api.jolpi.ca/ergast/f1/2026';
-            const teamColors = {
-                'Mercedes': '#27F4D2', 'Ferrari': '#F91536', 'McLaren': '#FF8700',
-                'Red Bull': '#3671C6', 'Alpine': '#0090FF', 'Racing Bulls': '#6692FF',
-                'Haas': '#B6BABD', 'Williams': '#64C4FF', 'Audi': '#C8102E',
-                'Cadillac': '#E41E3C', 'Aston Martin': '#229971', 'Sauber': '#C8102E',
-                'Kick Sauber': '#C8102E'
+            let CHAMPIONSHIP_DATA = {
+                driver: {
+                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Monaco', 'Spain'],
+                    kimiAntonelli: { name: 'Kimi Antonelli', team: 'Mercedes', color: '#27F4D2', points: [18, 47, 75, 100, 130, 156, 156] },
+                    lewisHamilton: { name: 'Lewis Hamilton', team: 'Ferrari', color: '#F91536', points: [12, 33, 54, 79, 103, 103, 115] },
+                    georgeRussell: { name: 'George Russell', team: 'Mercedes', color: '#27F4D2', points: [25, 51, 72, 91, 106, 106, 106] },
+                    charlesLeclerc: { name: 'Charles Leclerc', team: 'Ferrari', color: '#F91536', points: [15, 34, 50, 70, 75, 75, 75] },
+                    landoNorris: { name: 'Lando Norris', team: 'McLaren', color: '#FF8700', points: [10, 15, 28, 43, 58, 68, 73] }
+                },
+                constructor: {
+                    rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Monaco', 'Spain'],
+                    mercedes: { name: 'Mercedes', color: '#27F4D2', points: [43, 98, 147, 191, 236, 262, 262] },
+                    ferrari: { name: 'Ferrari', color: '#F91536', points: [27, 67, 104, 149, 178, 178, 190] },
+                    mclaren: { name: 'McLaren', color: '#FF8700', points: [18, 28, 54, 84, 114, 131, 141] },
+                    redBull: { name: 'Red Bull Racing', color: '#3671C6', points: [10, 13, 25, 40, 60, 80, 89] },
+                    alpine: { name: 'Alpine', color: '#FF87BC', points: [10, 13, 28, 42, 53, 53, 57] }
+                }
             };
-
-            function getColor(name) {
-                for (const [key, color] of Object.entries(teamColors)) {
-                    if (name.includes(key)) return color;
-                }
-                return '#888';
-            }
-
-            function toKey(str) { return str.replace(/[^a-zA-Z]/g, '').replace(/^./, c => c.toLowerCase()); }
-
-            let CHAMPIONSHIP_DATA = { driver: { rounds: [] }, constructor: { rounds: [] } };
             let currentGraphType = 'driver';
-            let selectedDrivers = [];
-            let selectedConstructors = [];
+            let selectedDrivers = ['kimiAntonelli', 'lewisHamilton', 'georgeRussell', 'charlesLeclerc', 'landoNorris'];
+            let selectedConstructors = ['mercedes', 'ferrari', 'mclaren', 'redBull', 'alpine'];
 
-            async function fetchChampionshipData() {
-                try {
-                    // Fetch results for all rounds
-                    const res = await fetch(`${API}/results.json?limit=600`);
-                    if (!res.ok) throw new Error('Failed');
-                    const data = await res.json();
-                    const races = data?.MRData?.RaceTable?.Races || [];
-
-                    // Also fetch sprint results
-                    let sprintRaces = [];
-                    try {
-                        const sRes = await fetch(`${API}/sprint.json?limit=200`);
-                        if (sRes.ok) { const sd = await sRes.json(); sprintRaces = sd?.MRData?.RaceTable?.Races || []; }
-                    } catch(e) {}
-
-                    // Build cumulative points per driver and constructor
-                    const driverCumulative = {};
-                    const constructorCumulative = {};
-                    const rounds = [];
-
-                    // Points systems
-                    const racePoints = [25,18,15,12,10,8,6,4,2,1];
-                    const sprintPoints = [8,7,6,5,4,3,2,1];
-
-                    // Process each round
-                    races.forEach((race, rIdx) => {
-                        const roundName = race.raceName.replace(' Grand Prix', '');
-                        rounds.push(roundName);
-
-                        // Add race points
-                        (race.Results || []).forEach((r, i) => {
-                            if (i >= 10) return;
-                            const dName = `${r.Driver.givenName} ${r.Driver.familyName}`;
-                            const cName = r.Constructor.name;
-                            const pts = racePoints[i] || 0;
-                            const dKey = toKey(dName);
-                            const cKey = toKey(cName);
-
-                            if (!driverCumulative[dKey]) driverCumulative[dKey] = { name: dName, team: cName, color: getColor(cName), points: [] };
-                            if (!constructorCumulative[cKey]) constructorCumulative[cKey] = { name: cName, color: getColor(cName), points: [] };
-
-                            // Ensure array length matches rounds
-                            while (driverCumulative[dKey].points.length < rIdx) driverCumulative[dKey].points.push(driverCumulative[dKey].points[driverCumulative[dKey].points.length-1] || 0);
-                            while (constructorCumulative[cKey].points.length < rIdx) constructorCumulative[cKey].points.push(constructorCumulative[cKey].points[constructorCumulative[cKey].points.length-1] || 0);
-
-                            const prevD = driverCumulative[dKey].points[rIdx - 1] || 0;
-                            driverCumulative[dKey].points[rIdx] = (driverCumulative[dKey].points[rIdx] || prevD) + pts;
-
-                            const prevC = constructorCumulative[cKey].points[rIdx - 1] || 0;
-                            constructorCumulative[cKey].points[rIdx] = (constructorCumulative[cKey].points[rIdx] || prevC) + pts;
-                        });
-
-                        // Add sprint points for this round
-                        const sprint = sprintRaces.find(s => s.round === race.round);
-                        if (sprint) {
-                            (sprint.SprintResults || []).forEach((r, i) => {
-                                if (i >= 8) return;
-                                const dName = `${r.Driver.givenName} ${r.Driver.familyName}`;
-                                const cName = r.Constructor.name;
-                                const pts = sprintPoints[i] || 0;
-                                const dKey = toKey(dName);
-                                const cKey = toKey(cName);
-
-                                if (!driverCumulative[dKey]) driverCumulative[dKey] = { name: dName, team: cName, color: getColor(cName), points: [] };
-                                if (!constructorCumulative[cKey]) constructorCumulative[cKey] = { name: cName, color: getColor(cName), points: [] };
-
-                                while (driverCumulative[dKey].points.length <= rIdx) driverCumulative[dKey].points.push(driverCumulative[dKey].points[driverCumulative[dKey].points.length-1] || 0);
-                                while (constructorCumulative[cKey].points.length <= rIdx) constructorCumulative[cKey].points.push(constructorCumulative[cKey].points[constructorCumulative[cKey].points.length-1] || 0);
-
-                                driverCumulative[dKey].points[rIdx] += pts;
-                                constructorCumulative[cKey].points[rIdx] += pts;
-                            });
-                        }
-
-                        // Fill in drivers/constructors that didn't score this round
-                        Object.values(driverCumulative).forEach(d => {
-                            while (d.points.length <= rIdx) d.points.push(d.points[d.points.length-1] || 0);
-                        });
-                        Object.values(constructorCumulative).forEach(c => {
-                            while (c.points.length <= rIdx) c.points.push(c.points[c.points.length-1] || 0);
-                        });
-                    });
-
-                    // Build CHAMPIONSHIP_DATA
-                    CHAMPIONSHIP_DATA.driver = { rounds };
-                    Object.entries(driverCumulative).forEach(([key, val]) => { CHAMPIONSHIP_DATA.driver[key] = val; });
-                    CHAMPIONSHIP_DATA.constructor = { rounds };
-                    Object.entries(constructorCumulative).forEach(([key, val]) => { CHAMPIONSHIP_DATA.constructor[key] = val; });
-
-                    // Select top 7 drivers and constructors by final points
-                    const sortedDrivers = Object.entries(driverCumulative).sort((a,b) => (b[1].points.at(-1)||0) - (a[1].points.at(-1)||0));
-                    selectedDrivers = sortedDrivers.slice(0, 7).map(d => d[0]);
-                    const sortedConstructors = Object.entries(constructorCumulative).sort((a,b) => (b[1].points.at(-1)||0) - (a[1].points.at(-1)||0));
-                    selectedConstructors = sortedConstructors.slice(0, 7).map(c => c[0]);
-
-                } catch(e) {
-                    console.error('Championship data fetch failed:', e);
-                }
-            }
 
             function renderGraph() {
                 const svg = document.getElementById('championshipSvg');
@@ -389,8 +289,53 @@
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.setAttribute('d', pathD);
                     path.setAttribute('class', 'graph-line animate');
-                    path.setAttribute('style', `stroke: ${color}`);
+                    path.setAttribute('style', `stroke: ${color}; cursor: pointer;`);
                     path.setAttribute('data-name', item.name);
+                    path.setAttribute('data-team', item.team || item.name);
+                    path.setAttribute('data-points', points[points.length - 1]);
+                    path.setAttribute('data-color', color);
+
+                    // Add hover functionality to show driver name
+                    path.addEventListener('mouseenter', (e) => {
+                        const tooltip = document.getElementById('graphTooltip');
+                        if (!tooltip) return;
+
+                        tooltip.innerHTML = `
+                            <div class="graph-tooltip-header" style="border-left: 3px solid ${color}; padding-left: 8px;">
+                                <div class="graph-tooltip-name" style="font-weight: 700; font-size: 14px; color: white;">${item.name}</div>
+                                <div class="graph-tooltip-team" style="font-size: 12px; opacity: 0.8; color: rgba(255,255,255,0.7);">${item.team || ''}</div>
+                            </div>
+                            <div class="graph-tooltip-entries" style="margin-top: 8px;">
+                                <div class="graph-tooltip-entry">
+                                    <span class="graph-tooltip-label" style="color: rgba(255,255,255,0.7);">Current Points:</span>
+                                    <span class="graph-tooltip-points" style="font-weight: 600; color: #e10600;">${points[points.length - 1]} pts</span>
+                                </div>
+                            </div>
+                        `;
+
+                        tooltip.classList.add('visible');
+                    });
+
+                    path.addEventListener('mousemove', (e) => {
+                        const tooltip = document.getElementById('graphTooltip');
+                        if (!tooltip || !tooltip.classList.contains('visible')) return;
+
+                        const container = document.getElementById('graphContainer');
+                        const containerRect = container.getBoundingClientRect();
+                        const mouseX = e.clientX - containerRect.left;
+                        const mouseY = e.clientY - containerRect.top;
+
+                        tooltip.style.left = (mouseX + 15) + 'px';
+                        tooltip.style.top = (mouseY - 40) + 'px';
+                    });
+
+                    path.addEventListener('mouseleave', () => {
+                        const tooltip = document.getElementById('graphTooltip');
+                        if (tooltip) {
+                            tooltip.classList.remove('visible');
+                        }
+                    });
+
                     svg.appendChild(path);
 
                     // Draw points
@@ -403,7 +348,54 @@
                         circle.setAttribute('cy', y);
                         circle.setAttribute('r', '5');
                         circle.setAttribute('class', 'graph-point');
-                        circle.setAttribute('style', `stroke: ${color}; fill: #1a1a2e`);
+                        circle.setAttribute('style', `stroke: ${color}; fill: #1a1a2e; cursor: pointer;`);
+                        circle.setAttribute('data-race', rounds[i]);
+                        circle.setAttribute('data-points', point);
+                        circle.setAttribute('data-name', item.name);
+                        circle.setAttribute('data-team', item.team || item.name);
+                        circle.setAttribute('data-color', color);
+
+                        // Add hover functionality to points
+                        circle.addEventListener('mouseenter', (e) => {
+                            const tooltip = document.getElementById('graphTooltip');
+                            if (!tooltip) return;
+
+                            tooltip.innerHTML = `
+                                <div class="graph-tooltip-header" style="border-left: 3px solid ${color}; padding-left: 8px;">
+                                    <div class="graph-tooltip-name" style="font-weight: 700; font-size: 14px; color: white;">${item.name}</div>
+                                    <div class="graph-tooltip-team" style="font-size: 12px; opacity: 0.8; color: rgba(255,255,255,0.7);">${item.team || ''}</div>
+                                </div>
+                                <div class="graph-tooltip-entries" style="margin-top: 8px;">
+                                    <div class="graph-tooltip-entry">
+                                        <span class="graph-tooltip-label" style="color: rgba(255,255,255,0.7);">${rounds[i]}:</span>
+                                        <span class="graph-tooltip-points" style="font-weight: 600; color: #e10600;">${point} pts</span>
+                                    </div>
+                                </div>
+                            `;
+
+                            tooltip.classList.add('visible');
+                        });
+
+                        circle.addEventListener('mousemove', (e) => {
+                            const tooltip = document.getElementById('graphTooltip');
+                            if (!tooltip || !tooltip.classList.contains('visible')) return;
+
+                            const container = document.getElementById('graphContainer');
+                            const containerRect = container.getBoundingClientRect();
+                            const mouseX = e.clientX - containerRect.left;
+                            const mouseY = e.clientY - containerRect.top;
+
+                            tooltip.style.left = (mouseX + 15) + 'px';
+                            tooltip.style.top = (mouseY - 40) + 'px';
+                        });
+
+                        circle.addEventListener('mouseleave', () => {
+                            const tooltip = document.getElementById('graphTooltip');
+                            if (tooltip) {
+                                tooltip.classList.remove('visible');
+                            }
+                        });
+
                         svg.appendChild(circle);
                     });
 
@@ -419,9 +411,7 @@
             }
 
             // Initialize
-            async function initGraph() {
-                await fetchChampionshipData();
-
+            function initGraph() {
                 // Button handlers
                 const typeBtns = document.querySelectorAll('.graph-type-btn');
 

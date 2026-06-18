@@ -1209,38 +1209,43 @@ function loadLeaderboard() {
 // Championship points data after each race (2026 Season)
 const CHAMPIONSHIP_DATA_2026 = {
     driver: {
-        rounds: ['Australia', 'China'],
-        georgeRussell: { name: 'George Russell', team: 'Mercedes', color: '#27F4D2', points: [25, 51] },
-        kimiAntonelli: { name: 'Kimi Antonelli', team: 'Mercedes', color: '#27F4D2', points: [18, 47] },
-        charlesLeclerc: { name: 'Charles Leclerc', team: 'Ferrari', color: '#F91536', points: [15, 34] },
-        lewisHamilton: { name: 'Lewis Hamilton', team: 'Ferrari', color: '#F91536', points: [12, 33] },
-        oliverBearman: { name: 'Oliver Bearman', team: 'Haas', color: '#B6BABD', points: [10, 17] },
-        landoNorris: { name: 'Lando Norris', team: 'McLaren', color: '#FF8700', points: [10, 15] },
-        pierreGasly: { name: 'Pierre Gasly', team: 'Alpine', color: '#FF87BC', points: [8, 9] },
-        maxVerstappen: { name: 'Max Verstappen', team: 'Red Bull', color: '#3671C6', points: [6, 8] },
-        liamLawson: { name: 'Liam Lawson', team: 'RB', color: '#5E8FAA', points: [5, 8] },
-        oscarPiastri: { name: 'Oscar Piastri', team: 'McLaren', color: '#FF8700', points: [8, 3] },
-        carlosSainz: { name: 'Carlos Sainz', team: 'Williams', color: '#64C4FF', points: [4, 2] },
-        nicoHulkenberg: { name: 'Nico Hulkenberg', team: 'Audi', color: '#C92D4B', points: [2, 2] },
-        estebanOcon: { name: 'Esteban Ocon', team: 'Haas', color: '#B6BABD', points: [2, 0] }
+        rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Monaco', 'Spain'],
+        kimiAntonelli: { name: 'Kimi Antonelli', team: 'Mercedes', color: '#27F4D2', points: [18, 47, 75, 100, 130, 156, 156] },
+        lewisHamilton: { name: 'Lewis Hamilton', team: 'Ferrari', color: '#F91536', points: [12, 33, 54, 79, 103, 103, 115] },
+        georgeRussell: { name: 'George Russell', team: 'Mercedes', color: '#27F4D2', points: [25, 51, 72, 91, 106, 106, 106] },
+        charlesLeclerc: { name: 'Charles Leclerc', team: 'Ferrari', color: '#F91536', points: [15, 34, 50, 70, 75, 75, 75] },
+        landoNorris: { name: 'Lando Norris', team: 'McLaren', color: '#FF8700', points: [10, 15, 28, 43, 58, 68, 73] },
+        oscarPiastri: { name: 'Oscar Piastri', team: 'McLaren', color: '#FF8700', points: [8, 13, 26, 41, 56, 63, 68] },
+        maxVerstappen: { name: 'Max Verstappen', team: 'Red Bull', color: '#3671C6', points: [6, 8, 15, 25, 40, 52, 55] },
+        pierreGasly: { name: 'Pierre Gasly', team: 'Alpine', color: '#FF87BC', points: [8, 9, 20, 30, 38, 38, 41] },
+        isackHadjar: { name: 'Isack Hadjar', team: 'Red Bull', color: '#3671C6', points: [4, 5, 10, 15, 20, 28, 34] },
+        liamLawson: { name: 'Liam Lawson', team: 'RB', color: '#5E8FAA', points: [5, 8, 12, 18, 23, 25, 28] },
+        francoColapinto: { name: 'Franco Colapinto', team: 'Alpine', color: '#FF87BC', points: [2, 4, 8, 12, 15, 15, 16] },
+        oliverBearman: { name: 'Oliver Bearman', team: 'Haas', color: '#B6BABD', points: [10, 17, 22, 27, 27, 18, 18] },
+        carlosSainz: { name: 'Carlos Sainz', team: 'Williams', color: '#64C4FF', points: [4, 2, 8, 12, 12, 6, 6] },
+        alexAlbon: { name: 'Alexander Albon', team: 'Williams', color: '#64C4FF', points: [2, 4, 6, 8, 8, 5, 5] },
+        estebanOcon: { name: 'Esteban Ocon', team: 'Haas', color: '#B6BABD', points: [2, 0, 2, 4, 6, 3, 3] },
+        gabrielBortoleto: { name: 'Gabriel Bortoleto', team: 'Audi', color: '#C92D4B', points: [1, 2, 2, 2, 2, 2, 2] },
+        fernandoAlonso: { name: 'Fernando Alonso', team: 'Aston Martin', color: '#229971', points: [0, 1, 1, 1, 1, 1, 1] }
     },
     constructor: {
-        rounds: ['Australia', 'China'],
-        mercedes: { name: 'Mercedes', color: '#27F4D2', points: [43, 98] },
-        ferrari: { name: 'Ferrari', color: '#F91536', points: [27, 67] },
-        haas: { name: 'Haas F1 Team', color: '#B6BABD', points: [12, 17] },
-        mclaren: { name: 'McLaren', color: '#FF8700', points: [18, 18] },
-        alpine: { name: 'Alpine', color: '#FF87BC', points: [8, 10] },
-        redBull: { name: 'Red Bull Racing', color: '#3671C6', points: [6, 12] },
-        rb: { name: 'Racing Bulls', color: '#5E8FAA', points: [5, 12] },
-        audi: { name: 'Audi', color: '#C92D4B', points: [2, 2] },
-        williams: { name: 'Williams', color: '#64C4FF', points: [4, 2] }
+        rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Monaco', 'Spain'],
+        mercedes: { name: 'Mercedes', color: '#27F4D2', points: [43, 98, 147, 191, 236, 262, 262] },
+        ferrari: { name: 'Ferrari', color: '#F91536', points: [27, 67, 104, 149, 178, 178, 190] },
+        mclaren: { name: 'McLaren', color: '#FF8700', points: [18, 28, 54, 84, 114, 131, 141] },
+        redBull: { name: 'Red Bull Racing', color: '#3671C6', points: [10, 13, 25, 40, 60, 80, 89] },
+        alpine: { name: 'Alpine', color: '#FF87BC', points: [10, 13, 28, 42, 53, 53, 57] },
+        rb: { name: 'Racing Bulls', color: '#5E8FAA', points: [5, 12, 22, 32, 39, 39, 41] },
+        haas: { name: 'Haas F1 Team', color: '#B6BABD', points: [12, 17, 24, 31, 33, 21, 21] },
+        williams: { name: 'Williams', color: '#64C4FF', points: [6, 6, 14, 20, 20, 11, 11] },
+        audi: { name: 'Audi', color: '#C92D4B', points: [3, 4, 4, 4, 4, 4, 4] },
+        astonMartin: { name: 'Aston Martin', color: '#229971', points: [0, 1, 1, 1, 1, 1, 1] }
     }
 };
 
 let currentGraphType = 'driver';
-let selectedDrivers = ['georgeRussell', 'kimiAntonelli', 'charlesLeclerc', 'lewisHamilton'];
-let selectedConstructors = ['mercedes', 'ferrari', 'mclaren', 'redBull'];
+let selectedDrivers = ['kimiAntonelli', 'lewisHamilton', 'georgeRussell', 'charlesLeclerc', 'landoNorris'];
+let selectedConstructors = ['mercedes', 'ferrari', 'mclaren', 'redBull', 'alpine'];
 
 // Category Tabs Filter
 function initCategoryTabs() {
@@ -1476,6 +1481,17 @@ function renderGraph() {
 
         // Add hover event to line
         path.addEventListener('mouseenter', (e) => showGraphLineTooltip(e, item.name, item.team || item.name, rounds, points, color));
+        path.addEventListener('mousemove', (e) => {
+            const tooltip = document.getElementById('graphTooltip');
+            if (tooltip && tooltip.classList.contains('visible')) {
+                const container = document.getElementById('graphContainer');
+                const containerRect = container.getBoundingClientRect();
+                const mouseX = e.clientX - containerRect.left;
+                const mouseY = e.clientY - containerRect.top;
+                tooltip.style.left = (mouseX + 15) + 'px';
+                tooltip.style.top = (mouseY - 40) + 'px';
+            }
+        });
         path.addEventListener('mouseleave', hideGraphTooltip);
 
         svg.appendChild(path);
@@ -1553,13 +1569,13 @@ function showGraphLineTooltip(event, name, team, rounds, points, color) {
 
     tooltip.innerHTML = `
         <div class="graph-tooltip-header" style="border-left: 3px solid ${color}; padding-left: 8px;">
-            <div class="graph-tooltip-name" style="font-weight: 700; font-size: 14px;">${name}</div>
-            <div class="graph-tooltip-team" style="font-size: 12px; opacity: 0.8;">${team}</div>
+            <div class="graph-tooltip-name" style="font-weight: 700; font-size: 14px; color: white;">${name}</div>
+            <div class="graph-tooltip-team" style="font-size: 12px; opacity: 0.8; color: rgba(255,255,255,0.7);">${team}</div>
         </div>
         <div class="graph-tooltip-entries" style="margin-top: 8px;">
             <div class="graph-tooltip-entry">
-                <span class="graph-tooltip-label">Current Points:</span>
-                <span class="graph-tooltip-points" style="font-weight: 600;">${currentPoints} pts</span>
+                <span class="graph-tooltip-label" style="color: rgba(255,255,255,0.7);">Current Points:</span>
+                <span class="graph-tooltip-points" style="font-weight: 600; color: #e10600;">${currentPoints} pts</span>
             </div>
         </div>
     `;

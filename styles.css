@@ -4377,6 +4377,7 @@ body::before {
     transition: opacity 0.3s ease;
     z-index: 100;
     min-width: 150px;
+    pointer-events: none;
 }
 
 .graph-tooltip.visible {
