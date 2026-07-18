@@ -334,7 +334,7 @@ async function loadRaceSchedule() {
         // Fetch schedule and results in parallel
         const [schedRes, resultsRes] = await Promise.all([
             fetch(`${API_BASE}/${CURRENT_YEAR}.json`),
-            fetch(`${API_BASE}/${CURRENT_YEAR}/results.json?limit=500`)
+            fetch(`${API_BASE}/${CURRENT_YEAR}/results/1.json?limit=100`)
         ]);
         if (!schedRes.ok) throw new Error('Schedule fetch failed');
         const schedData = await schedRes.json();
@@ -1384,7 +1384,7 @@ function initChampionshipGraph() {
 function renderGraph() {
     const svg = document.getElementById('championshipSvg');
     const legend = document.getElementById('graphLegend');
-    if (!svg) return;
+    if (!svg || !legend) return;
 
     const data = CHAMPIONSHIP_DATA_2026[currentGraphType];
     const rounds = data.rounds;

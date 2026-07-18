@@ -369,11 +369,12 @@
             stroke-width: 2;
         }
     </style>
-    <script src="script.js?v=20260615"></script>
+    <script src="script.js?v=20260718"></script>
     <script>
         // Enhanced Championship Graph
         (function() {
-            const CHAMPIONSHIP_DATA = {
+            // Fallback data — only used if the live API is unreachable
+            let CHAMPIONSHIP_DATA = {
                 driver: {
                     teams: [
                         {
@@ -684,6 +685,115 @@
                 }
             }
 
+            // ---- Live data from Jolpica/Ergast API ----
+            const GRAPH_API = 'https://api.jolpi.ca/ergast/f1/2026';
+            const TEAM_STYLE = {
+                mercedes: { color: '#27F4D2', short: 'MER' },
+                ferrari: { color: '#F91536', short: 'FER' },
+                mclaren: { color: '#FF8700', short: 'MCL' },
+                red_bull: { color: '#3671C6', short: 'RBR' },
+                alpine: { color: '#FF87BC', short: 'ALP' },
+                rb: { color: '#5E8FAA', short: 'RBT' },
+                haas: { color: '#B6BABD', short: 'HAA' },
+                williams: { color: '#64C4FF', short: 'WIL' },
+                audi: { color: '#C92D4B', short: 'AUD' },
+                sauber: { color: '#C92D4B', short: 'AUD' },
+                aston_martin: { color: '#229971', short: 'AST' },
+                cadillac: { color: '#D4AF37', short: 'CAD' }
+            };
+            const TOP_DRIVERS = 6;
+            const TOP_CONSTRUCTORS = 5;
+
+            // Fetch every page of a paginated Ergast endpoint (Jolpica caps limit at 100)
+            async function fetchAllRaces(path) {
+                const races = [];
+                let offset = 0, total = Infinity;
+                while (offset < total) {
+                    const res = await fetch(`${GRAPH_API}/${path}.json?limit=100&offset=${offset}`);
+                    if (!res.ok) throw new Error(`${path} fetch failed`);
+                    const data = await res.json();
+                    total = parseInt(data.MRData.total);
+                    races.push(...(data.MRData.RaceTable?.Races || []));
+                    offset += 100;
+                }
+                return races;
+            }
+
+            function buildProgressions(rounds, entriesByRound) {
+                // entriesByRound: Map(round -> Map(id -> {name, team, constructorId, points}))
+                const totals = new Map();
+                const progression = new Map();
+                rounds.forEach(round => {
+                    (entriesByRound.get(round.round) || new Map()).forEach((entry, id) => {
+                        if (!totals.has(id)) totals.set(id, { ...entry, points: 0 });
+                        const t = totals.get(id);
+                        t.points += entry.points;
+                        t.team = entry.team;
+                        t.constructorId = entry.constructorId;
+                    });
+                    totals.forEach((t, id) => {
+                        if (!progression.has(id)) progression.set(id, []);
+                        const prog = progression.get(id);
+                        while (prog.length < rounds.indexOf(round)) prog.push(prog.length ? prog[prog.length - 1] : 0);
+                        prog.push(t.points);
+                    });
+                });
+                return Array.from(totals.entries())
+                    .sort((a, b) => b[1].points - a[1].points)
+                    .map(([id, t], i) => {
+                        const style = TEAM_STYLE[t.constructorId] || { color: '#B6BABD', short: '' };
+                        return {
+                            name: t.name,
+                            team: t.team,
+                            color: style.color,
+                            short: style.short,
+                            position: i + 1,
+                            points: t.points,
+                            progression: progression.get(id)
+                        };
+                    });
+            }
+
+            async function loadLiveChampionshipData() {
+                const raceResults = await fetchAllRaces('results');
+                let sprintResults = [];
+                try { sprintResults = await fetchAllRaces('sprint'); } catch (e) { /* no sprint data yet */ }
+
+                // Collect completed rounds in order
+                const roundsMap = new Map();
+                raceResults.forEach(r => roundsMap.set(r.round, {
+                    round: r.round,
+                    label: r.Circuit?.Location?.locality || r.raceName.replace(' Grand Prix', '')
+                }));
+                const rounds = Array.from(roundsMap.values()).sort((a, b) => a.round - b.round);
+                if (!rounds.length) throw new Error('No race results yet');
+
+                // Points per round for drivers and constructors (race + sprint)
+                const driverRounds = new Map(), teamRounds = new Map();
+                const addPoints = (round, result) => {
+                    const pts = parseFloat(result.points) || 0;
+                    const cons = result.Constructor;
+                    const drv = result.Driver;
+                    if (!driverRounds.has(round)) driverRounds.set(round, new Map());
+                    if (!teamRounds.has(round)) teamRounds.set(round, new Map());
+                    const dMap = driverRounds.get(round), tMap = teamRounds.get(round);
+                    const dKey = drv.driverId;
+                    if (!dMap.has(dKey)) dMap.set(dKey, { name: `${drv.givenName} ${drv.familyName}`, team: cons.name, constructorId: cons.constructorId, points: 0 });
+                    dMap.get(dKey).points += pts;
+                    const tKey = cons.constructorId;
+                    if (!tMap.has(tKey)) tMap.set(tKey, { name: cons.name, team: cons.name, constructorId: cons.constructorId, points: 0 });
+                    tMap.get(tKey).points += pts;
+                };
+                raceResults.forEach(r => (r.Results || []).forEach(res => addPoints(r.round, res)));
+                sprintResults.forEach(r => (r.SprintResults || []).forEach(res => addPoints(r.round, res)));
+
+                const roundLabels = rounds.map(r => r.label);
+                CHAMPIONSHIP_DATA = {
+                    driver: { teams: buildProgressions(rounds, driverRounds).slice(0, TOP_DRIVERS), rounds: roundLabels },
+                    constructor: { teams: buildProgressions(rounds, teamRounds).slice(0, TOP_CONSTRUCTORS), rounds: roundLabels }
+                };
+            }
+
             function initGraph() {
                 // Button handlers
                 const typeBtns = document.querySelectorAll('.graph-type-btn');
@@ -699,6 +809,11 @@
                 });
 
                 renderGraph();
+
+                // Replace fallback data with live standings, then re-render
+                loadLiveChampionshipData()
+                    .then(() => { hiddenLines.clear(); renderGraph(); })
+                    .catch(err => console.error('Live championship data unavailable, using fallback:', err));
             }
 
             // Run after DOM is ready
