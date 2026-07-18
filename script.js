@@ -80,9 +80,9 @@ const RACE_SCHEDULE_2026 = [
     { round: 5, name: 'Canada', location: 'Montreal', date: 'May 22-24', completed: true, winner: 'Kimi Antonelli', sprintWinner: 'George Russell' },
     { round: 6, name: 'Monaco', location: 'Monte Carlo', date: 'Jun 5-7', completed: true, winner: 'Kimi Antonelli' },
     { round: 7, name: 'Spain', location: 'Barcelona', date: 'Jun 12-14', completed: true, winner: 'Lewis Hamilton' },
-    { round: 8, name: 'Austria', location: 'Spielberg', date: 'Jun 26-28', completed: false, next: true },
-    { round: 9, name: 'Great Britain', location: 'Silverstone', date: 'Jul 3-5', completed: false },
-    { round: 10, name: 'Belgium', location: 'Spa', date: 'Jul 17-19', completed: false },
+    { round: 8, name: 'Austria', location: 'Spielberg', date: 'Jun 26-28', completed: true },
+    { round: 9, name: 'Great Britain', location: 'Silverstone', date: 'Jul 3-5', completed: true },
+    { round: 10, name: 'Belgium', location: 'Spa', date: 'Jul 17-19', completed: false, next: true },
     { round: 11, name: 'Hungary', location: 'Budapest', date: 'Jul 24-26', completed: false },
     { round: 12, name: 'Netherlands', location: 'Zandvoort', date: 'Aug 21-23', completed: false },
     { round: 13, name: 'Italy', location: 'Monza', date: 'Sep 4-6', completed: false },
@@ -430,6 +430,7 @@ function loadFallbackSchedule(container) {
 // Back to Top Button
 function initBackToTop() {
     const backToTop = document.getElementById('backToTop');
+    if (!backToTop) return;
 
     // Show/hide button based on scroll position
     window.addEventListener('scroll', () => {
