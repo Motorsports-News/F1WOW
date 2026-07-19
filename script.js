@@ -9,7 +9,6 @@ function sanitizeHTML(str) {
 
 // F1 API Endpoints - Primary and backup
 const API_BASE = 'https://api.jolpi.ca/ergast/f1';
-const ERGAST_API = 'https://ergast.com/api/f1';
 const CURRENT_YEAR = 2026;
 
 // Cached JSON fetch — jolpica allows ~500 req/hr/IP; cache 5 min per URL in localStorage
@@ -112,61 +111,6 @@ const RACE_SCHEDULE_2026 = [
 ];
 
 // 2026 Grid Helper
-const GRID_2026 = {
-    drivers: [
-        { pos: 1, name: 'Max Verstappen', team: 'Red Bull Racing' },
-        { pos: 2, name: 'Lando Norris', team: 'McLaren' },
-        { pos: 3, name: 'Charles Leclerc', team: 'Ferrari' },
-        { pos: 4, name: 'Oscar Piastri', team: 'McLaren' },
-        { pos: 5, name: 'Lewis Hamilton', team: 'Ferrari' },
-        { pos: 6, name: 'George Russell', team: 'Mercedes' },
-        { pos: 7, name: 'Kimi Antonelli', team: 'Mercedes' },
-        { pos: 8, name: 'Carlos Sainz', team: 'Williams' },
-        { pos: 9, name: 'Fernando Alonso', team: 'Aston Martin' },
-        { pos: 10, name: 'Lance Stroll', team: 'Aston Martin' },
-        { pos: 11, name: 'Yuki Tsunoda', team: 'RB' },
-        { pos: 12, name: 'Liam Lawson', team: 'RB' },
-        { pos: 13, name: 'Pierre Gasly', team: 'Alpine' },
-        { pos: 14, name: 'Jack Doohan', team: 'Alpine' },
-        { pos: 15, name: 'Alex Albon', team: 'Williams' },
-        { pos: 16, name: 'Nico Hulkenberg', team: 'Sauber' },
-        { pos: 17, name: 'Gabriel Bortoleto', team: 'Sauber' },
-        { pos: 18, name: 'Esteban Ocon', team: 'Haas' },
-        { pos: 19, name: 'Oliver Bearman', team: 'Haas' },
-        { pos: 20, name: 'Isack Hadjar', team: 'RB' }
-    ],
-    constructors: [
-        { pos: 1, name: 'McLaren' },
-        { pos: 2, name: 'Ferrari' },
-        { pos: 3, name: 'Red Bull Racing' },
-        { pos: 4, name: 'Mercedes' },
-        { pos: 5, name: 'Aston Martin' },
-        { pos: 6, name: 'Williams' },
-        { pos: 7, name: 'RB' },
-        { pos: 8, name: 'Alpine' },
-        { pos: 9, name: 'Sauber' },
-        { pos: 10, name: 'Haas' }
-    ]
-};
-
-// Constructor name mapping
-const constructorMapping = {
-    'red_bull': 'Red Bull Racing',
-    'ferrari': 'Ferrari',
-    'mercedes': 'Mercedes',
-    'mclaren': 'McLaren',
-    'aston_martin': 'Aston Martin',
-    'alpine': 'Alpine',
-    'williams': 'Williams',
-    'rb': 'RB',
-    'alphatauri': 'AlphaTauri',
-    'alfa': 'Alfa Romeo',
-    'kick_sauber': 'Kick Sauber',
-    'sauber': 'Sauber',
-    'haas': 'Haas F1 Team'
-};
-
-// Fetch driver standings
 async function fetchDriverStandings() {
     const container = document.getElementById('driverStandings');
     if (!container) return;
@@ -696,526 +640,6 @@ function startCountdown() {
 // Fetch Instagram follower count for @f1wow
 // NOTE: Instagram's public API (?__a=1) is deprecated. This will use the fallback value.
 // For production, implement Instagram Basic Display API with proper authentication.
-async function fetchInstagramFollowers() {
-    const followerElement = document.getElementById('followerCount');
-    if (!followerElement) return;
-
-    const username = 'f1wow';
-
-    try {
-        // NOTE: This endpoint no longer works - Instagram deprecated public API access
-        const response = await fetch(`https://www.instagram.com/${username}/?__a=1&__d=dis`, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const followers = data?.graphql?.user?.edge_followed_by?.count;
-            if (followers) {
-                updateFollowerCount(followers);
-                return;
-            }
-        }
-    } catch (error) {
-        // Primary API failed - using fallback
-    }
-
-    // Backup: Use a counter service or set manual value
-    // For now, set a base count that increments
-    updateFollowerCount(132500);
-}
-
-function updateFollowerCount(count) {
-    const followerElement = document.getElementById('followerCount');
-    const heroFollowerElement = document.getElementById('heroFollowerCount');
-    if (!followerElement) return;
-
-    // Animate the count
-    const targetCount = parseInt(count);
-    const duration = 2000;
-    const steps = 60;
-    const increment = targetCount / steps;
-    let current = 0;
-    let step = 0;
-
-    const timer = setInterval(() => {
-        current += increment;
-        step++;
-        if (step >= steps) {
-            current = targetCount;
-            clearInterval(timer);
-        }
-        const formatted = formatNumber(Math.floor(current));
-        followerElement.textContent = formatted;
-        if (heroFollowerElement) {
-            heroFollowerElement.textContent = formatted + '+';
-        }
-    }, duration / steps);
-}
-
-function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toString();
-}
-
-// ============================================
-// PREDICTOR GAME
-// ============================================
-
-// Driver list for 2026
-const DRIVERS_2026 = [
-    { name: 'Max Verstappen', team: 'Red Bull Racing' },
-    { name: 'Lando Norris', team: 'McLaren' },
-    { name: 'Charles Leclerc', team: 'Ferrari' },
-    { name: 'Oscar Piastri', team: 'McLaren' },
-    { name: 'Lewis Hamilton', team: 'Ferrari' },
-    { name: 'George Russell', team: 'Mercedes' },
-    { name: 'Kimi Antonelli', team: 'Mercedes' },
-    { name: 'Carlos Sainz', team: 'Williams' },
-    { name: 'Fernando Alonso', team: 'Aston Martin' },
-    { name: 'Lance Stroll', team: 'Aston Martin' },
-    { name: 'Yuki Tsunoda', team: 'RB' },
-    { name: 'Liam Lawson', team: 'RB' },
-    { name: 'Pierre Gasly', team: 'Alpine' },
-    { name: 'Jack Doohan', team: 'Alpine' },
-    { name: 'Alex Albon', team: 'Williams' },
-    { name: 'Nico Hulkenberg', team: 'Audi' },
-    { name: 'Gabriel Bortoleto', team: 'Audi' },
-    { name: 'Esteban Ocon', team: 'Haas' },
-    { name: 'Oliver Bearman', team: 'Haas' },
-    { name: 'Isack Hadjar', team: 'Red Bull Racing' }
-];
-
-// Upcoming races for predictions
-const PREDICTION_RACES = RACE_SCHEDULE_2026.filter(race => !race.completed && !race.cancelled);
-
-// Initialize Predictor Game
-function initPredictorGame() {
-    // Only initialize if we're on the predictor page
-    const predictionTitle = document.getElementById('predictionTitle');
-    if (!predictionTitle) {
-        return;
-    }
-
-    // Debug alert to verify function runs
-    // alert('Predictor init running!');
-
-    populateDriverDropdowns();
-    populateRaceSelector();
-    loadUserData();
-    initSubmitPrediction();
-    loadLeaderboard();
-    displayUserPredictions();
-}
-
-// Populate driver dropdowns
-function populateDriverDropdowns() {
-    const firstSelect = document.getElementById('firstPlace');
-    const secondSelect = document.getElementById('secondPlace');
-    const thirdSelect = document.getElementById('thirdPlace');
-
-    if (!firstSelect || !secondSelect || !thirdSelect) return;
-
-    // Create options using textContent to prevent XSS
-    const createOptions = (select) => {
-        DRIVERS_2026.forEach(driver => {
-            const option = document.createElement('option');
-            option.value = driver.name;
-            option.textContent = driver.name;
-            option.style.background = '#1a1a2e';
-            option.style.color = '#ffffff';
-            select.appendChild(option);
-        });
-    };
-
-    // Add default option to each select
-    [firstSelect, secondSelect, thirdSelect].forEach(select => {
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Select Driver';
-        defaultOption.style.background = '#1a1a2e';
-        defaultOption.style.color = '#ffffff';
-        select.appendChild(defaultOption);
-        createOptions(select);
-    });
-
-    // Prevent duplicate selections
-    firstSelect.addEventListener('change', () => updateDriverOptions(firstSelect, [secondSelect, thirdSelect]));
-    secondSelect.addEventListener('change', () => updateDriverOptions(secondSelect, [firstSelect, thirdSelect]));
-    thirdSelect.addEventListener('change', () => updateDriverOptions(thirdSelect, [firstSelect, secondSelect]));
-}
-
-// Update driver options to prevent duplicates
-function updateDriverOptions(changedSelect, otherSelects) {
-    const selectedValues = Array.from(document.querySelectorAll('.podium-select'))
-        .map(select => select.value)
-        .filter(val => val);
-
-    otherSelects.forEach(select => {
-        const currentValue = select.value;
-        const options = select.querySelectorAll('option');
-
-        options.forEach(option => {
-            if (option.value && option.value !== currentValue && selectedValues.includes(option.value)) {
-                option.disabled = true;
-            } else {
-                option.disabled = false;
-            }
-        });
-    });
-}
-
-// Populate race selector - only show the upcoming race
-function populateRaceSelector() {
-    const predictionTitle = document.getElementById('predictionTitle');
-    const raceInfoName = document.getElementById('raceInfoName');
-
-    if (!predictionTitle || !raceInfoName) return;
-
-    // Find the race marked with next: true from RACE_SCHEDULE_2026 directly
-    const nextRace = RACE_SCHEDULE_2026.find(race => race.next && !race.cancelled);
-
-    if (nextRace) {
-        predictionTitle.innerHTML = `Make Your Prediction for <span style="color: var(--f1-red);">${nextRace.name} GP</span>`;
-        raceInfoName.textContent = `${nextRace.name} GP (${nextRace.date})`;
-    } else {
-        predictionTitle.textContent = 'No Upcoming Race';
-        raceInfoName.textContent = 'Check back soon for the next race!';
-    }
-}
-
-// Load user data from localStorage
-function loadUserData() {
-    const usernameInput = document.getElementById('usernameInput');
-    const userTotalPoints = document.getElementById('userTotalPoints');
-    const usernameStatus = document.getElementById('usernameStatus');
-    const usernameHint = document.getElementById('usernameHint');
-    if (!usernameInput || !userTotalPoints) return;
-
-    const username = localStorage.getItem('f1predictor_username');
-    const userPoints = localStorage.getItem('f1predictor_points') || '0';
-
-    if (username) {
-        usernameInput.value = username;
-        // Current user's username is always valid for them
-        if (usernameStatus) {
-            usernameStatus.textContent = '✓';
-            usernameStatus.className = 'username-status available';
-        }
-    }
-
-    userTotalPoints.textContent = userPoints;
-
-    // Check if username is taken when input changes (for real-time feedback)
-    usernameInput.addEventListener('input', (e) => {
-        const newUsername = e.target.value.trim();
-        if (newUsername) {
-            // Check if username is available (exclude current user's own username)
-            if (isUsernameTaken(newUsername, username)) {
-                // Username is taken, show error
-                usernameInput.style.borderColor = '#e74c3c';
-                usernameInput.classList.add('taken');
-                if (usernameStatus) {
-                    usernameStatus.textContent = '✗';
-                    usernameStatus.className = 'username-status';
-                }
-                if (usernameHint) {
-                    usernameHint.textContent = 'This username is already taken!';
-                    usernameHint.style.color = '#e74c3c';
-                }
-            } else {
-                usernameInput.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                usernameInput.classList.remove('taken');
-                if (usernameStatus) {
-                    usernameStatus.textContent = '✓';
-                    usernameStatus.className = 'username-status available';
-                }
-                if (usernameHint) {
-                    usernameHint.textContent = 'Username available!';
-                    usernameHint.style.color = '#2ecc71';
-                }
-            }
-        } else {
-            usernameInput.style.borderColor = '';
-            usernameInput.classList.remove('taken');
-            if (usernameStatus) {
-                usernameStatus.textContent = '✓';
-                usernameStatus.className = 'username-status available';
-            }
-            if (usernameHint) {
-                usernameHint.textContent = 'Choose a unique username to identify your predictions';
-                usernameHint.style.color = '';
-            }
-        }
-    });
-
-    // Save username on blur (when leaving the field) - not on every keystroke
-    usernameInput.addEventListener('blur', (e) => {
-        const newUsername = e.target.value.trim();
-        if (newUsername) {
-            if (isUsernameTaken(newUsername, username)) {
-                alert('This username is already taken! Please choose a different username.');
-                e.target.value = '';
-                localStorage.removeItem('f1predictor_username');
-                usernameInput.style.borderColor = '';
-                usernameInput.classList.remove('taken');
-                if (usernameStatus) {
-                    usernameStatus.textContent = '✓';
-                    usernameStatus.className = 'username-status available';
-                }
-                if (usernameHint) {
-                    usernameHint.textContent = 'Choose a unique username to identify your predictions';
-                    usernameHint.style.color = '';
-                }
-            } else {
-                // Only save if username is valid and available
-                localStorage.setItem('f1predictor_username', newUsername.slice(0, 20));
-            }
-        }
-    });
-}
-
-// Check if username is already taken
-// excludeUsername: optional parameter to exclude a specific username (e.g., current user's own username)
-function isUsernameTaken(username, excludeUsername = null) {
-    const predictions = JSON.parse(localStorage.getItem('f1predictor_predictions') || '[]');
-    const takenUsernames = predictions
-        .filter(p => !excludeUsername || p.username.toLowerCase() !== excludeUsername.toLowerCase())
-        .map(p => p.username.toLowerCase());
-    return takenUsernames.includes(username.toLowerCase());
-}
-
-// Submit prediction
-function initSubmitPrediction() {
-    const submitBtn = document.getElementById('submitPrediction');
-    if (!submitBtn) return;
-
-    submitBtn.addEventListener('click', () => {
-        const username = document.getElementById('usernameInput').value.trim();
-        const firstPlace = document.getElementById('firstPlace').value;
-        const secondPlace = document.getElementById('secondPlace').value;
-        const thirdPlace = document.getElementById('thirdPlace').value;
-
-        // Validation
-        if (!username) {
-            alert('Please enter your name first!');
-            return;
-        }
-
-        // Check if username is already taken (but allow current user to use their own username)
-        const currentUser = localStorage.getItem('f1predictor_username');
-        if (isUsernameTaken(username, currentUser)) {
-            alert('The username "' + username + '" is already taken! Please choose a different username.');
-            return;
-        }
-
-        // Get the current race automatically (the one with next: true)
-        const selectedRace = RACE_SCHEDULE_2026.find(race => race.next && !race.cancelled);
-
-        if (!selectedRace) {
-            alert('No upcoming race available for prediction!');
-            return;
-        }
-
-        if (!firstPlace || !secondPlace || !thirdPlace) {
-            alert('Please select all 3 podium positions!');
-            return;
-        }
-
-        if (firstPlace === secondPlace || firstPlace === thirdPlace || secondPlace === thirdPlace) {
-            alert('Please select 3 different drivers!');
-            return;
-        }
-
-        // Create prediction object
-        const prediction = {
-            id: Date.now(),
-            username: username,
-            raceRound: selectedRace.round,
-            raceName: selectedRace.name,
-            raceDate: selectedRace.date,
-            predictions: [firstPlace, secondPlace, thirdPlace],
-            timestamp: new Date().toISOString(),
-            points: 0,
-            status: 'pending'
-        };
-
-        // Save prediction
-        savePrediction(prediction);
-
-        // Update UI
-        displayUserPredictions();
-        updateTotalPoints();
-        loadLeaderboard(); // Refresh leaderboard to show new user
-
-        // Reset form
-        document.getElementById('firstPlace').value = '';
-        document.getElementById('secondPlace').value = '';
-        document.getElementById('thirdPlace').value = '';
-
-        // Show success message
-        showSuccessMessage();
-    });
-}
-
-// Save prediction to localStorage
-function savePrediction(prediction) {
-    let predictions = JSON.parse(localStorage.getItem('f1predictor_predictions') || '[]');
-
-    // Check if user already has a prediction for this race
-    const existingIndex = predictions.findIndex(p =>
-        p.username === prediction.username && p.raceRound === prediction.raceRound
-    );
-
-    if (existingIndex >= 0) {
-        predictions[existingIndex] = prediction;
-    } else {
-        predictions.push(prediction);
-    }
-
-    localStorage.setItem('f1predictor_predictions', JSON.stringify(predictions));
-}
-
-// Show success message
-function showSuccessMessage() {
-    const submitBtn = document.getElementById('submitPrediction');
-    const originalHTML = submitBtn.innerHTML;
-
-    submitBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-        </svg>
-        Prediction Saved!
-    `;
-    submitBtn.style.background = 'linear-gradient(135deg, #27F4D2 0%, #1FA89C 100%)';
-
-    setTimeout(() => {
-        submitBtn.innerHTML = originalHTML;
-        submitBtn.style.background = '';
-    }, 2000);
-}
-
-// Display user predictions
-function displayUserPredictions() {
-    const container = document.getElementById('userPredictions');
-    if (!container) return;
-
-    const username = localStorage.getItem('f1predictor_username');
-
-    if (!username) {
-        container.innerHTML = '<p style="color: var(--f1-light-gray); text-align: center;">Enter your name to see your predictions.</p>';
-        return;
-    }
-
-    const predictions = JSON.parse(localStorage.getItem('f1predictor_predictions') || '[]');
-    const userPredictions = predictions.filter(p => p.username === username);
-
-    if (userPredictions.length === 0) {
-        container.innerHTML = '<p style="color: var(--f1-light-gray); text-align: center;">No predictions yet. Make your first prediction above!</p>';
-        return;
-    }
-
-    // Whitelist of valid status values to prevent XSS
-    const validStatuses = ['pending', 'correct', 'partial', 'incorrect'];
-    const isValidStatus = (status) => validStatuses.includes(status);
-
-    container.innerHTML = userPredictions.map(p => {
-        const safeStatus = isValidStatus(p.status) ? p.status : 'pending';
-        return `
-        <div class="prediction-item ${safeStatus}">
-            <div class="prediction-race">
-                <div class="prediction-race-name">${sanitizeHTML(p.raceName)} GP - ${sanitizeHTML(p.raceDate)}</div>
-                <div class="prediction-username">🏁 ${sanitizeHTML(p.username)}</div>
-                <div class="prediction-drivers">
-                    <span>
-                        <svg class="medal" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        ${sanitizeHTML(p.predictions[0])}
-                    </span>
-                    <span>
-                        <svg class="medal" viewBox="0 0 24 24" fill="#C0C0C0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        ${sanitizeHTML(p.predictions[1])}
-                    </span>
-                    <span>
-                        <svg class="medal" viewBox="0 0 24 24" fill="#CD7F32"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        ${sanitizeHTML(p.predictions[2])}
-                    </span>
-                </div>
-            </div>
-            <span class="prediction-points">${p.points > 0 ? '+' + p.points : '-'} pts</span>
-            <span class="prediction-status ${safeStatus}">${safeStatus}</span>
-        </div>`;
-    }).join('');
-}
-
-// Update total points
-function updateTotalPoints() {
-    const username = localStorage.getItem('f1predictor_username');
-    if (!username) return;
-
-    const predictions = JSON.parse(localStorage.getItem('f1predictor_predictions') || '[]');
-    const userPredictions = predictions.filter(p => p.username === username);
-    const totalPoints = userPredictions.reduce((sum, p) => sum + (p.points || 0), 0);
-
-    localStorage.setItem('f1predictor_points', totalPoints.toString());
-    document.getElementById('userTotalPoints').textContent = totalPoints;
-}
-
-// Load leaderboard
-function loadLeaderboard() {
-    const container = document.getElementById('leaderboard');
-    if (!container) return;
-
-    const predictions = JSON.parse(localStorage.getItem('f1predictor_predictions') || '[]');
-
-    // Calculate points for each user
-    const userPoints = {};
-    predictions.forEach(p => {
-        if (!userPoints[p.username]) {
-            userPoints[p.username] = 0;
-        }
-        userPoints[p.username] += p.points || 0;
-    });
-
-    // Show "no predictions" message if truly empty
-    if (Object.keys(userPoints).length === 0) {
-        container.innerHTML = '<p style="color: var(--f1-light-gray); text-align: center; padding: 20px;">No predictions yet. Be the first to predict!</p>';
-        return;
-    }
-
-    // Convert to array and sort (by points descending, then by name for ties)
-    const leaderboard = Object.entries(userPoints)
-        .map(([name, points]) => ({ name, points }))
-        .sort((a, b) => b.points - a.points || a.name.localeCompare(b.name))
-        .slice(0, 10);
-
-    // Get current user
-    const currentUser = localStorage.getItem('f1predictor_username');
-
-    container.innerHTML = leaderboard.map((entry, index) => {
-        const positionClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-        const isCurrentUser = entry.name === currentUser;
-
-        return `
-            <div class="leaderboard-item ${isCurrentUser ? 'current-user' : ''}">
-                <div class="leaderboard-position ${positionClass}">${index + 1}</div>
-                <div class="leaderboard-name ${isCurrentUser ? 'current' : ''}">${sanitizeHTML(entry.name)}${isCurrentUser ? ' (You)' : ''}</div>
-                <div class="leaderboard-points">${entry.points}</div>
-            </div>
-        `;
-    }).join('');
-}
-
-// ============================================
-// CHAMPIONSHIP GRAPH
-// ============================================
-
-// Championship points data after each race (2026 Season)
 const CHAMPIONSHIP_DATA_2026 = {
     driver: {
         rounds: ['Australia', 'China', 'Japan', 'Miami', 'Canada', 'Spain'],
@@ -1644,71 +1068,6 @@ function toggleLine(key, name) {
 // ============================================
 
 // Copy article link to clipboard
-function copyArticleLink() {
-    const url = window.location.href;
-
-    // Try modern clipboard API first
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => {
-            showCopySuccess();
-        }).catch(() => {
-            // Fallback to old method
-            fallbackCopyTextToClipboard(url);
-        });
-    } else {
-        fallbackCopyTextToClipboard(url);
-    }
-}
-
-// Fallback copy method for older browsers
-function fallbackCopyTextToClipboard(text) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-9999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            showCopySuccess();
-        }
-    } catch (err) {
-        console.error('Unable to copy', err);
-    }
-
-    document.body.removeChild(textArea);
-}
-
-// Show copy success feedback
-function showCopySuccess() {
-    const copyBtn = document.querySelector('.share-btn.copy-link');
-    if (!copyBtn) return;
-
-    const originalHTML = copyBtn.innerHTML;
-    copyBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 6L9 17l-5-5"/>
-        </svg>
-        Copied!
-    `;
-    copyBtn.classList.add('copied');
-
-    setTimeout(() => {
-        copyBtn.innerHTML = originalHTML;
-        copyBtn.classList.remove('copied');
-    }, 2000);
-}
-
-// ============================================
-// SUBSCRIBE FUNCTION - No Setup Required
-// ============================================
-
-// Store subscribers in localStorage
-// When you publish new articles, use Admin Panel to notify all subscribers
-
 function handleSubscribe(event) {
     event.preventDefault();
     const form = event.target;
@@ -2190,3 +1549,50 @@ function initCookieConsent() {
 }
 
 document.addEventListener('DOMContentLoaded', initCookieConsent);
+
+// ============================================
+// GA4 CUSTOM EVENTS (fires only after cookie consent grants analytics)
+// ============================================
+function initAnalyticsEvents() {
+    if (typeof gtag !== 'function') return;
+    const track = (name, params) => { try { gtag('event', name, params || {}); } catch (e) {} };
+
+    // Scroll depth: 25/50/75/90, once each
+    const marks = [25, 50, 75, 90];
+    const fired = new Set();
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = Math.round((h.scrollTop + window.innerHeight) / h.scrollHeight * 100);
+        marks.forEach(m => {
+            if (pct >= m && !fired.has(m)) { fired.add(m); track('scroll_depth', { percent: m }); }
+        });
+    }, { passive: true });
+
+    // Clicks: shares, related stories, trending
+    document.addEventListener('click', (e) => {
+        const share = e.target.closest('.share-btn');
+        if (share) track('share_click', { network: share.className.replace(/share-btn|\s/g, '') || 'copy' });
+        const rel = e.target.closest('.related-card');
+        if (rel) track('related_click', { target: rel.getAttribute('href') });
+        const trend = e.target.closest('.trending-item');
+        if (trend) track('trending_click', { target: trend.getAttribute('href') });
+    });
+
+    // Newsletter submits
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', () => {
+            if (form.querySelector('input[type="email"]')) track('newsletter_submit', { page: location.pathname });
+        });
+    });
+
+    // Search usage (first keystroke per page view)
+    const search = document.getElementById('searchInput');
+    if (search) {
+        let used = false;
+        search.addEventListener('input', () => {
+            if (!used) { used = true; track('search_used', {}); }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initAnalyticsEvents);
