@@ -1,14 +1,24 @@
 {
   "latestPost": {
-    "title": "Lewis Hamilton Wins Barcelona GP for Ferrari - Historic First Victory",
-    "quote": "Lewis Hamilton delivers historic victory for Ferrari at Barcelona Grand Prix 2026 - First win with Scuderia Ferrari marks new chapter in F1 history 🏆🐎",
-    "driver": "Lewis Hamilton",
+    "title": "Belgian GP 2026: Antonelli Wins at Spa as Russell Retirement Reshapes Title Fight",
+    "quote": "Kimi Antonelli takes his sixth win of 2026 at Spa-Francorchamps - and Lewis Hamilton moves to P2 in the championship after George Russell retires. \ud83c\udfc6",
+    "driver": "Kimi Antonelli",
     "source": "@f1wow",
     "sourceLink": "https://www.instagram.com/f1wow/",
-    "image": "images/hamilton-ferrari-barcelona-win.jpg",
-    "date": "June 14, 2026",
-    "event": "Barcelona Grand Prix 2026",
-    "articleLink": "hamilton-ferrari-barcelona-win.html",
-    "tags": ["f1", "f12026", "formula1", "ferrari", "hamilton", "barcelonagp", "race", "winner", "historic", "scuderia"]
+    "image": "f1-car-hero.webp",
+    "date": "July 19, 2026",
+    "event": "Belgian Grand Prix 2026",
+    "articleLink": "belgian-gp-2026.html",
+    "tags": [
+      "f1",
+      "f12026",
+      "formula1",
+      "belgiangp",
+      "spa",
+      "antonelli",
+      "mercedes",
+      "race",
+      "winner"
+    ]
   }
 }
