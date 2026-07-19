@@ -10,8 +10,8 @@
     --f1-silver: #E8E8E8;
 
     /* F1 Flag Colors */
-    --f1-yellow: #FFD700;  /* Caution/Yellow flag */
-    --f1-green: #00FF00;   /* Start/Go lights */
+    --f1-yellow: #E8C84D;  /* Caution/Yellow flag */
+    --f1-green: #3BD66A;   /* Start/Go lights */
     --f1-blue: #00AEEF;    /* Blue flag */
 
     /* Checkered Flag Pattern */
@@ -140,7 +140,7 @@ body::before {
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 4px 20px rgba(225, 6, 0, 0.3);
+    box-shadow: none;
 }
 
 /* Reading Progress Bar - F1 Telemetry Style */
@@ -184,7 +184,7 @@ body::before {
 }
 
 .brand h1, .brand .brand-title {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 2.2rem;
     font-weight: 400;
     background: linear-gradient(90deg, var(--f1-white) 0%, var(--f1-red) 100%);
@@ -221,7 +221,7 @@ body::before {
 
 .nav-link:hover {
     background: var(--f1-red);
-    box-shadow: 0 0 20px rgba(225, 6, 0, 0.5);
+    box-shadow: none;
     transform: translateY(-2px);
 }
 
@@ -249,12 +249,12 @@ body::before {
 
 .follower-counter:hover {
     background: var(--f1-red);
-    box-shadow: 0 0 20px rgba(225, 6, 0, 0.5);
+    box-shadow: none;
     transform: translateY(-2px);
 }
 
 .follower-count {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--f1-red);
@@ -371,7 +371,7 @@ body::before {
 }
 
 .subscriber-count span {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     color: var(--f1-white);
@@ -601,14 +601,15 @@ body::before {
 }
 
 .hero-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1.1;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 0.95;
     margin-bottom: 10px;
     color: var(--f1-white);
     text-transform: uppercase;
-    letter-spacing: 6px;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
 }
 
 @keyframes shimmer {
@@ -681,11 +682,11 @@ body::before {
 .countdown-item:hover {
     transform: translateY(-2px);
     border-color: var(--f1-red);
-    box-shadow: 0 5px 15px rgba(225, 6, 0, 0.15);
+    box-shadow: none;
 }
 
 .countdown-number {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--f1-red);
@@ -744,12 +745,12 @@ body::before {
 .cta-primary {
     background: linear-gradient(135deg, var(--f1-red) 0%, var(--f1-dark-red) 100%);
     color: var(--f1-white);
-    box-shadow: 0 4px 15px rgba(225, 6, 0, 0.4);
+    box-shadow: none;
 }
 
 .cta-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(225, 6, 0, 0.6);
+    box-shadow: none;
 }
 
 .cta-secondary {
@@ -775,7 +776,7 @@ body::before {
 }
 
 .next-race-name {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.9rem;
     color: var(--f1-white);
     text-transform: uppercase;
@@ -786,7 +787,7 @@ body::before {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(225, 6, 0, 0.3);
     transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(225, 6, 0, 0.15);
+    box-shadow: none;
 }
 
 /* Main Content Padding */
@@ -832,7 +833,7 @@ body::before {
 
 .compact-search-container:focus-within {
     border-color: rgba(225, 6, 0, 0.5);
-    box-shadow: 0 10px 50px rgba(225, 6, 0, 0.3);
+    box-shadow: none;
 }
 
 .compact-search-container .search-icon {
@@ -1108,7 +1109,7 @@ body::before {
     align-items: center;
     justify-content: flex-end;
     padding-right: 12px;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     color: var(--f1-white);
@@ -1333,7 +1334,7 @@ body::before {
     background: linear-gradient(135deg, var(--f1-red), #ff3333);
     color: white;
     border-radius: 50px;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -1355,7 +1356,7 @@ body::before {
 
 .featured-category {
     display: inline-block;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--f1-red);
@@ -1364,7 +1365,7 @@ body::before {
 }
 
 .featured-title {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--f1-white);
@@ -1588,7 +1589,7 @@ body::before {
 }
 
 .article-preview-title {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.3rem;
     font-weight: 400;
     font-weight: 700;
@@ -1646,7 +1647,7 @@ body::before {
 }
 
 .section-header h2 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 2.2rem;
     font-weight: 400;
     text-transform: uppercase;
@@ -1738,7 +1739,7 @@ body::before {
 }
 
 .article-title {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 20px;
@@ -1834,7 +1835,7 @@ body::before {
 }
 
 .article-subheading {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--f1-white);
@@ -1928,11 +1929,11 @@ body::before {
 .standings-card:hover {
     border-color: rgba(225, 6, 0, 0.3);
     transform: translateY(-3px);
-    box-shadow: 0 15px 50px rgba(225, 6, 0, 0.2);
+    box-shadow: none;
 }
 
 .standings-card h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     padding: 20px 25px;
@@ -1979,7 +1980,7 @@ body::before {
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -2019,7 +2020,7 @@ body::before {
 }
 
 .standing-position {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 1.1rem;
     color: var(--f1-light-gray);
@@ -2064,7 +2065,7 @@ body::before {
 }
 
 .standing-points {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     color: var(--f1-red);
     font-size: 1rem;
@@ -2118,7 +2119,7 @@ body::before {
 }
 
 .subscribe-section h2 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 2rem;
     color: var(--f1-white);
     margin-bottom: 15px;
@@ -2191,7 +2192,7 @@ body::before {
 .subscribe-btn:hover {
     background: #ff1a1a;
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(225, 6, 0, 0.4);
+    box-shadow: none;
 }
 
 .subscribe-btn:active {
@@ -2340,7 +2341,7 @@ body::before {
 }
 
 .admin-header h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.3rem;
     color: var(--f1-white);
     margin: 0;
@@ -2382,7 +2383,7 @@ body::before {
 
 .stat-value {
     display: block;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--f1-red);
@@ -2472,7 +2473,7 @@ body::before {
 
 .send-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(225, 6, 0, 0.4);
+    box-shadow: none;
 }
 
 @keyframes fadeIn {
@@ -2579,7 +2580,7 @@ body::before {
 .race-card:hover {
     border-color: rgba(225, 6, 0, 0.4);
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 30px rgba(225, 6, 0, 0.2);
+    box-shadow: none;
 }
 
 .race-card.completed {
@@ -2597,7 +2598,7 @@ body::before {
 }
 
 .race-round {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--f1-red);
@@ -2734,7 +2735,7 @@ body::before {
 }
 
 .results-card h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     padding: 20px 25px;
@@ -2784,7 +2785,7 @@ body::before {
 }
 
 .result-pos {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 1.1rem;
     color: var(--f1-light-gray);
@@ -2814,7 +2815,7 @@ body::before {
 }
 
 .result-gap, .result-points {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     color: var(--f1-red);
     font-size: 0.9rem;
@@ -2855,7 +2856,7 @@ body::before {
 }
 
 .lap-time {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--f1-red);
@@ -2928,7 +2929,7 @@ body::before {
     transform: translateY(20px);
     transition: all 0.3s ease;
     z-index: 999;
-    box-shadow: 0 4px 15px rgba(225, 6, 0, 0.4);
+    box-shadow: none;
 }
 
 .back-to-top.visible {
@@ -2939,7 +2940,7 @@ body::before {
 
 .back-to-top:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(225, 6, 0, 0.6);
+    box-shadow: none;
 }
 
 .back-to-top:active {
@@ -3052,7 +3053,7 @@ body::before {
 }
 
 .article-share h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 20px;
@@ -3193,7 +3194,7 @@ body::before {
     border: 2px solid var(--f1-gray);
     border-radius: 30px;
     color: var(--f1-light-gray);
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: 2px;
@@ -3212,7 +3213,7 @@ body::before {
     background: linear-gradient(135deg, var(--f1-red) 0%, var(--f1-dark-red) 100%);
     border-color: var(--f1-red);
     color: var(--f1-white);
-    box-shadow: 0 4px 20px rgba(225, 6, 0, 0.4);
+    box-shadow: none;
 }
 
 .tab-btn svg {
@@ -3240,7 +3241,7 @@ body::before {
 }
 
 .predictor-header h2 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 2rem;
     font-weight: 900;
     margin-bottom: 10px;
@@ -3273,7 +3274,7 @@ body::before {
 }
 
 .predictor-card-header h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -3287,7 +3288,7 @@ body::before {
     background: rgba(0, 0, 0, 0.3);
     padding: 8px 20px;
     border-radius: 20px;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
 }
 
@@ -3379,7 +3380,7 @@ body::before {
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--f1-white);
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
 }
 
 .race-select option {
@@ -3445,7 +3446,7 @@ body::before {
 }
 
 .podium-position-label {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 1.5rem;
     color: var(--f1-white);
@@ -3489,7 +3490,7 @@ body::before {
     border: none;
     border-radius: 10px;
     color: var(--f1-white);
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 3px;
@@ -3504,7 +3505,7 @@ body::before {
 
 .submit-prediction-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(225, 6, 0, 0.4);
+    box-shadow: none;
 }
 
 .submit-prediction-btn:disabled {
@@ -3524,7 +3525,7 @@ body::before {
 }
 
 .previous-predictions h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 20px;
@@ -3596,7 +3597,7 @@ body::before {
 }
 
 .prediction-points {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 1.2rem;
     color: #FFD700;
@@ -3632,7 +3633,7 @@ body::before {
 }
 
 .leaderboard h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 20px;
@@ -3677,7 +3678,7 @@ body::before {
 }
 
 .leaderboard-position {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 1.2rem;
     width: 35px;
@@ -3707,7 +3708,7 @@ body::before {
 }
 
 .leaderboard-points {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     color: #FFD700;
 }
@@ -3794,7 +3795,7 @@ body::before {
 }
 
 .scoring-info h4 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     margin-bottom: 15px;
@@ -3931,7 +3932,7 @@ body::before {
     background: linear-gradient(135deg, #2a2a4e, #26264a);
     border-color: #e10600;
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(225, 6, 0, 0.3);
+    box-shadow: none;
 }
 
 .quick-nav-btn:active {
@@ -3946,16 +3947,16 @@ body::before {
 
 @keyframes pulse-glow {
     0%, 100% {
-        box-shadow: 0 4px 15px rgba(225, 6, 0, 0.4);
+        box-shadow: none;
     }
     50% {
-        box-shadow: 0 4px 25px rgba(225, 6, 0, 0.6);
+        box-shadow: none;
     }
 }
 
 .quick-nav-btn.primary:hover {
     background: linear-gradient(135deg, #ff1e1e, #e10600);
-    box-shadow: 0 8px 30px rgba(225, 6, 0, 0.5);
+    box-shadow: none;
 }
 
 .quick-nav-btn svg {
@@ -3987,7 +3988,7 @@ body::before {
 }
 
 .championship-graph-header h3 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -4354,7 +4355,7 @@ body::before {
 
 .graph-point-label {
     fill: var(--f1-white);
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.75rem;
     font-weight: 700;
     text-anchor: middle;
@@ -4411,7 +4412,7 @@ body::before {
 }
 
 .graph-tooltip-points {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     color: var(--f1-red);
     margin-left: auto;
@@ -4627,7 +4628,7 @@ body::before {
 }
 .footer-col { display: flex; flex-direction: column; gap: 10px; }
 .footer-brand {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 1.1rem;
     color: var(--f1-white);
@@ -4664,7 +4665,7 @@ body::before {
     padding: 0 20px;
 }
 .legal-content h1 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 2rem;
     margin-bottom: 8px;
     color: var(--f1-white);
@@ -4814,7 +4815,7 @@ body::before {
     background: var(--f1-red);
     border-color: var(--f1-red);
     color: #fff;
-    box-shadow: 0 0 16px rgba(225, 6, 0, 0.4);
+    box-shadow: none;
 }
 /* Two-item nav fits every viewport: no hamburger needed */
 .mobile-menu-toggle {
@@ -4950,7 +4951,7 @@ body::before {
 }
 .trending-item:hover { transform: translateY(-2px); border-color: var(--f1-red); }
 .trending-rank {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.6rem;
     font-weight: 700;
     color: var(--f1-red);
@@ -4997,8 +4998,77 @@ body::before {
     border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px;
 }
 .hub-podium-item.pos-1 { border-color: var(--f1-yellow); }
-.hub-podium-pos { font-family: 'Orbitron', sans-serif; font-weight: 700; color: var(--f1-red); }
+.hub-podium-pos { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: var(--f1-red); }
 .hub-podium-item.pos-1 .hub-podium-pos { color: var(--f1-yellow); }
 .hub-podium-name { font-weight: 600; }
 .hub-podium-team { font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); }
 .hub-links { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ============================================
+   STAGE 1 — BROADCAST EDITORIAL TYPE & DISCIPLINE
+   ============================================ */
+/* Display voice: condensed signage, committed scale */
+.section-header h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
+    line-height: 0.95;
+    text-wrap: balance;
+}
+.article-title-full, .article-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    font-weight: 800;
+    line-height: 1.02;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    text-wrap: balance;
+}
+.brand .brand-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 800;
+    font-size: 1.7rem;
+}
+/* Metadata: light weight, wide tracking — the contrast axis */
+.preview-date, .article-date, .countdown-label, .subtitle, .hub-tz-note {
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+/* Data reads professional when digits line up */
+.countdown-number, .standing-points, .standing-position,
+.graph-axis-text, .hub-session-time, .trending-rank,
+.race-round, .related-category {
+    font-variant-numeric: tabular-nums;
+}
+.countdown-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+}
+/* Red as structure: hairline rule + kerb-ready underline on section titles */
+.section-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 14px;
+    position: relative;
+}
+.section-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 72px;
+    height: 3px;
+    background: var(--f1-red);
+}
+/* Calm the surfaces: hairlines, no drama */
+.article-preview-card:hover, .race-card:hover, .related-card:hover, .trending-item:hover {
+    box-shadow: none;
+    border-color: rgba(225, 6, 0, 0.6);
+}
+body { font-size: 1rem; }
