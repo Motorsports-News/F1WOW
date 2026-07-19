@@ -12,6 +12,20 @@ const API_BASE = 'https://api.jolpi.ca/ergast/f1';
 const ERGAST_API = 'https://ergast.com/api/f1';
 const CURRENT_YEAR = 2026;
 
+// Cached JSON fetch — jolpica allows ~500 req/hr/IP; cache 5 min per URL in localStorage
+async function cachedJson(url, ttlMs = 5 * 60 * 1000) {
+    const key = 'f1wow_api_' + url;
+    try {
+        const hit = JSON.parse(localStorage.getItem(key));
+        if (hit && Date.now() - hit.t < ttlMs) return hit.d;
+    } catch (e) { /* corrupt entry — refetch */ }
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API request failed: ' + url);
+    const data = await res.json();
+    try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), d: data })); } catch (e) { /* storage full */ }
+    return data;
+}
+
 // Team color mapping (2026 teams)
 const teamColors = {
     'Red Bull Racing': 'team-redbull',
@@ -155,10 +169,9 @@ const constructorMapping = {
 // Fetch driver standings
 async function fetchDriverStandings() {
     const container = document.getElementById('driverStandings');
+    if (!container) return;
     try {
-        const response = await fetch(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
-        if (!response.ok) throw new Error('API request failed');
-        const data = await response.json();
+        const data = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
 
         const standings = data?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
         if (!standings) {
@@ -202,10 +215,9 @@ function displayDriverStandings(standings) {
 // Fetch constructor standings
 async function fetchConstructorStandings() {
     const container = document.getElementById('constructorStandings');
+    if (!container) return;
     try {
-        const response = await fetch(`${API_BASE}/${CURRENT_YEAR}/constructorstandings.json`);
-        if (!response.ok) throw new Error('API request failed');
-        const data = await response.json();
+        const data = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/constructorstandings.json`);
 
         const standings = data?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings;
         if (!standings) {
@@ -331,18 +343,15 @@ async function loadRaceSchedule() {
     if (!container) return;
 
     try {
-        // Fetch schedule and results in parallel
-        const [schedRes, resultsRes] = await Promise.all([
-            fetch(`${API_BASE}/${CURRENT_YEAR}.json`),
-            fetch(`${API_BASE}/${CURRENT_YEAR}/results/1.json?limit=100`)
+        // Fetch schedule and results in parallel (cached)
+        const [schedData, resData] = await Promise.all([
+            cachedJson(`${API_BASE}/${CURRENT_YEAR}.json`),
+            cachedJson(`${API_BASE}/${CURRENT_YEAR}/results/1.json?limit=100`).catch(() => null)
         ]);
-        if (!schedRes.ok) throw new Error('Schedule fetch failed');
-        const schedData = await schedRes.json();
         const races = schedData?.MRData?.RaceTable?.Races || [];
 
         let resultsMap = {};
-        if (resultsRes.ok) {
-            const resData = await resultsRes.json();
+        if (resData) {
             const raceResults = resData?.MRData?.RaceTable?.Races || [];
             raceResults.forEach(r => {
                 const winner = r.Results?.[0];
@@ -605,6 +614,7 @@ function initSearch() {
 
 // Countdown Timer for Next Race - fetches from live API
 function startCountdown() {
+    if (!document.getElementById('countdown')) return;
     const flags = {
         'australia': '🇦🇺', 'china': '🇨🇳', 'japan': '🇯🇵', 'bahrain': '🇧🇭',
         'saudi': '🇸🇦', 'miami': '🇺🇸', 'canada': '🇨🇦', 'monaco': '🇲🇨',
@@ -627,9 +637,7 @@ function startCountdown() {
 
     async function fetchNextRace() {
         try {
-            const res = await fetch(`${API_BASE}/${CURRENT_YEAR}.json`);
-            if (!res.ok) throw new Error('Failed');
-            const data = await res.json();
+            const data = await cachedJson(`${API_BASE}/${CURRENT_YEAR}.json`);
             const races = data?.MRData?.RaceTable?.Races || [];
             const now = new Date();
             const next = races.find(r => new Date(r.date + 'T' + (r.time || '14:00:00Z')) > now);
