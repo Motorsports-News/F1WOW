@@ -517,6 +517,42 @@
 
             let currentGraphType = 'driver';
             let hiddenLines = new Set();
+            let graphInView = false;
+            let lastRoundsCount = 6;
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const SECONDS_PER_RACE = 0.35;
+
+            // Race-by-race draw-in, played when the graph scrolls into view
+            function playGraphAnimation() {
+                const svgEl = document.getElementById('championshipSvg');
+                if (!svgEl) return;
+                const paths = svgEl.querySelectorAll('.line-path');
+                const points = svgEl.querySelectorAll('.data-point');
+                const total = Math.max(1, lastRoundsCount - 1) * SECONDS_PER_RACE;
+                if (prefersReducedMotion) {
+                    paths.forEach(p => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
+                    points.forEach(pt => { pt.style.opacity = ''; });
+                    return;
+                }
+                paths.forEach(p => {
+                    p.style.transition = 'stroke-dashoffset ' + total + 's linear';
+                    requestAnimationFrame(() => { p.style.strokeDashoffset = '0'; });
+                });
+                points.forEach(pt => {
+                    const i = parseInt(pt.dataset.i || '0', 10);
+                    pt.style.transition = 'opacity 0.25s ease ' + (i * SECONDS_PER_RACE).toFixed(2) + 's';
+                    requestAnimationFrame(() => { pt.style.opacity = '1'; });
+                });
+                // Clear inline styles afterwards so legend toggles/hover keep working
+                setTimeout(() => {
+                    paths.forEach(p => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
+                    points.forEach(pt => { pt.style.transition = ''; pt.style.opacity = ''; });
+                }, (total + 0.5) * 1000);
+            }
+
+            function armGraphAnimation() {
+                if (graphInView) requestAnimationFrame(playGraphAnimation);
+            }
 
             function renderGraph() {
                 const svg = document.getElementById('championshipSvg');
@@ -530,6 +566,7 @@
 
                 const teams = data.teams;
                 const rounds = data.rounds;
+                lastRoundsCount = rounds.length;
 
                 // Clear SVG and legend
                 svg.innerHTML = '';
@@ -638,6 +675,13 @@
                     path.setAttribute('data-color', color);
                     svg.appendChild(path);
 
+                    // Start fully hidden; playGraphAnimation() draws it race by race
+                    if (!prefersReducedMotion) {
+                        const pathLen = path.getTotalLength();
+                        path.style.strokeDasharray = pathLen;
+                        path.style.strokeDashoffset = pathLen;
+                    }
+
                     // Draw points
                     progression.forEach((points, i) => {
                         const x = padding.left + (chartWidth / (rounds.length - 1)) * i;
@@ -658,6 +702,8 @@
                         circle.setAttribute('data-name', team.name);
                         circle.setAttribute('data-team', team.team || team.name);
                         circle.setAttribute('data-color', color);
+                        circle.dataset.i = i;
+                        if (!prefersReducedMotion) circle.style.opacity = '0';
 
                         // Add events
                         circle.addEventListener('mouseenter', (e) => showTooltip(e, team, rounds[i], points, color));
@@ -677,6 +723,8 @@
                     legendItem.addEventListener('click', () => toggleLine(teamIndex));
                     legend.appendChild(legendItem);
                 });
+
+                armGraphAnimation();
 
                 function showTooltip(event, team, round, points, color) {
                     document.getElementById('tooltipLogo').style.background = color;
@@ -849,6 +897,20 @@
                         renderGraph();
                     });
                 });
+
+                const wrapperEl = document.getElementById('graphWrapper');
+                if (wrapperEl && 'IntersectionObserver' in window) {
+                    new IntersectionObserver((entries) => {
+                        entries.forEach(en => {
+                            if (en.isIntersecting && !graphInView) {
+                                graphInView = true;
+                                playGraphAnimation();
+                            }
+                        });
+                    }, { threshold: 0.25 }).observe(wrapperEl);
+                } else {
+                    graphInView = true;
+                }
 
                 renderGraph();
 
