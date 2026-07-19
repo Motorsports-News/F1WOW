@@ -812,7 +812,7 @@ body::before {
 /* Compact Search Wrapper */
 .compact-search-wrapper {
     max-width: 700px;
-    margin: -30px auto 30px;
+    margin: 30px auto 10px;
     position: relative;
     z-index: 10;
 }

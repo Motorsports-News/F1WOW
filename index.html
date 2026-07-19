@@ -268,39 +268,40 @@
             </div>
         </section>
 
-        <!-- Compact Search Bar -->
-        <div class="compact-search-wrapper">
-            <div class="compact-search-container">
-                <div class="search-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="M21 21l-4.35-4.35"></path>
-                    </svg>
-                </div>
-                <input type="text" id="searchInput" placeholder="Search articles, drivers, races..." class="search-input">
-                <button class="search-toggle" id="searchToggle" aria-label="Toggle search filters" title="Filter options">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 6h16M4 12h16M4 18h7"/>
-                    </svg>
-                </button>
-                <button class="search-clear" id="searchClear" aria-label="Clear search" style="display: none;">✕</button>
-            </div>
-            <!-- Expandable Filters -->
-            <div class="search-filters" id="searchFilters">
-                <div class="search-tags" id="searchTags">
-                    <span class="search-tag active" data-filter="all">All</span>
-                    <span class="search-tag" data-filter="news">News</span>
-                    <span class="search-tag" data-filter="race">Races</span>
-                    <span class="search-tag" data-filter="verstappen">Verstappen</span>
-                    <span class="search-tag" data-filter="antonelli">Antonelli</span>
-                    <span class="search-tag" data-filter="mercedes">Mercedes</span>
-                </div>
-            </div>
-            <div class="search-results" id="searchResults"></div>
-        </div>
-
         <div class="container content-section">
             <!-- Articles Grid -->
+        <!-- Compact Search Bar -->
+            <div class="compact-search-wrapper">
+                <div class="compact-search-container">
+                    <div class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Search articles, drivers, races..." class="search-input">
+                    <button class="search-toggle" id="searchToggle" aria-label="Toggle search filters" title="Filter options">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 6h16M4 12h16M4 18h7"/>
+                        </svg>
+                    </button>
+                    <button class="search-clear" id="searchClear" aria-label="Clear search" style="display: none;">✕</button>
+                </div>
+                <!-- Expandable Filters -->
+                <div class="search-filters" id="searchFilters">
+                    <div class="search-tags" id="searchTags">
+                        <span class="search-tag active" data-filter="all">All</span>
+                        <span class="search-tag" data-filter="news">News</span>
+                        <span class="search-tag" data-filter="race">Races</span>
+                        <span class="search-tag" data-filter="verstappen">Verstappen</span>
+                        <span class="search-tag" data-filter="antonelli">Antonelli</span>
+                        <span class="search-tag" data-filter="mercedes">Mercedes</span>
+                    </div>
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+
                         <!-- Trending Now -->
             <section class="trending-strip" aria-label="Trending stories">
                 <div class="trending-strip-head">
