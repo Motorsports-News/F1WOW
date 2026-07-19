@@ -688,12 +688,20 @@
 
                     const container = document.getElementById('graphWrapper');
                     const rect = container.getBoundingClientRect();
-                    const x = event.clientX - rect.left + 20;
-                    const y = event.clientY - rect.top - 90;
+
+                    // Show first so the tooltip is measurable, then clamp inside the wrapper
+                    tooltip.classList.add('visible');
+                    const tw = tooltip.offsetWidth;
+                    const th = tooltip.offsetHeight;
+                    let x = event.clientX - rect.left + 20;
+                    let y = event.clientY - rect.top - 90;
+                    if (x + tw > rect.width - 8) x = event.clientX - rect.left - tw - 20; // flip to left of cursor
+                    if (x < 8) x = 8;
+                    if (y < 8) y = 8;
+                    if (y + th > rect.height - 8) y = rect.height - th - 8;
 
                     tooltip.style.left = `${x}px`;
                     tooltip.style.top = `${y}px`;
-                    tooltip.classList.add('visible');
                 }
 
                 function hideTooltip() {
