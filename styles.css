@@ -5072,3 +5072,193 @@ body::before {
     border-color: rgba(225, 6, 0, 0.6);
 }
 body { font-size: 1rem; }
+
+/* ============================================
+   STAGE 2A-R — BROADCAST RACE STRIP (below hero)
+   ============================================ */
+.race-strip {
+    background: #101016;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.race-strip-inner {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+}
+.race-strip-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--f1-red);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    padding-right: 22px;
+    white-space: nowrap;
+}
+.live-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--f1-red);
+    animation: liveDotPulse 2s ease-in-out infinite;
+}
+@keyframes liveDotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.race-strip .next-race-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.15rem;
+    letter-spacing: 0.03em;
+}
+.race-strip .countdown-container { display: flex; gap: 16px; margin-left: auto; }
+.race-strip .countdown-item { display: flex; flex-direction: column; align-items: center; min-width: 42px; background: none; border: none; padding: 0; }
+.race-strip .countdown-number { font-size: 1.5rem; line-height: 1.1; }
+.race-strip .countdown-label { font-size: 0.6rem; }
+.race-strip-link {
+    color: var(--f1-white);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--f1-red);
+    padding-bottom: 2px;
+}
+.race-strip-link:hover { color: var(--f1-red); }
+@media (max-width: 768px) {
+    .race-strip .countdown-container { margin-left: 0; }
+    .race-strip-label { border-right: none; padding-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+
+/* ============================================
+   STAGE 2B — TIMING-TOWER STORY ROWS
+   ============================================ */
+.articles-grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0;
+    counter-reset: story;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.articles-grid .article-preview-card {
+    counter-increment: story;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 18px;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0;
+    padding: 16px 20px;
+    background: var(--f1-dark);
+    transition: background 0.2s ease;
+}
+.articles-grid .article-preview-card:last-child { border-bottom: none; }
+.articles-grid .article-preview-card:hover {
+    background: #22222c;
+    transform: none;
+    box-shadow: none;
+}
+.articles-grid .article-preview-card::before {
+    content: counter(story, decimal-leading-zero);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--f1-red);
+    background: rgba(225, 6, 0, 0.08);
+    border: 1px solid rgba(225, 6, 0, 0.35);
+    border-radius: 6px;
+    min-width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+.articles-grid .article-preview-content { display: flex; flex-direction: column; gap: 4px; }
+.articles-grid .article-preview-title { font-size: 1.05rem; line-height: 1.35; }
+.articles-grid .preview-excerpt, .articles-grid .article-preview-excerpt { display: none; }
+@media (max-width: 600px) {
+    .articles-grid .article-preview-card { padding: 13px 14px; gap: 12px; }
+    .articles-grid .article-preview-card::before { min-width: 38px; height: 38px; font-size: 1.05rem; }
+}
+
+/* ============================================
+   STAGE 2B — CHAMPIONSHIP BATTLE BAND (live)
+   ============================================ */
+.battle-band { margin: 44px 0; }
+.battle-band-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    position: relative;
+}
+.battle-band-head::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -1px;
+    width: 72px; height: 3px;
+    background: var(--f1-red);
+}
+.battle-band-head h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.95;
+}
+.battle-band-link { color: var(--f1-white); text-decoration: none; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--f1-red); padding-bottom: 2px; white-space: nowrap; }
+.battle-band-link:hover { color: var(--f1-red); }
+.battle-rows { display: flex; flex-direction: column; gap: 10px; }
+.battle-row {
+    display: grid;
+    grid-template-columns: 46px 1fr auto;
+    align-items: center;
+    gap: 16px;
+}
+.battle-pos {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--f1-white);
+    background: var(--f1-dark);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+}
+.battle-info { min-width: 0; }
+.battle-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.battle-bar-track { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); margin-top: 6px; overflow: hidden; }
+.battle-bar { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+.battle-pts {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    font-variant-numeric: tabular-nums;
+}
+.battle-pts span { font-size: 0.7rem; font-weight: 300; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.6); margin-left: 4px; }

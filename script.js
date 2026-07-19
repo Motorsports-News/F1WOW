@@ -1596,3 +1596,48 @@ function initAnalyticsEvents() {
 }
 
 document.addEventListener('DOMContentLoaded', initAnalyticsEvents);
+
+// ============================================
+// CHAMPIONSHIP BATTLE BAND (homepage)
+// ============================================
+async function initChampionshipBand() {
+    const band = document.getElementById('championshipBand');
+    if (!band) return;
+    const TEAM_HEX = {
+        'Mercedes': '#27F4D2', 'Ferrari': '#F91536', 'McLaren': '#FF8700',
+        'Red Bull': '#3671C6', 'Red Bull Racing': '#3671C6', 'Alpine F1 Team': '#FF87BC',
+        'Alpine': '#FF87BC', 'RB F1 Team': '#5E8FAA', 'Haas F1 Team': '#B6BABD',
+        'Williams': '#64C4FF', 'Audi': '#C92D4B', 'Sauber': '#C92D4B', 'Aston Martin': '#229971'
+    };
+    try {
+        const data = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
+        const standings = data?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
+        if (!standings || !standings.length) throw new Error('No standings');
+        const top = standings.slice(0, 3);
+        const lead = parseFloat(top[0].points) || 1;
+        band.innerHTML = top.map(d => {
+            const team = d.Constructors?.[0]?.name || '';
+            const color = TEAM_HEX[team] || '#B6BABD';
+            return `
+            <div class="battle-row">
+                <div class="battle-pos">${sanitizeHTML(d.position)}</div>
+                <div class="battle-info">
+                    <div class="battle-name">${sanitizeHTML(d.Driver.givenName + ' ' + d.Driver.familyName)} <span style="color:${color}; font-size:0.8rem; font-weight:600;">${sanitizeHTML(team)}</span></div>
+                    <div class="battle-bar-track"><div class="battle-bar" style="width:0; background:${color}"></div></div>
+                </div>
+                <div class="battle-pts">${sanitizeHTML(d.points)}<span>PTS</span></div>
+            </div>`;
+        }).join('');
+        // animate bars in
+        requestAnimationFrame(() => {
+            band.querySelectorAll('.battle-bar').forEach((bar, i) => {
+                bar.style.width = ((parseFloat(top[i].points) / lead) * 100).toFixed(1) + '%';
+            });
+        });
+    } catch (e) {
+        const wrap = band.closest('.battle-band');
+        if (wrap) wrap.setAttribute('hidden', '');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initChampionshipBand);

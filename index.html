@@ -88,7 +88,24 @@
         .hero-speed-lines { transform: translateZ(-30px) scale(1.04); }
         .hero-content { transform: translateZ(50px); }
         /* Drop CTA buttons down onto the track */
-        .hero-cta { margin-top: 64px; }
+        /* Hero = flex column: title block centered, CTAs flush at the bottom edge */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+        }
+        .hero-section > .container {
+            margin-top: 0;        /* title block at the very top */
+            margin-bottom: auto;  /* all remaining space stays open for the car */
+        }
+        .hero-section > .container .hero-content { padding-top: 10px; }
+        .hero-section .hero-cta {
+            position: relative;
+            z-index: 6;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 0;
+            padding: 0 20px 0;    /* buttons flush on the bottom edge */
+        }
 
         /* Race track the car drives on */
         .track {
@@ -224,29 +241,11 @@
                     <span class="hero-badge"><span>2026 Season</span></span>
                     <h1 class="hero-title">F1WOW NEWS</h1>
                     <p class="hero-subtitle">Motorsports News, Results & Analysis</p>
-                    <div class="countdown-group">
-                        <div class="next-race-name">🏁 Next Race</div>
-                        <div class="countdown-container" id="countdown">
-                            <div class="countdown-item">
-                                <span class="countdown-number" id="days">00</span>
-                                <span class="countdown-label">Days</span>
-                            </div>
-                            <div class="countdown-item">
-                                <span class="countdown-number" id="hours">00</span>
-                                <span class="countdown-label">Hours</span>
-                            </div>
-                            <div class="countdown-item">
-                                <span class="countdown-number" id="minutes">00</span>
-                                <span class="countdown-label">Mins</span>
-                            </div>
-                            <div class="countdown-item">
-                                <span class="countdown-number" id="seconds">00</span>
-                                <span class="countdown-label">Secs</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- CTA Buttons -->
-                    <div class="hero-cta">
+                </div>
+            </div>
+        
+            <!-- CTA Buttons: bottom of hero, above the race strip -->
+<div class="hero-cta">
                         <a href="#articles" class="cta-btn cta-primary">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
                             Latest News
@@ -264,9 +263,22 @@
                             Calendar
                         </a>
                     </div>
-                </div>
-            </div>
         </section>
+        <!-- Broadcast strip: next race + countdown -->
+        <div class="race-strip">
+            <div class="container race-strip-inner">
+                <span class="race-strip-label"><span class="live-dot" aria-hidden="true"></span>Next Race</span>
+                <span class="next-race-name">Loading next race...</span>
+                <div class="countdown-container" id="countdown">
+                    <div class="countdown-item"><span class="countdown-number" id="days">00</span><span class="countdown-label">Days</span></div>
+                    <div class="countdown-item"><span class="countdown-number" id="hours">00</span><span class="countdown-label">Hrs</span></div>
+                    <div class="countdown-item"><span class="countdown-number" id="minutes">00</span><span class="countdown-label">Min</span></div>
+                    <div class="countdown-item"><span class="countdown-number" id="seconds">00</span><span class="countdown-label">Sec</span></div>
+                </div>
+                <a href="race-hub.html" class="race-strip-link">Race Hub &rarr;</a>
+            </div>
+        </div>
+
 
         <div class="container content-section">
             <!-- Articles Grid -->
@@ -315,6 +327,17 @@
                     <a href="regulations-2026-article.html" class="trending-item"><span class="trending-rank">4</span><h3>2026 Regulations: What Changed and Why It Matters</h3></a>
                 </div>
             </section>
+            <!-- Championship Battle (live) -->
+            <section class="battle-band" aria-label="Championship battle">
+                <div class="battle-band-head">
+                    <h2>Championship Battle</h2>
+                    <a href="championship.html" class="battle-band-link">Full standings &amp; graph &rarr;</a>
+                </div>
+                <div class="battle-rows" id="championshipBand">
+                    <div class="loading">Loading standings...</div>
+                </div>
+            </section>
+
 
             <section class="articles-section" id="articles">
                 <div class="section-header">
