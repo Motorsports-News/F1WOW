@@ -4,7 +4,7 @@ A Formula 1 news and analysis website featuring live standings, race calendar, c
 
 ## 🌐 Live Site
 
-[https://motorsports-news.github.io/F1WOW/](https://motorsports-news.github.io/F1WOW/)
+[https://f1wownews.com/](https://f1wownews.com/)
 
 ## ✨ Features
 

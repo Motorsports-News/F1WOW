@@ -22,14 +22,14 @@ Based on the format from `alonso-vibrations-retirement.html`
     <meta name="description" content="{SEO_DESCRIPTION}">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://motorsports-news.github.io/F1WOW/{ARTICLE_FILE}">
+    <link rel="canonical" href="https://f1wownews.com/{ARTICLE_FILE}">
 
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://motorsports-news.github.io/F1WOW/{ARTICLE_FILE}">
+    <meta property="og:url" content="https://f1wownews.com/{ARTICLE_FILE}">
     <meta property="og:title" content="{ARTICLE_TITLE} - F1wow News">
     <meta property="og:description" content="{OG_DESCRIPTION}">
-    <meta property="og:image" content="https://motorsports-news.github.io/F1WOW/f1-car-hero.webp">
+    <meta property="og:image" content="https://f1wownews.com/f1-car-hero.webp">
     <meta property="og:site_name" content="F1wow News">
     <meta property="og:locale" content="en_US">
     <meta property="article:published_time" content="{YYYY-MM-DD}">
@@ -38,10 +38,10 @@ Based on the format from `alonso-vibrations-retirement.html`
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://motorsports-news.github.io/F1WOW/{ARTICLE_FILE}">
+    <meta name="twitter:url" content="https://f1wownews.com/{ARTICLE_FILE}">
     <meta name="twitter:title" content="{ARTICLE_TITLE} - F1wow News">
     <meta name="twitter:description" content="{TWITTER_DESC}">
-    <meta name="twitter:image" content="https://motorsports-news.github.io/F1WOW/f1-car-hero.webp">
+    <meta name="twitter:image" content="https://f1wownews.com/f1-car-hero.webp">
     <meta name="twitter:site" content="@f1wow">
 
     <script type="application/ld+json">

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://motorsports-news.github.io/F1WOW/sitemap.xml
+Sitemap: https://f1wownews.com/sitemap.xml

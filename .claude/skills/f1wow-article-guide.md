@@ -16,7 +16,7 @@ This skill guides the creation of F1 news articles for the F1WOW website followi
 - Sitemap: `sitemap.xml`
 - Images: `images/{article-name}-{number}.jpg`
 
-**Live URL:** `https://motorsports-news.github.io/F1WOW/`
+**Live URL:** `https://f1wownews.com/`
 
 ---
 
@@ -44,11 +44,11 @@ This skill guides the creation of F1 news articles for the F1WOW website followi
     <meta name="author" content="F1wow News">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://motorsports-news.github.io/F1WOW/{ARTICLE_FILE}">
+    <link rel="canonical" href="https://f1wownews.com/{ARTICLE_FILE}">
 
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://motorsports-news.github.io/F1WOW/{ARTICLE_FILE}">
+    <meta property="og:url" content="https://f1wownews.com/{ARTICLE_FILE}">
     <meta property="og:title" content="{OG_TITLE}">
     <meta property="og:description" content="{OG_DESCRIPTION}">
     <meta property="og:image" content="https://motorsports-news.github.io/F1WOG/images/{HERO_IMAGE}">
@@ -60,10 +60,10 @@ This skill guides the creation of F1 news articles for the F1WOW website followi
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://motorsports-news.github.io/F1WOW/{ARTICLE_FILE}">
+    <meta name="twitter:url" content="https://f1wownews.com/{ARTICLE_FILE}">
     <meta name="twitter:title" content="{TWITTER_TITLE}">
     <meta name="twitter:description" content="{TWITTER_DESC}">
-    <meta name="twitter:image" content="https://motorsports-news.github.io/F1WOW/images/{HERO_IMAGE}">
+    <meta name="twitter:image" content="https://f1wownews.com/images/{HERO_IMAGE}">
     <meta name="twitter:site" content="@f1wow">
 </head>
 ```
@@ -84,7 +84,7 @@ This skill guides the creation of F1 news articles for the F1WOW website followi
   "publisher": {
     "@type": "Organization",
     "name": "F1wow",
-    "url": "https://motorsports-news.github.io/F1WOW"
+    "url": "https://f1wownews.com"
   },
   "description": "{ARTICLE_DESCRIPTION}",
   "about": [
@@ -356,7 +356,7 @@ Add entry after index.html entry:
 
 ```xml
 <url>
-  <loc>https://motorsports-news.github.io/F1WOW/{ARTICLE_FILE}</loc>
+  <loc>https://f1wownews.com/{ARTICLE_FILE}</loc>
   <lastmod>{YYYY-MM-DD}</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.9</priority>
