@@ -586,7 +586,7 @@ body::before {
     color: var(--f1-white);
     padding: 6px 16px;
     border-radius: 12px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -603,15 +603,10 @@ body::before {
 .hero-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 3rem;
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1.1;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, var(--f1-white) 0%, var(--f1-red) 50%, var(--f1-white) 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 3s ease-in-out infinite;
+    color: var(--f1-white);
     text-transform: uppercase;
     letter-spacing: 6px;
 }
@@ -634,7 +629,7 @@ body::before {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--f1-light-gray);
     margin-bottom: 15px;
     flex-wrap: wrap;
@@ -650,7 +645,7 @@ body::before {
 }
 
 .hero-social .separator {
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.55);
     margin: 0 4px;
 }
 
@@ -761,7 +756,7 @@ body::before {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     color: var(--f1-white);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.55);
 }
 
 .cta-secondary:hover {
@@ -841,7 +836,7 @@ body::before {
 }
 
 .compact-search-container .search-icon {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
 }
@@ -858,13 +853,13 @@ body::before {
 }
 
 .compact-search-container .search-input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .search-toggle {
     background: rgba(255, 255, 255, 0.05);
     border: none;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.6);
     width: 44px;
     height: 44px;
     min-width: 44px;
@@ -974,7 +969,7 @@ body::before {
     color: var(--f1-light-gray);
     padding: 5px 12px;
     border-radius: 15px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
@@ -1071,7 +1066,7 @@ body::before {
     color: var(--f1-light-gray);
     padding: 5px 12px;
     border-radius: 15px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
@@ -1200,7 +1195,7 @@ body::before {
 
 .category-tab:hover {
     background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.55);
     color: var(--f1-white);
 }
 
@@ -1229,7 +1224,7 @@ body::before {
 
 .articles-count {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.65);
 }
 
 .articles-count span {
@@ -1378,7 +1373,7 @@ body::before {
 
 .featured-excerpt {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.6;
 }
 
@@ -1393,11 +1388,11 @@ body::before {
 .featured-event,
 .featured-driver {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.65);
 }
 
 .featured-divider {
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.55);
 }
 
 .featured-arrow {
@@ -1551,7 +1546,7 @@ body::before {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     position: relative;
     overflow: hidden;
 }
@@ -1667,7 +1662,7 @@ body::before {
     color: #000;
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -1986,7 +1981,7 @@ body::before {
     border-radius: 8px;
     font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: #fff;
@@ -2172,7 +2167,7 @@ body::before {
 }
 
 .subscribe-input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .subscribe-btn {
@@ -2538,7 +2533,7 @@ body::before {
     color: var(--f1-white);
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -2629,7 +2624,7 @@ body::before {
 }
 
 .race-badge {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     padding: 3px 8px;
     border-radius: 10px;
     text-transform: uppercase;
@@ -4360,7 +4355,7 @@ body::before {
 .graph-point-label {
     fill: var(--f1-white);
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-anchor: middle;
     pointer-events: none;
@@ -4674,7 +4669,7 @@ body::before {
     margin-bottom: 8px;
     color: var(--f1-white);
 }
-.legal-updated { color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-bottom: 30px; }
+.legal-updated { color: rgba(255, 255, 255, 0.65); font-size: 0.85rem; margin-bottom: 30px; }
 .legal-content h2 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--f1-white); }
 .legal-content p, .legal-content li { color: rgba(255, 255, 255, 0.87); line-height: 1.8; margin-bottom: 14px; }
 .legal-content ul { padding-left: 22px; }
@@ -4860,3 +4855,13 @@ body::before {
         transition: none;
     }
 }
+
+/* Related articles (shared - was per-file inline) */
+.related-articles { padding: 40px 0; background: rgba(255, 255, 255, 0.02); margin-top: 60px; }
+.related-articles h2 { font-size: 1.5rem; margin-bottom: 24px; text-align: center; }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.related-card { display: block; background: var(--f1-dark); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 18px; text-decoration: none; transition: transform 0.25s ease, border-color 0.25s ease; }
+.related-card:hover { transform: translateY(-3px); border-color: var(--f1-red); }
+.related-card h4 { color: var(--f1-white); font-size: 0.95rem; line-height: 1.4; margin-top: 8px; }
+.related-category { display: inline-block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--f1-red); font-weight: 600; }
+.related-category.breaking { color: var(--f1-yellow); }
