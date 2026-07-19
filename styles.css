@@ -4975,3 +4975,30 @@ body::before {
 
 /* Reading measure: 900px -> 760px for comfortable line length */
 .article-content { max-width: 760px; }
+
+/* Race Hub */
+.hub-section { margin: 40px 0; }
+.hub-tz-note { color: rgba(255, 255, 255, 0.55); font-size: 0.85rem; margin: -6px 0 16px; }
+.hub-sessions { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
+.hub-session {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--f1-dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px; padding: 14px 18px;
+}
+.hub-session-race { border-color: var(--f1-red); }
+.hub-session.done { opacity: 0.6; }
+.hub-session-name { font-weight: 600; min-width: 150px; }
+.hub-session-time { color: rgba(255, 255, 255, 0.75); }
+.hub-session-done { margin-left: auto; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.55); }
+.hub-podium { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; max-width: 640px; }
+.hub-podium-item {
+    background: var(--f1-dark); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px;
+}
+.hub-podium-item.pos-1 { border-color: var(--f1-yellow); }
+.hub-podium-pos { font-family: 'Orbitron', sans-serif; font-weight: 700; color: var(--f1-red); }
+.hub-podium-item.pos-1 .hub-podium-pos { color: var(--f1-yellow); }
+.hub-podium-name { font-weight: 600; }
+.hub-podium-team { font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); }
+.hub-links { display: flex; gap: 12px; flex-wrap: wrap; }
