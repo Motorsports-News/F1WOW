@@ -201,8 +201,8 @@ function displayDriverStandings(standings) {
                 <div class="team-logo ${logoClass}">${shortName}</div>
                 <div class="standing-info">
                     <div>
-                        <div class="standing-name">${driver.Driver.givenName} ${driver.Driver.familyName}</div>
-                        <div style="font-size: 0.75rem; color: var(--f1-light-gray);">${teamName}</div>
+                        <div class="standing-name">${sanitizeHTML(driver.Driver.givenName + ' ' + driver.Driver.familyName)}</div>
+                        <div style="font-size: 0.75rem; color: var(--f1-light-gray);">${sanitizeHTML(teamName)}</div>
                     </div>
                 </div>
                 <div class="standing-points">${driver.points} pts</div>
@@ -245,7 +245,7 @@ function displayConstructorStandings(standings) {
                 <div class="standing-position">${team.position}</div>
                 <div class="team-logo ${logoClass}">${shortName}</div>
                 <div class="standing-info">
-                    <div class="standing-name">${team.Constructor.name}</div>
+                    <div class="standing-name">${sanitizeHTML(team.Constructor.name)}</div>
                 </div>
                 <div class="standing-points">${team.points} pts</div>
             </div>
@@ -383,7 +383,7 @@ async function loadRaceSchedule() {
             let statusClass = '', badgeClass = '', badgeText = '';
             if (completed) {
                 statusClass = 'completed'; badgeClass = 'completed';
-                badgeText = `Winner: ${winner}`;
+                badgeText = `Winner: ${sanitizeHTML(winner)}`;
             } else if (isNext) {
                 statusClass = 'next-race'; badgeClass = 'next';
                 badgeText = 'NEXT RACE';
@@ -398,7 +398,7 @@ async function loadRaceSchedule() {
                 <a class="race-card ${statusClass}" style="${!completed ? 'cursor:default;' : ''}">
                     <div class="race-round">R${round}</div>
                     <div class="race-info">
-                        <div class="race-name">${race.raceName}</div>
+                        <div class="race-name">${sanitizeHTML(race.raceName)}</div>
                         <div class="race-date">${dateStr}</div>
                     </div>
                     <span class="race-badge ${badgeClass}">${badgeText}</span>

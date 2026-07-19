@@ -4865,3 +4865,24 @@ body::before {
 .related-card h4 { color: var(--f1-white); font-size: 0.95rem; line-height: 1.4; margin-top: 8px; }
 .related-category { display: inline-block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--f1-red); font-weight: 600; }
 .related-category.breaking { color: var(--f1-yellow); }
+
+/* Brand is a home link */
+.brand-link { text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+.brand-link:hover .brand-title { opacity: 0.85; }
+.author-link { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.author-link:hover { color: var(--f1-red); }
+
+/* Skip to content (visible on keyboard focus only) */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 10001;
+    background: var(--f1-red);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 0 0 8px 0;
+    text-decoration: none;
+    font-weight: 600;
+}
+.skip-link:focus { left: 0; }
