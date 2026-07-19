@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "generate-sitemap": "node scripts/generate-sitemap.js"
+    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "publish": "node scripts/build-home.js && node scripts/generate-sitemap.js"
   },
   "devDependencies": {
     "glob": "^13.0.6"

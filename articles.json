@@ -1,0 +1,139 @@
+{
+  "articles": [
+    {
+      "slug": "belgian-gp-2026.html",
+      "title": "Belgian GP 2026: Antonelli Wins at Spa as Russell Retirement Reshapes Title Fight",
+      "excerpt": "Sixth win of the season for the championship leader - and Hamilton snatches P2 in the standings after Russell's retirement.",
+      "date": "2026-07-19",
+      "category": "race",
+      "label": "Race Report",
+      "badge": "Sixth Win of the Season",
+      "driver": "Kimi Antonelli",
+      "event": "Belgian GP 2026",
+      "featuredTitle": "Antonelli Conquers Spa as Russell Retirement Reshapes the Title Fight"
+    },
+    {
+      "slug": "hamilton-ferrari-barcelona-win.html",
+      "title": "Lewis Hamilton Wins Barcelona GP for Ferrari - Historic First Victory",
+      "excerpt": "Seven-time champion delivers masterful performance to secure Ferrari's first win of 2026 season and dream beginning to Hamilton-Ferrari partnership...",
+      "date": "2026-06-14",
+      "category": "race",
+      "label": "Race Report",
+      "badge": "Historic First Win",
+      "driver": "Lewis Hamilton",
+      "event": "Barcelona GP 2026"
+    },
+    {
+      "slug": "canada-gp-2026.html",
+      "title": "Antonelli Makes It Five in a Row at Canadian Grand Prix",
+      "excerpt": "Mercedes star wins dramatic Montreal race as Russell retires from the lead. Hamilton and Verstappen complete the podium...",
+      "date": "2026-05-24",
+      "category": "race",
+      "label": "Race Report"
+    },
+    {
+      "slug": "lambiase-mclaren-2028.html",
+      "title": "Gianpiero Lambiase to Join McLaren from 2028 in Shock F1 Move",
+      "excerpt": "Max Verstappen's race engineer set to switch teams in stunning personnel move that could reshape Formula 1's competitive landscape...",
+      "date": "2026-04-09",
+      "category": "news",
+      "label": "Breaking News"
+    },
+    {
+      "slug": "rb-spring-edition-japanese-gp.html",
+      "title": "VCARB Unveils Stunning Spring Edition Livery for Japanese Grand Prix",
+      "excerpt": "Visa Cash App Racing Bulls F1 Team embraces Japanese culture with cherry blossom-inspired special livery for Suzuka...",
+      "date": "2026-03-21",
+      "category": "news",
+      "label": "Team Announcement"
+    },
+    {
+      "slug": "wheatley-departs-audi-f1.html",
+      "title": "Jonathan Wheatley Departs Audi F1 Team with Immediate Effect",
+      "excerpt": "Audi F1 team undergoes sudden leadership change as Wheatley leaves and Mattia Binotto assumes Team Principal role...",
+      "date": "2026-03-20",
+      "category": "news",
+      "label": "Breaking News"
+    },
+    {
+      "slug": "piastri-unwanted-record.html",
+      "title": "Unwanted Record For Oscar Piastri: First Driver with Two Consecutive Season-Opening DNS",
+      "excerpt": "The McLaren driver makes Formula 1 history for all the wrong reasons after back-to-back Did Not Start results to begin the 2026 season...",
+      "date": "2026-03-19",
+      "category": "news",
+      "label": "News"
+    },
+    {
+      "slug": "japan-gp-2026.html",
+      "title": "Japanese Grand Prix 2026: Everything You Need to Know",
+      "excerpt": "Complete guide to the 2026 Japanese Grand Prix at Suzuka Circuit. Track info, championship standings, key storylines, and what to expect from Round 3...",
+      "date": "2026-03-18",
+      "category": "news",
+      "label": "Race Preview"
+    },
+    {
+      "slug": "cancellation-article.html",
+      "title": "F1 Announces Cancellation of Bahrain and Saudi Arabian GPs",
+      "excerpt": "Formula 1 officially announces cancellation of Bahrain and Saudi Arabian GPs due to unforeseen regional circumstances...",
+      "date": "2026-03-16",
+      "category": "news",
+      "label": "Breaking News"
+    },
+    {
+      "slug": "regulations-2026-article.html",
+      "title": "F1 2026 vs 2025 Regulations: The Complete Guide",
+      "excerpt": "Power units, active aerodynamics, sustainable fuels, and new manufacturers—everything you need to know about the biggest regulatory shakeup in decades...",
+      "date": "2026-03-16",
+      "category": "technical",
+      "label": "Technical Analysis"
+    },
+    {
+      "slug": "f1-33-day-break-japan-miami.html",
+      "title": "Formula 1 Faces 33-Day Break: Japan to Miami Gap Explained",
+      "excerpt": "F1 will have a 33-day break from Japanese GP to Miami GP - one week longer than the typical summer break due to cancelled races...",
+      "date": "2026-03-16",
+      "category": "news",
+      "label": "F1 Calendar"
+    },
+    {
+      "slug": "verstappen-article.html",
+      "title": "Verstappen Criticizes 2026 F1 Cars: 'It's a Joke'",
+      "excerpt": "Max Verstappen launches scathing attack on new 2026 regulations, calling the future of F1 'a joke' after Chinese GP...",
+      "date": "2026-03-15",
+      "category": "news",
+      "label": "News"
+    },
+    {
+      "slug": "alonso-vibrations-retirement.html",
+      "title": "Alonso Retires from Chinese GP: 'I Couldn't Feel My Hands'",
+      "excerpt": "Severe vibrations force Aston Martin driver out of Chinese Grand Prix as Alonso questions team's \"artificial\" measures...",
+      "date": "2026-03-15",
+      "category": "news",
+      "label": "Race Report"
+    },
+    {
+      "slug": "antonelli-maiden-win.html",
+      "title": "Kimi Antonelli Wins Maiden Formula 1 Race at Chinese Grand Prix",
+      "excerpt": "Mercedes youngster claims historic first victory as Hamilton secures first Ferrari podium in dramatic Shanghai race...",
+      "date": "2026-03-15",
+      "category": "race",
+      "label": "Race Report"
+    },
+    {
+      "slug": "china-gp.html",
+      "title": "Chinese Grand Prix 2026: Full Results &amp; Championship Standings",
+      "excerpt": "Complete results from Shanghai including sprint race, and updated championship standings after round 2.",
+      "date": "2026-03-15",
+      "category": "race",
+      "label": "Race Report"
+    },
+    {
+      "slug": "australia-gp.html",
+      "title": "Australian Grand Prix 2026: Season Opener Results",
+      "excerpt": "George Russell wins the 2026 season opener in Melbourne - full qualifying and race results from Albert Park.",
+      "date": "2026-03-08",
+      "category": "race",
+      "label": "Race Report"
+    }
+  ]
+}
