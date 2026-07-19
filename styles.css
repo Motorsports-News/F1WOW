@@ -183,7 +183,7 @@ body::before {
     align-items: center;
 }
 
-.brand h1 {
+.brand h1, .brand .brand-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 2.2rem;
     font-weight: 400;
@@ -2665,7 +2665,7 @@ body::before {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .brand h1 {
+    .brand h1, .brand .brand-title {
         font-size: 1.3rem;
     }
 
@@ -4619,3 +4619,114 @@ body::before {
     clip: auto;
     white-space: normal;
 }
+
+/* ============================================
+   FOOTER (site-wide, added 2026-07-18)
+   ============================================ */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 30px;
+    padding: 40px 0 30px;
+    text-align: left;
+}
+.footer-col { display: flex; flex-direction: column; gap: 10px; }
+.footer-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--f1-white);
+}
+.footer-tagline { color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; line-height: 1.5; }
+.footer-heading {
+    font-weight: 600;
+    color: var(--f1-white);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+.footer-col a {
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+.footer-col a:hover { color: var(--f1-red); }
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 0;
+}
+.footer-bottom p { color: rgba(255, 255, 255, 0.45); font-size: 0.8rem; line-height: 1.6; margin: 0; }
+@media (max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Legal / info pages */
+.legal-content {
+    max-width: 760px;
+    margin: 40px auto 60px;
+    padding: 0 20px;
+}
+.legal-content h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: var(--f1-white);
+}
+.legal-updated { color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-bottom: 30px; }
+.legal-content h2 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--f1-white); }
+.legal-content p, .legal-content li { color: rgba(255, 255, 255, 0.87); line-height: 1.8; margin-bottom: 14px; }
+.legal-content ul { padding-left: 22px; }
+.legal-content a { color: var(--f1-red); }
+
+/* Contact form */
+.contact-form { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 20px; }
+.contact-form label { font-weight: 600; color: var(--f1-white); margin-top: 10px; font-size: 0.9rem; }
+.contact-form input, .contact-form select, .contact-form textarea {
+    background: var(--f1-dark);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--f1-white);
+    font-family: inherit;
+    font-size: 1rem;
+}
+.contact-form input:focus-visible, .contact-form select:focus-visible, .contact-form textarea:focus-visible {
+    outline: 2px solid var(--f1-red);
+    outline-offset: 2px;
+}
+.contact-form button { margin-top: 16px; align-self: flex-start; }
+
+/* Cookie consent banner */
+.cookie-banner {
+    position: fixed;
+    left: 16px; right: 16px; bottom: 16px;
+    z-index: 10000;
+    background: var(--f1-dark);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    max-width: 720px;
+    margin: 0 auto;
+}
+.cookie-banner p { color: rgba(255, 255, 255, 0.87); font-size: 0.9rem; line-height: 1.5; margin: 0; flex: 1 1 300px; }
+.cookie-banner a { color: var(--f1-red); }
+.cookie-banner-actions { display: flex; gap: 10px; }
+.cookie-btn {
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-height: 44px;
+}
+.cookie-btn.accept { background: var(--f1-red); border: 1px solid var(--f1-red); color: #fff; }
+.cookie-btn.decline { background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.87); }
+.cookie-btn:hover { filter: brightness(1.15); }

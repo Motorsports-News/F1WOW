@@ -2139,3 +2139,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }, 1000);
 });
+
+// ============================================
+// COOKIE CONSENT (Google Consent Mode v2)
+// ============================================
+function initCookieConsent() {
+    const KEY = 'f1wow_consent';
+    const grantAll = () => {
+        if (typeof gtag === 'function') {
+            gtag('consent', 'update', {
+                'analytics_storage': 'granted',
+                'ad_storage': 'granted',
+                'ad_user_data': 'granted',
+                'ad_personalization': 'granted'
+            });
+        }
+    };
+    const stored = localStorage.getItem(KEY);
+    if (stored === 'granted') { grantAll(); return; }
+    if (stored === 'denied') return;
+
+    const banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.setAttribute('role', 'dialog');
+    banner.setAttribute('aria-label', 'Cookie consent');
+    banner.innerHTML = `
+        <p>We use cookies for anonymous analytics to improve the site. See our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+        <div class="cookie-banner-actions">
+            <button class="cookie-btn accept" id="cookieAccept">Accept</button>
+            <button class="cookie-btn decline" id="cookieDecline">Essential only</button>
+        </div>`;
+    document.body.appendChild(banner);
+    document.getElementById('cookieAccept').addEventListener('click', () => {
+        localStorage.setItem(KEY, 'granted');
+        grantAll();
+        banner.remove();
+    });
+    document.getElementById('cookieDecline').addEventListener('click', () => {
+        localStorage.setItem(KEY, 'denied');
+        banner.remove();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initCookieConsent);
