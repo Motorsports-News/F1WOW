@@ -4730,3 +4730,133 @@ body::before {
 .cookie-btn.accept { background: var(--f1-red); border: 1px solid var(--f1-red); color: #fff; }
 .cookie-btn.decline { background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.87); }
 .cookie-btn:hover { filter: brightness(1.15); }
+
+/* ============================================
+   HEADER REFINEMENT (2026-07-18)
+   Masthead lockup + quiet nav. Overrides the
+   legacy button-style nav above.
+   ============================================ */
+.header {
+    padding: 12px 0;
+}
+.brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+.brand h1, .brand .brand-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: none;
+    -webkit-background-clip: initial;
+    -webkit-text-fill-color: initial;
+    color: var(--f1-white);
+    margin: 0;
+}
+.brand .brand-accent {
+    color: var(--f1-red);
+}
+.subtitle {
+    margin-left: 0;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+/* Quiet text link instead of chunky button */
+.header .nav {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+.header .nav-link {
+    padding: 6px 2px;
+    min-height: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.85);
+    position: relative;
+}
+.header .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: 0;
+    height: 2px;
+    background: var(--f1-red);
+    transition: right 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.header .nav-link:hover {
+    background: none;
+    box-shadow: none;
+    transform: none;
+    color: var(--f1-white);
+}
+.header .nav-link:hover::after {
+    right: 0;
+}
+/* Instagram: compact circular icon button */
+.header .nav-link-social {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.85);
+}
+.header .nav-link-social::after {
+    display: none;
+}
+.header .nav-link-social:hover {
+    background: var(--f1-red);
+    border-color: var(--f1-red);
+    color: #fff;
+    box-shadow: 0 0 16px rgba(225, 6, 0, 0.4);
+}
+/* Two-item nav fits every viewport: no hamburger needed */
+.mobile-menu-toggle {
+    display: none !important;
+}
+@media (max-width: 768px) {
+    .header .nav {
+        position: static;
+        flex-direction: row;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        background: none;
+        padding: 0;
+        gap: 16px;
+        box-shadow: none;
+        border: none;
+        width: auto;
+    }
+    .header .nav-link {
+        width: auto;
+        justify-content: center;
+    }
+    .brand h1, .brand .brand-title {
+        font-size: 1.25rem;
+    }
+    .subtitle {
+        letter-spacing: 2.5px;
+    }
+}
+@media (max-width: 420px) {
+    .subtitle {
+        display: none;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .header .nav-link::after {
+        transition: none;
+    }
+}
