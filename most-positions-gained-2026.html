@@ -497,36 +497,53 @@
         }
 
         .standings-table {
-            display: flex;
-            flex-direction: column;
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .standings-row {
-            display: grid;
-            grid-template-columns: 40px 1fr 1fr 60px;
-            gap: 12px;
-            padding: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+        .standings-table th,
+        .standings-table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            vertical-align: middle;
         }
 
-        .standings-row.header {
-            font-weight: 600;
+        .standings-table thead th {
             color: var(--f1-white);
-            border-bottom: 2px solid rgba(225, 6, 0, 0.3);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            border-bottom: 2px solid rgba(225, 6, 0, 0.35);
         }
 
-        .standings-row span {
-            color: var(--text-muted);
+        .standings-table tbody td {
+            color: rgba(255,255,255,0.85);
         }
 
-        .standings-row .position {
+        .standings-table tbody td:first-child {
             color: var(--f1-red);
-            font-weight: 600;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            width: 44px;
         }
 
-        .standings-row .points {
+        .standings-table tbody td:last-child {
             color: #27F4D2;
-            font-weight: 600;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .standings-table tbody tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+
+        @media (max-width: 600px) {
+            .standings-table th,
+            .standings-table td { padding: 9px 8px; font-size: 0.85rem; }
         }
 
         /* Share Section */
