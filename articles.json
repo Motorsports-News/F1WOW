@@ -134,6 +134,18 @@
       "date": "2026-03-08",
       "category": "race",
       "label": "Race Report"
+    },
+    {
+      "slug": "most-positions-gained-2026.html",
+      "title": "Comeback Kings of 2026: The Biggest Position Gains of the Season",
+      "excerpt": "Isack Hadjar's 15-place charge at Spa leads the 2026 comeback leaderboard. The full ranking of the season's biggest single-race position gains, with stat credit to @f1guydan.",
+      "date": "2026-07-23",
+      "category": "news",
+      "label": "Stat Attack",
+      "featuredTitle": "Comeback Kings of 2026: The Biggest Position Gains of the Season So Far",
+      "badge": "Stat Attack",
+      "driver": "Isack Hadjar",
+      "event": "2026 Season"
     }
   ]
 }
