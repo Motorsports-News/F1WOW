@@ -17,7 +17,11 @@ const fmtDate = iso => {
 };
 
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'articles.json'), 'utf8'));
-const articles = manifest.articles.slice().sort((a, b) => b.date.localeCompare(a.date));
+// newest first; break same-date ties by manifest order (last added = newest)
+const articles = manifest.articles
+    .map((a, i) => ({ a, i }))
+    .sort((x, y) => y.a.date.localeCompare(x.a.date) || y.i - x.i)
+    .map(x => x.a);
 const newest = articles[0];
 
 // sanity: every slug must exist as a file
