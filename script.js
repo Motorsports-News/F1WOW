@@ -1435,7 +1435,8 @@ function initSocialShare() {
 
 // Copy Link Function (enhanced)
 function copyArticleLink() {
-    const url = window.location.href;
+    // Share the clean, extensionless URL (GitHub Pages serves it fine)
+    const url = window.location.href.replace(/\.html(?=$|[?#])/, '').split('#')[0];
     navigator.clipboard.writeText(url).then(() => {
         const copyBtn = document.querySelector('.share-btn.copy-link');
         if (copyBtn) {
