@@ -146,6 +146,18 @@
       "badge": "Stat Attack",
       "driver": "Isack Hadjar",
       "event": "2026 Season"
+    },
+    {
+      "slug": "malaysia-f1-calendar-replacement.html",
+      "title": "Malaysia Emerges as Frontrunner to Replace Dropped F1 Round",
+      "excerpt": "With a Middle Eastern round unable to go ahead, Malaysia's Sepang circuit is a leading candidate to step in - with Turkey and Portimao also in contention, per The Race.",
+      "date": "2026-07-26",
+      "category": "news",
+      "label": "News",
+      "featuredTitle": "Malaysia Emerges as Frontrunner to Replace Dropped F1 Round",
+      "badge": "Calendar News",
+      "driver": "",
+      "event": "2026 Calendar"
     }
   ]
 }
