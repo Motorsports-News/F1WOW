@@ -385,14 +385,16 @@ function initBackToTop() {
     const backToTop = document.getElementById('backToTop');
     if (!backToTop) return;
 
-    // Show/hide button based on scroll position
+    // Show/hide button based on scroll position (passive + rAF-throttled = smooth scroll)
+    let btTicking = false;
     window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            backToTop.classList.add('visible');
-        } else {
-            backToTop.classList.remove('visible');
-        }
-    });
+        if (btTicking) return;
+        btTicking = true;
+        requestAnimationFrame(() => {
+            backToTop.classList.toggle('visible', window.pageYOffset > 300);
+            btTicking = false;
+        });
+    }, { passive: true });
 
     // Smooth scroll to top on click
     backToTop.addEventListener('click', () => {
@@ -771,7 +773,7 @@ function initReadingProgress() {
             });
             ticking = true;
         }
-    });
+    }, { passive: true });
 }
 
 function initChampionshipGraph() {
@@ -1561,13 +1563,21 @@ function initAnalyticsEvents() {
     // Scroll depth: 25/50/75/90, once each
     const marks = [25, 50, 75, 90];
     const fired = new Set();
-    window.addEventListener('scroll', () => {
-        const h = document.documentElement;
-        const pct = Math.round((h.scrollTop + window.innerHeight) / h.scrollHeight * 100);
-        marks.forEach(m => {
-            if (pct >= m && !fired.has(m)) { fired.add(m); track('scroll_depth', { percent: m }); }
+    let sdTicking = false;
+    const onScrollDepth = () => {
+        if (sdTicking) return;
+        sdTicking = true;
+        requestAnimationFrame(() => {
+            const h = document.documentElement;
+            const pct = Math.round((h.scrollTop + window.innerHeight) / h.scrollHeight * 100);
+            marks.forEach(m => {
+                if (pct >= m && !fired.has(m)) { fired.add(m); track('scroll_depth', { percent: m }); }
+            });
+            if (fired.size === marks.length) window.removeEventListener('scroll', onScrollDepth);
+            sdTicking = false;
         });
-    }, { passive: true });
+    };
+    window.addEventListener('scroll', onScrollDepth, { passive: true });
 
     // Clicks: shares, related stories, trending
     document.addEventListener('click', (e) => {
