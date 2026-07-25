@@ -170,6 +170,18 @@
       "badge": "Breaking News",
       "driver": "",
       "event": "Indian Motorsport"
+    },
+    {
+      "slug": "hungarian-gp-2026-qualifying.html",
+      "title": "Hungarian GP 2026 Qualifying: Norris Beats Hamilton to Pole by 0.012s",
+      "excerpt": "Lando Norris pipped Lewis Hamilton to pole by just 0.012s at the Hungaroring - his first pole as world champion - on a rare off-day for championship-leading Mercedes.",
+      "date": "2026-07-26",
+      "category": "race",
+      "label": "Qualifying",
+      "featuredTitle": "Twelve Thousandths: Norris Snatches Hungary Pole from Hamilton",
+      "badge": "Qualifying",
+      "driver": "Lando Norris",
+      "event": "Hungarian GP 2026"
     }
   ]
 }
