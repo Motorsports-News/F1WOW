@@ -1,4 +1,4 @@
-# Generate Hungarian GP 2026 Qualifying report
+# Generate Hungarian GP 2026 Qualifying report (v2: wider layout, embed, more depth)
 import re
 
 base = open('belgian-gp-2026.html', encoding='utf-8').read()
@@ -30,14 +30,32 @@ head = re.sub(r'"name":"Belgian[^"]*"', '"name":"Hungarian GP 2026 Qualifying"',
 head = re.sub(r'"name": "Belgian[^"]*"', '"name": "Hungarian GP 2026 Qualifying"', head)
 head = head.replace('src="script.js"', 'src="script.js?v=20260726a"')
 
-RADIO_CSS = '''
+EXTRA_CSS = '''
     <style>
-        .radio-box { background: rgba(225,6,0,0.06); border: 1px solid rgba(225,6,0,0.35); border-radius: 12px; padding: 18px 22px; margin: 26px 0; }
+        /* Qualifying report — wider layout so content fills the page */
+        .article-full .article-content { max-width: 1080px; }
+        .article-full .article-section p,
+        .article-full .article-intro p { font-size: 1.05rem; }
+        /* Team radio box */
+        .radio-box { background: rgba(225,6,0,0.06); border: 1px solid rgba(225,6,0,0.35); border-radius: 12px; padding: 18px 22px; margin: 26px 0; clear: both; }
         .radio-box-head { display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--f1-red); font-size: 0.85rem; margin-bottom: 10px; }
         .radio-box blockquote { margin: 0; font-size: 1.2rem; line-height: 1.55; color: #fff; font-style: italic; }
         .radio-box cite { display: block; margin-top: 8px; font-style: normal; font-size: 0.8rem; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; }
+        /* Inline Instagram embed, medium size, floated so text wraps and fills width */
+        .ig-embed-float { float: right; width: 340px; max-width: 100%; margin: 4px 0 18px 30px; }
+        .ig-embed-float .instagram-media { min-width: 0 !important; width: 100% !important; margin: 0 auto !important; }
+        .ig-embed-caption { font-size: 0.78rem; color: rgba(255,255,255,0.5); text-align: center; margin-top: 6px; }
+        .article-full .article-section h2 { clear: both; }
+        @media (max-width: 768px) {
+            .ig-embed-float { float: none; width: 100%; max-width: 460px; margin: 20px auto; }
+        }
+        /* Key-facts strip */
+        .quali-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 24px 0; clear: both; }
+        .quali-fact { background: var(--f1-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px; }
+        .quali-fact .qf-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
+        .quali-fact .qf-label { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 6px; letter-spacing: 0.03em; }
     </style>'''
-head = head.replace('</head>', RADIO_CSS + '\n</head>')
+head = head.replace('</head>', EXTRA_CSS + '\n</head>')
 
 body = '''    <main class="main" id="main">
         <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -53,24 +71,41 @@ body = '''    <main class="main" id="main">
                         <span class="article-category">Qualifying</span>
                         <span class="article-date"><time datetime="''' + DATE + '''">July 26, 2026</time></span>
                     </div>
-                    <h1 class="article-title-full">Twelve Thousandths: Norris Snatches Hungary Pole from Hamilton in Qualifying Thriller</h1>
-                    <p class="article-subtitle-full">Lando Norris edged Lewis Hamilton by a barely-believable 0.012s to take pole for the Hungarian Grand Prix &mdash; his first since becoming world champion &mdash; as Mercedes endured its scrappiest qualifying of the 2026 season.</p>
+                    <h1 class="article-title-full">Twelve Thousandths: Norris Denies Hamilton Hungary Pole in a Qualifying Classic</h1>
+                    <p class="article-subtitle-full">One-hundredth of a heartbeat separated glory from agony. Lando Norris beat Lewis Hamilton to pole at the Hungaroring by 0.012 seconds &mdash; his first as world champion &mdash; as Ferrari surged, Mercedes stumbled and Verstappen spun.</p>
                     <div class="article-meta-footer">
                         <span class="article-author">By <a href="about.html" class="author-link">F1wow Team</a></span>
-                        <span class="article-read-time">4 min read</span>
+                        <span class="article-read-time">6 min read</span>
                     </div>
                 </div>
             </div>
 
             <div class="article-content">
                 <div class="article-intro">
-                    <p><strong>BUDAPEST</strong> &mdash; It does not get closer than this. Lando Norris produced a stunning final lap at the Hungaroring to beat Lewis Hamilton to pole position by just <strong>0.012 seconds</strong>, denying the Ferrari driver a fairytale front-row headline and claiming his first pole since he was crowned world champion. On a chaotic Q3 that featured a Max Verstappen spin and a George Russell stoppage, it was McLaren's man who kept his cool when it mattered most.</p>
+                    <p><strong>BUDAPEST</strong> &mdash; It does not get closer than this. Lando Norris produced a stunning final lap at the Hungaroring to snatch pole position for the Hungarian Grand Prix from Lewis Hamilton by just <strong>0.012 seconds</strong> &mdash; the width of a visor, the blink of an eye, the difference between the front of the grid and the frustration of second. It is Norris's first pole since he was crowned world champion, and it arrived on an afternoon of pure theatre: a Verstappen spin, a Russell stoppage, a Ferrari revival and, most strikingly, the first genuinely off-colour qualifying of the season for runaway championship leaders Mercedes.</p>
+                </div>
+
+                <div class="quali-facts" aria-label="Qualifying key facts">
+                    <div class="quali-fact"><div class="qf-num">0.012s</div><div class="qf-label">Norris's pole margin over Hamilton</div></div>
+                    <div class="quali-fact"><div class="qf-num">1:17.207</div><div class="qf-label">Pole lap time</div></div>
+                    <div class="quali-fact"><div class="qf-num">~50&deg;C</div><div class="qf-label">Track temperature</div></div>
+                    <div class="quali-fact"><div class="qf-num">4th</div><div class="qf-label">Best Mercedes (Antonelli)</div></div>
+                </div>
+
+                <div class="article-section">
+                    <h2><span class="section-icon">\U0001F5D3️</span> A Ferrari Friday That Became a McLaren Saturday</h2>
+                    <div class="ig-embed-float">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DbOFrxXCMbm/" data-instgrm-version="14" style="background:#FFF; border-radius:8px; width:100%;"></blockquote>
+                        <p class="ig-embed-caption">Qualifying reaction &mdash; via <a href="https://instagram.com/f1wow" target="_blank" rel="noopener">@f1wow</a></p>
+                    </div>
+                    <p>For much of the weekend, this looked like Ferrari's to lose. It was a "Ferrari Friday" in Budapest: Charles Leclerc topped opening practice before Hamilton led the way in FP2, and many in the paddock &mdash; McLaren team principal Andrea Stella among them, as reported &mdash; had installed the Scuderia as weekend favourites.</p>
+                    <p>Then Saturday flipped the script. Norris hauled McLaren's upgraded car to the top of final practice, edging Hamilton and Antonelli, and suddenly the question was whether he could convert that pace into the team's first non-Mercedes pole of 2026. He could. In brutal conditions &mdash; around 26&deg;C in the air and a searing track temperature approaching 50&deg;C that left tyres screaming by the final corner &mdash; Norris found two-hundredths where it counted.</p>
                 </div>
 
                 <div class="article-section">
                     <h2><span class="section-icon">\U0001F3C6</span> The Pole Lap: 0.012s of Daylight</h2>
-                    <p>Hamilton had looked set for a remarkable pole, fastest through the first and final sectors and provisionally clear of the field &mdash; the timing screens flagging that he was on course to become the oldest polesitter in more than four decades. But Norris, running one of the last laps of the session, found just enough. A 1:17.207 put him twelve-thousandths of a second ahead: the width of a visor, and the difference between P1 and P2.</p>
-                    <p>Charles Leclerc completed a stellar showing for the front two rows in third, with championship leader Kimi Antonelli fourth. The drama peaked in the closing seconds as Russell stopped on track, triggering double waved yellows &mdash; but Norris had already crossed the line, his pole safe.</p>
+                    <p>Hamilton looked, for a few electric minutes, to be on course for a fairytale. Fastest through the opening and final sectors, he held provisional pole after the first Q3 runs &mdash; the timing graphics noting he was on the verge of becoming the oldest polesitter in more than four decades, and in the famous number 44. But Norris was the only driver who managed to improve on his final flying lap. A 1:17.207 nudged him ahead by twelve-thousandths of a second, and pole was gone from Hamilton's grasp.</p>
+                    <p>Behind them, Leclerc capped Ferrari's recovery with third, and championship leader Kimi Antonelli could only manage fourth. The tension peaked in the dying seconds as George Russell stopped on track, bringing out double waved yellows &mdash; but Norris had already banked his lap, and his pole was safe.</p>
                 </div>
 
                 <div class="article-section">
@@ -92,23 +127,23 @@ body = '''    <main class="main" id="main">
                             </tbody>
                         </table>
                     </div>
-                    <p style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Eliminated in Q2 (11&ndash;16): Lawson, Gasly, Colapinto, Bortoleto, Ocon, Alonso. Eliminated in Q1 (17&ndash;22): Bearman, Sainz, Albon, Stroll, Bottas, Perez. <em>Classification provisional pending stewards.</em></p>
+                    <p style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Eliminated in Q2 (11&ndash;16): Lawson, Gasly, Colapinto, Bortoleto, Ocon, Alonso. Eliminated in Q1 (17&ndash;22): Bearman, Sainz, Albon, Stroll, Bottas, Perez. <em>Classification provisional pending FIA stewards.</em></p>
                 </div>
 
                 <div class="article-section">
-                    <h2><span class="section-icon">\U0001F4C9</span> Mercedes' First Off-Day</h2>
-                    <p>For a team that has set the pace for much of 2026, this was a jarring result. Antonelli, who arrives in Hungary with a commanding championship lead, could manage only fourth, while Russell's session ended with his car stopped on circuit &mdash; leaving him seventh and Mercedes without a genuine crack at pole for the first time this year. On a weekend where McLaren's upgraded car finally clicked, the Silver Arrows looked, for once, beatable.</p>
+                    <h2><span class="section-icon">\U0001F4C9</span> Mercedes' First Real Off-Day</h2>
+                    <p>For a team that has dominated the 2026 season, this was a genuine jolt. Antonelli, who arrives in Hungary with a commanding lead in the drivers' standings, could extract only fourth from a car that has routinely fought for pole. Team-mate Russell, meanwhile, saw his session end prematurely with his car stopped on circuit, leaving him seventh on the grid. It is the first weekend all year that the Silver Arrows have been locked out of the front-row conversation &mdash; and it could hardly have come at a more overtaking-averse venue.</p>
                 </div>
 
                 <div class="article-section">
-                    <h2><span class="section-icon">\U0001F3CE️</span> Verstappen Spin, Leclerc's Escape</h2>
-                    <p>It was a session that kept everyone honest. Verstappen spun on his final effort in Q3 and had to settle for sixth, unable to string together the lap the Red Bull was capable of. Earlier, Leclerc had a heart-in-mouth Q2, dropping into the elimination zone before hauling himself back up to finish second in the segment and dodge a shock early exit &mdash; before going on to qualify a strong third.</p>
-                    <p>There was reason to cheer further back, too: Fernando Alonso reached Q2 for the first time this season, a small but welcome step for Aston Martin.</p>
+                    <h2><span class="section-icon">\U0001F3CE️</span> Verstappen's Spin and Leclerc's Great Escape</h2>
+                    <p>Max Verstappen will rue what might have been. The Red Bull driver spun on his final Q3 attempt and had to settle for sixth, unable to deliver the lap his car looked capable of on a knife-edge afternoon. Earlier, Leclerc had produced a scare and a save of his own: he slipped into the Q2 drop zone before dragging himself back to finish second in the segment, dodging a shock early exit that would have been unthinkable given where he ended up on the grid.</p>
+                    <p>There was encouragement further down the order, too. Fernando Alonso reached Q2 for the first time this season &mdash; a modest but meaningful sign of progress for Aston Martin.</p>
                 </div>
 
                 <div class="article-section">
                     <h2><span class="section-icon">\U0001F4FB</span> Star of the Underdogs: Arvid Lindblad</h2>
-                    <p>The breakout name of the session was Arvid Lindblad, who dragged his Racing Bulls into the top-10 shootout and lined up ninth &mdash; a superb effort at a track that rewards commitment. His radio message on the way into Q3 summed up the mood in the garage:</p>
+                    <p>The breakout performer of the session was Arvid Lindblad. The Racing Bulls rookie hustled his car into the top-10 shootout and lined up a superb ninth &mdash; exactly the kind of committed, fearless lap the Hungaroring rewards. His radio message on the way into Q3 captured the belief in the garage:</p>
                     <figure class="radio-box">
                         <figcaption class="radio-box-head">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
@@ -117,17 +152,18 @@ body = '''    <main class="main" id="main">
                         <blockquote>"For me we seem genuinely competitive, so let's throw everything at it."</blockquote>
                         <cite>&mdash; Arvid Lindblad, on the run into Q3</cite>
                     </figure>
-                    <p>Nico Hulkenberg made it two surprise names in Q3, rounding out the top 10 for Haas.</p>
+                    <p>He was not the only surprise name in the pole shootout: Nico Hulkenberg dragged his Haas into Q3 as well, rounding out the top 10 and underlining a scrappy, unpredictable session up and down the field.</p>
                 </div>
 
                 <div class="article-section">
                     <h2><span class="section-icon">\U0001F52E</span> What It Means for Sunday</h2>
-                    <p>The Hungaroring is notoriously difficult to overtake on, which makes Norris's pole hugely valuable &mdash; track position here is worth more than almost anywhere else on the calendar. But with Hamilton alongside him on the front row by a fingernail, two Ferraris in the mix, and Antonelli looking to protect his title lead, Sunday promises a tense afternoon. Follow it live on our <a href="race-hub.html">Race Hub</a>, and see how the title race stands on the <a href="championship.html">championship standings and graph</a>.</p>
+                    <p>Pole at the Hungaroring is worth its weight in gold. This is one of the hardest circuits on the calendar to overtake around &mdash; track position is everything, and clean air off the line can decide the race. That makes Norris's front-row lockout with Hamilton a tantalising prospect: a McLaren and a Ferrari, separated by twelve-thousandths, leading the field into Turn 1.</p>
+                    <p>With two Ferraris in the top three, a wounded Mercedes looking to salvage the weekend, and Antonelli determined to protect his title lead, Sunday has all the ingredients of a classic. Follow it live on our <a href="race-hub.html">Race Hub</a>, track the fight for the crown on the <a href="championship.html">championship standings and graph</a>, and see the full schedule on our <a href="calendar.html">2026 calendar</a>.</p>
                 </div>
 
                 <div class="article-section">
                     <h2><span class="section-icon">\U0001F517</span> Sources</h2>
-                    <p style="color: rgba(255,255,255,0.7); font-size:0.9rem;">Live session timing and classification. Corroborating coverage: <a href="https://www.autosport.com/f1/live-text/f1-hungarian-gp-live-commentary-and-updates-qualifying-1127473/1127473/" target="_blank" rel="noopener">Autosport live</a>, <a href="https://www.planetf1.com/news/f1-results-hungarian-grand-prix-2026-qualifying" target="_blank" rel="noopener">PlanetF1</a>. Results provisional pending FIA stewards.</p>
+                    <p style="color: rgba(255,255,255,0.7); font-size:0.9rem;">Live session timing and classification, with corroborating coverage from <a href="https://www.autosport.com/f1/live-text/f1-hungarian-gp-live-commentary-and-updates-qualifying-1127473/1127473/" target="_blank" rel="noopener">Autosport</a>, <a href="https://racingnews365.com/live-2026-f1-hungarian-grand-prix-budapest-qualifying" target="_blank" rel="noopener">RacingNews365</a> and <a href="https://www.planetf1.com/news/f1-live-2026-hungarian-grand-prix-qualifying-updates" target="_blank" rel="noopener">PlanetF1</a>. Results provisional pending FIA stewards.</p>
                 </div>
 ''' + share.rstrip() + '''
             </div>
@@ -165,5 +201,8 @@ body = body.replace('text=Belgian GP 2026: Antonelli Wins at Spa as Russell Reti
                     'text=Norris beats Hamilton to Hungary pole by 0.012s')
 
 out = head + body + tail
+# ensure embed.js loader present
+if 'instagram.com/embed.js' not in out:
+    out = out.replace('</body>', '    <script async src="https://www.instagram.com/embed.js"></script>\n</body>')
 open(SLUG, 'w', encoding='utf-8').write(out)
 print('written', SLUG, len(out), 'bytes')
