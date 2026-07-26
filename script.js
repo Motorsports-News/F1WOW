@@ -140,7 +140,7 @@ function displayDriverStandings(standings) {
         const shortName = teamShortNames[teamName] || teamName.substring(0, 3).toUpperCase();
 
         return `
-            <div class="standing-item">
+            <a class="standing-item" href="driver-${encodeURIComponent(driver.Driver.driverId)}.html">
                 <div class="standing-position">${driver.position}</div>
                 <div class="team-logo ${logoClass}">${shortName}</div>
                 <div class="standing-info">
@@ -150,7 +150,8 @@ function displayDriverStandings(standings) {
                     </div>
                 </div>
                 <div class="standing-points">${driver.points} pts</div>
-            </div>
+                <svg class="standing-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
         `;
     }).join('');
     container.innerHTML = html;
@@ -185,14 +186,15 @@ function displayConstructorStandings(standings) {
         const shortName = teamShortNames[team.Constructor.name] || team.Constructor.name.substring(0, 3).toUpperCase();
 
         return `
-            <div class="standing-item">
+            <a class="standing-item" href="team-${encodeURIComponent(team.Constructor.constructorId)}.html">
                 <div class="standing-position">${team.position}</div>
                 <div class="team-logo ${logoClass}">${shortName}</div>
                 <div class="standing-info">
                     <div class="standing-name">${sanitizeHTML(team.Constructor.name)}</div>
                 </div>
                 <div class="standing-points">${team.points} pts</div>
-            </div>
+                <svg class="standing-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
         `;
     }).join('');
     container.innerHTML = html;

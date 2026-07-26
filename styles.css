@@ -5428,3 +5428,62 @@ body { font-size: 1rem; }
 .roster-pts { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--f1-white); font-variant-numeric: tabular-nums; }
 .roster-pts small { font-size: 0.65rem; font-weight: 300; color: rgba(255,255,255,0.5); margin-left: 3px; }
 @media (max-width: 600px) { .profile-num { opacity: 0.1; } }
+
+/* ============================================================
+   STANDINGS ROWS AS PROFILE LINKS (2026-07-26)
+   ============================================================ */
+a.standing-item { text-decoration: none; color: inherit; cursor: pointer; }
+a.standing-item .standing-chevron { margin-left: 8px; color: rgba(255, 255, 255, 0.3); flex-shrink: 0; transition: transform 0.2s ease, color 0.2s ease; }
+a.standing-item:hover { background: rgba(225, 6, 0, 0.06); }
+a.standing-item:hover .standing-chevron { color: var(--f1-red); transform: translateX(3px); }
+a.standing-item:hover .standing-name { color: var(--f1-red); }
+
+/* ============================================================
+   "HOW TO WATCH F1" GUIDE PAGES — clean, scannable layout
+   ============================================================ */
+.watch-wrap { max-width: 940px; margin: 0 auto; padding: 8px 20px 56px; }
+.watch-lead { font-size: 1.15rem; color: var(--text-muted); line-height: 1.7; max-width: 62ch; margin: 6px 0 8px; }
+.watch-h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+    letter-spacing: 0.01em;
+    margin: 46px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--f1-white);
+}
+.watch-h2::before {
+    content: '';
+    width: 34px; height: 5px; flex-shrink: 0; border-radius: 1px;
+    background: repeating-linear-gradient(90deg, var(--f1-red) 0 8px, #f4f4f4 8px 16px);
+}
+.watch-sub { color: var(--text-muted); line-height: 1.7; max-width: 62ch; margin-bottom: 8px; }
+.watch-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; margin-top: 22px; }
+.watch-card {
+    background: var(--f1-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 22px 24px;
+}
+.watch-card.featured { background: linear-gradient(135deg, rgba(225, 6, 0, 0.13), var(--f1-dark) 60%); border-color: rgba(225, 6, 0, 0.4); }
+.watch-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.watch-flag { font-size: 1.5rem; line-height: 1; }
+.watch-card h3 { font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; font-weight: 800; font-size: 1.35rem; color: var(--f1-white); }
+.watch-badges { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 12px; }
+.watch-badge { display: inline-block; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 999px; }
+.watch-badge.live { background: var(--f1-red); color: #fff; }
+.watch-badge.free { background: var(--positive); color: #08210f; }
+.watch-badge.global { background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--border-color); }
+.watch-card p { color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; margin: 0; }
+.watch-card .opt { margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; }
+.watch-card .opt strong { color: var(--f1-white); }
+.watch-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 4px; }
+.watch-chip { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color); border-radius: 999px; padding: 9px 15px; font-size: 0.85rem; color: var(--f1-white); }
+.watch-price { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.watch-price .p { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--f1-white); }
+.watch-price .l { color: var(--text-muted); font-size: 0.9rem; }
+.watch-note { color: rgba(255, 255, 255, 0.62); font-size: 0.88rem; font-style: italic; border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 30px; }
+.watch-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
