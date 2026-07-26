@@ -5487,3 +5487,14 @@ a.standing-item:hover .standing-name { color: var(--f1-red); }
 .watch-price .l { color: var(--text-muted); font-size: 0.9rem; }
 .watch-note { color: rgba(255, 255, 255, 0.62); font-size: 0.88rem; font-style: italic; border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 30px; }
 .watch-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+/* Hub page h1 (drivers/teams) — match section-header treatment */
+.section-header h1.hub-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--f1-white);
+    margin: 0;
+}

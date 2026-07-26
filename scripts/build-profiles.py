@@ -225,7 +225,7 @@ drivers_body = f'''        <nav class="breadcrumb" aria-label="Breadcrumb">
             <a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Drivers</span>
         </nav>
         <div class="container">
-            <div class="section-header"><h2>2026 F1 Drivers</h2></div>
+            <div class="section-header"><h1 class="hub-title">2026 F1 Drivers</h1></div>
             <div class="roster-grid">
 {chr(10).join(driver_card(d) for d in drivers)}
             </div>
@@ -246,7 +246,7 @@ teams_body = f'''        <nav class="breadcrumb" aria-label="Breadcrumb">
             <a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Teams</span>
         </nav>
         <div class="container">
-            <div class="section-header"><h2>2026 F1 Teams</h2></div>
+            <div class="section-header"><h1 class="hub-title">2026 F1 Teams</h1></div>
             <div class="roster-grid">
 {chr(10).join(team_card(t) for t in teams)}
             </div>
