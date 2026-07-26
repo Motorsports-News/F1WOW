@@ -508,15 +508,6 @@ body::before {
     pointer-events: none;
 }
 
-@keyframes stripeMove {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    100% {
-        transform: translate(50px, 50px) rotate(0deg);
-    }
-}
-
 /* Asphalt Texture Overlay */
 .hero-section {
     background-image:
@@ -548,15 +539,6 @@ body::before {
     pointer-events: none;
     box-shadow: 0 -2px 30px rgba(225, 6, 0, 0.4);
     /* animation retired (Stage 3): calm the page */
-}
-
-@keyframes heroGlow {
-    0%, 100% {
-        box-shadow: 0 -2px 30px rgba(225, 6, 0, 0.3);
-    }
-    50% {
-        box-shadow: 0 -2px 50px rgba(225, 6, 0, 0.6);
-    }
 }
 
 @keyframes glowPulse {
@@ -1552,17 +1534,6 @@ body::before {
     font-weight: 700;
 }
 
-@keyframes breakingFlash {
-    0%, 100% {
-        background: var(--f1-yellow);
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    }
-    50% {
-        background: #FFA500;
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-    }
-}
-
 /* Race Report - Green (Start/Go) */
 .preview-category:where([data-category="race"], .race-report) {
     background: var(--f1-green);
@@ -1684,11 +1655,6 @@ body::before {
 @keyframes liveDot {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(0.7); }
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
 }
 
 /* Article Card */
@@ -3926,15 +3892,6 @@ body::before {
     background: linear-gradient(135deg, #e10600, #ff1e1e);
     border-color: #e10600;
     /* animation retired (Stage 3): calm the page */
-}
-
-@keyframes pulse-glow {
-    0%, 100% {
-        box-shadow: none;
-    }
-    50% {
-        box-shadow: none;
-    }
 }
 
 .quick-nav-btn.primary:hover {
