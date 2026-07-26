@@ -32,6 +32,13 @@
     --team-alphatauri: #5E8FAA;
     --team-alfaromeo: #C92D4B;
     --team-haas: #B6BABD;
+
+    /* Semantic UI tokens (kept separate from team colours) */
+    --text-muted: rgba(255, 255, 255, 0.72);
+    --nav-bg: rgba(15, 15, 20, 0.97);
+    --border-color: rgba(255, 255, 255, 0.12);
+    --positive: #3BD66A;
+    --gold-accent: #E8C84D;
 }
 
 html {
@@ -1309,12 +1316,9 @@ body::before {
 }
 
 .featured-article:hover {
-    border-color: rgba(225, 6, 0, 0.8);
-    transform: translateY(-8px) rotateX(2deg) scale(1.01);
-    box-shadow:
-        0 30px 80px rgba(225, 6, 0, 0.5),
-        0 0 0 1px rgba(225, 6, 0, 0.3),
-        inset 0 2px 0 rgba(255, 255, 255, 0.15);
+    border-color: rgba(225, 6, 0, 0.55);
+    transform: translateY(-4px);
+    box-shadow: none;
 }
 
 .featured-badge {
@@ -1500,12 +1504,9 @@ body::before {
 }
 
 .article-preview-card:hover {
-    transform: translateY(-8px) rotateX(3deg) scale(1.02);
-    border-color: rgba(225, 6, 0, 0.5);
-    box-shadow:
-        0 20px 60px rgba(225, 6, 0, 0.4),
-        0 0 0 1px rgba(225, 6, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    border-color: rgba(225, 6, 0, 0.55);
+    box-shadow: none;
 }
 
 .article-preview-image {
@@ -1640,13 +1641,10 @@ body::before {
 .section-header h2 {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 2.2rem;
-    font-weight: 400;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 5px;
-    background: linear-gradient(135deg, var(--f1-white) 0%, var(--f1-silver) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    letter-spacing: 1px;
+    color: var(--f1-white);
 }
 
 .live-badge {
@@ -4638,7 +4636,7 @@ body::before {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 20px 0;
 }
-.footer-bottom p { color: rgba(255, 255, 255, 0.45); font-size: 0.8rem; line-height: 1.6; margin: 0; }
+.footer-bottom p { color: rgba(255, 255, 255, 0.62); font-size: 0.8rem; line-height: 1.6; margin: 0; }
 @media (max-width: 768px) {
     .footer-grid { grid-template-columns: 1fr 1fr; }
 }
@@ -4953,7 +4951,7 @@ body::before {
     gap: 10px;
     align-items: center;
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.68);
 }
 .breadcrumb a { color: rgba(255, 255, 255, 0.75); text-decoration: none; }
 .breadcrumb a:hover { color: var(--f1-red); }
@@ -5292,3 +5290,69 @@ body { font-size: 1rem; }
     background: repeating-linear-gradient(90deg, var(--f1-red) 0 12px, #f4f4f4 12px 24px);
     opacity: 0.55;
 }
+
+/* ============================================================
+   DESIGN POLISH BATCH 1 (2026-07-26) — unify article template
+   with the site design system. Higher specificity so these win
+   over the per-article inline <style> blocks without !important.
+   ============================================================ */
+/* Display type reaches the article page (kills stale Orbitron fallback) */
+.article-full .article-title-full {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.03;
+    color: var(--f1-white);
+}
+.article-full .section-header-article h2,
+.article-full .article-section h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    font-weight: 800;
+    color: var(--f1-white);
+}
+/* Section headers: drop emoji icon, lead with a kerb tick (on-brand) */
+.article-full .article-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.article-full .article-section h2 .section-icon { display: none; }
+.article-full .article-section h2::before {
+    content: '';
+    width: 34px;
+    height: 5px;
+    flex-shrink: 0;
+    border-radius: 1px;
+    background: repeating-linear-gradient(90deg, var(--f1-red) 0 8px, #f4f4f4 8px 16px);
+}
+/* Standfirst: remove the side-stripe (anti-pattern), use a top kerb + full hairline */
+.article-full .article-intro {
+    border-left: none;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    padding-top: 28px;
+}
+.article-full .article-intro::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--f1-red) 0 12px, #f4f4f4 12px 24px);
+}
+/* Body copy hierarchy: muted (not pure white), comfortable prose */
+.article-full .article-section p,
+.article-full .article-intro p { color: var(--text-muted); }
+.article-full .article-intro p { color: rgba(255, 255, 255, 0.9); }
+/* Share buttons match the site radius/transition (no 25px pills) */
+.article-full .share-btn { border-radius: 8px; }
+/* Team colour must not do generic-positive duty: gap column -> semantic green */
+.article-full .standings-table tbody td:last-child { color: var(--positive); }
+/* Contrast floors for small secondary text on dark */
+.article-full .ig-embed-caption { color: rgba(255, 255, 255, 0.68); }
+.article-full .radio-box cite,
+.article-full .quote-box cite { color: rgba(255, 255, 255, 0.65); }
