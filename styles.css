@@ -5356,3 +5356,118 @@ body { font-size: 1rem; }
 .article-full .ig-embed-caption { color: rgba(255, 255, 255, 0.68); }
 .article-full .radio-box cite,
 .article-full .quote-box cite { color: rgba(255, 255, 255, 0.65); }
+
+/* ============================================================
+   DRIVER / TEAM PROFILE PAGES (2026-07-26)
+   ============================================================ */
+.profile-hero {
+    position: relative;
+    padding: 48px 0 36px;
+    border-bottom: 1px solid var(--border-color);
+    overflow: hidden;
+}
+.profile-hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    background: var(--team, var(--f1-red));
+}
+.profile-num {
+    position: absolute;
+    right: 4%; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: clamp(6rem, 20vw, 13rem);
+    line-height: 1;
+    color: var(--team, var(--f1-red));
+    opacity: 0.14;
+    pointer-events: none;
+}
+.profile-kicker {
+    display: inline-block;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+.profile-kicker a { color: var(--team, var(--f1-red)); text-decoration: none; }
+.profile-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: 0.01em;
+    color: var(--f1-white);
+    margin-bottom: 24px;
+    text-wrap: balance;
+}
+.profile-stats { display: flex; gap: 14px; flex-wrap: wrap; }
+.profile-stat {
+    background: var(--f1-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px 26px;
+    min-width: 120px;
+}
+.ps-num {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--f1-white);
+    font-variant-numeric: tabular-nums;
+}
+.ps-label {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.6);
+}
+.profile-body { padding: 34px 20px 10px; max-width: 900px; }
+.profile-body p { color: var(--text-muted); line-height: 1.8; font-size: 1.05rem; }
+.profile-subhead {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    margin: 10px 0 16px;
+}
+.profile-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+.lineup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.lineup-card {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--f1-dark); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 16px 18px; text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.lineup-card:hover { border-color: var(--team, var(--f1-red)); transform: translateY(-2px); }
+.lineup-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.6rem; color: var(--team, var(--f1-red)); min-width: 38px; }
+.lineup-name { color: var(--f1-white); font-weight: 600; flex: 1; }
+.lineup-pts { color: rgba(255, 255, 255, 0.65); font-variant-numeric: tabular-nums; }
+/* Roster hub grid */
+.roster-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 24px 0 50px; }
+.roster-card {
+    display: grid;
+    grid-template-columns: 34px 44px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background: var(--f1-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.roster-card:hover { transform: translateY(-2px); border-color: var(--team, var(--f1-red)); }
+.roster-pos { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
+.roster-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--team, var(--f1-red)); font-variant-numeric: tabular-nums; }
+.roster-name { color: var(--f1-white); font-weight: 600; grid-column: 3; }
+.roster-team { grid-column: 3; grid-row: 2; font-size: 0.8rem; color: rgba(255,255,255,0.55); }
+.roster-pts { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--f1-white); font-variant-numeric: tabular-nums; }
+.roster-pts small { font-size: 0.65rem; font-weight: 300; color: rgba(255,255,255,0.5); margin-left: 3px; }
+@media (max-width: 600px) { .profile-num { opacity: 0.1; } }
