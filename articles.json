@@ -194,6 +194,18 @@
       "badge": "Breaking News",
       "driver": "Lewis Hamilton",
       "event": "Hungarian GP 2026"
+    },
+    {
+      "slug": "hungarian-gp-2026.html",
+      "title": "Hungarian GP 2026: Norris Historic Win on Special Anniversary Day",
+      "excerpt": "Lando Norris claims his first victory as F1 world champion on July 26, 2026 - exactly 17 years after Lewis Hamilton's first win as champion on the same date in 2009. A remarkable coincidence at the Hungaroring.",
+      "date": "2026-07-26",
+      "category": "race",
+      "label": "Race Report",
+      "badge": "Historic Win",
+      "featuredTitle": "Norris Historic Win on Special Anniversary Day at Hungarian GP",
+      "driver": "Lando Norris",
+      "event": "Hungarian GP 2026"
     }
   ]
 }
