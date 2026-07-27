@@ -149,13 +149,13 @@
     },
     {
       "slug": "malaysia-f1-calendar-replacement.html",
-      "title": "Malaysia Emerges as Frontrunner to Replace Dropped F1 Round",
-      "excerpt": "With a Middle Eastern round unable to go ahead, Malaysia's Sepang circuit is a leading candidate to step in - with Turkey and Portimao also in contention, per The Race.",
+      "title": "Malaysia Confirmed: Sepang Returns to the F1 Calendar for 2026",
+      "excerpt": "Formula 1 and the FIA have confirmed Malaysia returns at Sepang on October 2-4, 2026 - between Azerbaijan and Singapore, officially the Gulf Air Bahrain Grand Prix.",
       "date": "2026-07-26",
       "category": "news",
       "label": "News",
-      "featuredTitle": "Malaysia Emerges as Frontrunner to Replace Dropped F1 Round",
-      "badge": "Calendar News",
+      "featuredTitle": "Sepang Returns: Malaysia Confirmed on the 2026 F1 Calendar",
+      "badge": "Confirmed",
       "driver": "",
       "event": "2026 Calendar"
     },
@@ -206,6 +206,18 @@
       "badge": "Race Report",
       "driver": "Lando Norris",
       "event": "Hungarian GP 2026"
+    },
+    {
+      "slug": "f1-2026-mid-season-review.html",
+      "title": "F1 2026 Mid-Season Review: Antonelli's Six-Win Rampage at the Break",
+      "excerpt": "At the 2026 summer break, Mercedes' Kimi Antonelli leads by 50 points with six wins from eleven rounds - we analyse the title fight, the constructors, and the run-in.",
+      "date": "2026-07-27",
+      "category": "news",
+      "label": "Mid-Season Review",
+      "featuredTitle": "Halfway Home: Antonelli's Six-Win Rampage Has the 2026 Title Under Lock",
+      "badge": "Mid-Season Review",
+      "driver": "Kimi Antonelli",
+      "event": "2026 Season"
     }
   ]
 }

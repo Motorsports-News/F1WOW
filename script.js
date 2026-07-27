@@ -101,13 +101,14 @@ const RACE_SCHEDULE_2026 = [
     { round: 13, name: 'Italy', location: 'Monza', date: 'Sep 4-6', completed: false },
     { round: 14, name: 'Spain', location: 'Madrid', date: 'Sep 11-13', completed: false },
     { round: 15, name: 'Azerbaijan', location: 'Baku', date: 'Sep 24-26', completed: false },
-    { round: 16, name: 'Singapore', location: 'Marina Bay', date: 'Oct 9-11', completed: false },
-    { round: 17, name: 'United States', location: 'Austin', date: 'Oct 23-25', completed: false },
-    { round: 18, name: 'Mexico', location: 'Mexico City', date: 'Oct 30 - Nov 1', completed: false },
-    { round: 19, name: 'Brazil', location: 'São Paulo', date: 'Nov 6-8', completed: false },
-    { round: 20, name: 'Las Vegas', location: 'Las Vegas', date: 'Nov 19-21', completed: false },
-    { round: 21, name: 'Qatar', location: 'Lusail', date: 'Nov 27-29', completed: false },
-    { round: 22, name: 'Abu Dhabi', location: 'Yas Marina', date: 'Dec 4-6', completed: false }
+    { round: 16, name: 'Malaysia', location: 'Sepang', date: 'Oct 2-4', completed: false },
+    { round: 17, name: 'Singapore', location: 'Marina Bay', date: 'Oct 9-11', completed: false },
+    { round: 18, name: 'United States', location: 'Austin', date: 'Oct 23-25', completed: false },
+    { round: 19, name: 'Mexico', location: 'Mexico City', date: 'Oct 30 - Nov 1', completed: false },
+    { round: 20, name: 'Brazil', location: 'São Paulo', date: 'Nov 6-8', completed: false },
+    { round: 21, name: 'Las Vegas', location: 'Las Vegas', date: 'Nov 19-21', completed: false },
+    { round: 22, name: 'Qatar', location: 'Lusail', date: 'Nov 27-29', completed: false },
+    { round: 23, name: 'Abu Dhabi', location: 'Yas Marina', date: 'Dec 4-6', completed: false }
 ];
 
 // 2026 Grid Helper
@@ -296,6 +297,20 @@ async function loadRaceSchedule() {
         ]);
         const races = schedData?.MRData?.RaceTable?.Races || [];
 
+        // Malaysia confirmed for 2026 at Sepang (Oct 2-4), slotting between Azerbaijan and Singapore.
+        // Not yet present in the Ergast feed, so inject it and keep the list chronologically sorted.
+        // (F1/FIA confirmation, July 2026; officially titled the "Gulf Air Bahrain Grand Prix".)
+        if (!races.some(r => r.Circuit?.Location?.country === 'Malaysia')) {
+            races.push({
+                round: '16',
+                raceName: 'Malaysian Grand Prix',
+                date: '2026-10-04',
+                time: '15:00:00Z',
+                Circuit: { Location: { locality: 'Kuala Lumpur', country: 'Malaysia' } }
+            });
+        }
+        races.sort((a, b) => new Date(a.date) - new Date(b.date));
+
         let resultsMap = {};
         if (resData) {
             const raceResults = resData?.MRData?.RaceTable?.Races || [];
@@ -316,9 +331,9 @@ async function loadRaceSchedule() {
         const now = new Date();
         let nextFound = false;
 
-        const html = races.map(race => {
+        const html = races.map((race, idx) => {
             const raceDate = new Date(race.date + 'T' + (race.time || '14:00:00Z'));
-            const round = parseInt(race.round);
+            const round = idx + 1; // chronological position (Malaysia inserted before Singapore)
 
             // Use API result if available, otherwise fall back to hardcoded data
             const winner = resultsMap[race.round] || fallbackMap[race.round];
