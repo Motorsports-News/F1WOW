@@ -194,6 +194,18 @@
       "badge": "Breaking News",
       "driver": "Lewis Hamilton",
       "event": "Hungarian GP 2026"
+    },
+    {
+      "slug": "hungarian-gp-2026-race.html",
+      "title": "Hungarian GP 2026: Norris Wins from Pole - 17 Years to the Day After Hamilton's First Title-Winning Victory",
+      "excerpt": "Lando Norris converts pole into his first win since being crowned champion, at the Hungaroring - on the same July 26 date Lewis Hamilton won his first race as champion back in 2009.",
+      "date": "2026-07-26",
+      "category": "race",
+      "label": "Race Report",
+      "featuredTitle": "Norris Wins Hungarian GP From Pole, 17 Years to the Day After Hamilton's First Win as Champion",
+      "badge": "Race Report",
+      "driver": "Lando Norris",
+      "event": "Hungarian GP 2026"
     }
   ]
 }
