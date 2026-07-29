@@ -218,6 +218,18 @@
       "badge": "Mid-Season Review",
       "driver": "Kimi Antonelli",
       "event": "2026 Season"
+    },
+    {
+      "slug": "f1-2026-regulations-explained.html",
+      "title": "F1 2026 Rules Explained: A Beginner's Guide to the New Cars",
+      "excerpt": "A plain-English guide to F1's biggest rules reset in a decade - a 50% electric power unit, 350 kW MGU-K, sustainable fuel, active aero and smaller, lighter cars.",
+      "date": "2026-07-29",
+      "category": "technical",
+      "label": "Technical Explainer",
+      "featuredTitle": "F1 2026 Regulations Explained: Inside the New Generation of Cars",
+      "badge": "2026 Rules",
+      "driver": "",
+      "event": "2026 Regulations"
     }
   ]
 }
