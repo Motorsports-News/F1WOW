@@ -34,7 +34,7 @@
     --team-haas: #B6BABD;
 
     /* Semantic UI tokens (kept separate from team colours) */
-    --text-muted: rgba(255, 255, 255, 0.72);
+    --text-muted: rgba(255, 255, 255, 0.85);
     --nav-bg: rgba(15, 15, 20, 0.97);
     --border-color: rgba(255, 255, 255, 0.12);
     --positive: #3BD66A;
@@ -60,6 +60,10 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     width: 100%;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* Prevent images from causing horizontal overflow */
