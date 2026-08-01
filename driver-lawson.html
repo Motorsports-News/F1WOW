@@ -24,6 +24,12 @@
     <!-- Google AdSense -->
     <script>/* Defer AdSense until idle for faster first paint; literal tag retained in noscript for verification */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669';s.crossOrigin='anonymous';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
 <noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669" crossorigin="anonymous"></script></noscript>
+
+    <style>
+        .season-log-scroll { max-height: 420px; overflow-y: auto; border-radius: 10px; margin: 18px 0; }
+        .season-log-scroll table { margin: 0; }
+        .season-log-scroll thead th { position: sticky; top: 0; background: var(--f1-dark); z-index: 1; }
+    </style>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -71,7 +77,26 @@
             </div>
         </section>
         <div class="container profile-body">
-            <p>Liam Lawson is a New Zealander racing driver competing in the 2026 FIA Formula 1 World Championship for <a href="team-rb.html">RB F1 Team</a>, carrying car number 30. Below is the latest F1wow coverage featuring Lawson, plus live championship data.</p>
+            <p>Liam Lawson is a racing driver competing in the 2026 FIA Formula 1 World Championship for <a href="team-rb.html">RB F1 Team</a>. Across 11 races in 2026, Lawson has taken 0 podiums, with a best finish of P6.</p>
+            <h2 class="profile-subhead">2026 Season Log</h2>
+            <div class="standings-container season-log-scroll">
+                <table class="standings-table" aria-label="Liam Lawson 2026 season results">
+                    <thead><tr><th>Rd</th><th>Race</th><th>Result</th><th>Pts</th></tr></thead>
+                    <tbody>
+<tr class="standings-row"><td>1</td><td>Melbourne</td><td>P13</td><td>0</td></tr>
+<tr class="standings-row"><td>2</td><td>Shanghai</td><td>P7</td><td>6</td></tr>
+<tr class="standings-row"><td>3</td><td>Suzuka</td><td>P9</td><td>2</td></tr>
+<tr class="standings-row"><td>4</td><td>Miami</td><td>Retired</td><td>0</td></tr>
+<tr class="standings-row"><td>5</td><td>Montreal</td><td>P7</td><td>6</td></tr>
+<tr class="standings-row"><td>6</td><td>Monte Carlo</td><td>P6</td><td>8</td></tr>
+<tr class="standings-row"><td>7</td><td>Barcelona</td><td>P8</td><td>4</td></tr>
+<tr class="standings-row"><td>8</td><td>Spielberg</td><td>P9</td><td>2</td></tr>
+<tr class="standings-row"><td>9</td><td>Silverstone</td><td>P6</td><td>8</td></tr>
+<tr class="standings-row"><td>10</td><td>Spa</td><td>P12</td><td>0</td></tr>
+<tr class="standings-row"><td>11</td><td>Budapest</td><td>P8</td><td>4</td></tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="profile-links">
                 <a href="championship.html" class="quick-nav-btn primary">Full Standings &amp; Graph</a>
                 <a href="calendar.html" class="quick-nav-btn">Race Calendar</a>
