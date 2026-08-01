@@ -1669,3 +1669,95 @@ async function initChampionshipBand() {
 }
 
 document.addEventListener('DOMContentLoaded', initChampionshipBand);
+
+// ============================================
+// LIVE PROFILE SEASON LOG (driver-*.html / team-*.html)
+// Auto-detects the entity from the URL and replaces the static
+// season-log table with freshly fetched, always-current data.
+// results.json paginates at the result-entry level (not race level),
+// so a single race's classified drivers can be split across two
+// "race" objects sharing the same round number - must merge by round
+// before aggregating, or teams get double-counted per-round rows.
+// ============================================
+async function fetchMergedSeasonResults() {
+    const races = [];
+    let offset = 0, total = Infinity;
+    while (offset < total) {
+        const data = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/results.json?limit=100&offset=${offset}`);
+        total = parseInt(data.MRData.total);
+        races.push(...(data.MRData.RaceTable?.Races || []));
+        offset += 100;
+    }
+    const merged = new Map();
+    races.forEach(r => {
+        if (!merged.has(r.round)) {
+            merged.set(r.round, { ...r, Results: [...r.Results] });
+        } else {
+            merged.get(r.round).Results.push(...r.Results);
+        }
+    });
+    return Array.from(merged.values()).sort((a, b) => parseInt(a.round) - parseInt(b.round));
+}
+
+async function initProfileSeasonLog() {
+    const path = window.location.pathname;
+    const driverMatch = path.match(/driver-([a-z0-9_]+)\.html/i);
+    const teamMatch = path.match(/team-([a-z0-9_]+)\.html/i);
+    if (!driverMatch && !teamMatch) return;
+    const tbody = document.querySelector('.season-log-scroll tbody');
+    if (!tbody) return;
+
+    try {
+        const races = await fetchMergedSeasonResults();
+        let rows = '';
+
+        if (driverMatch) {
+            const driverId = driverMatch[1];
+            races.forEach(r => {
+                const label = r.Circuit?.Location?.locality || r.raceName.replace(' Grand Prix', '');
+                const res = r.Results.find(x => x.Driver.driverId === driverId);
+                if (!res) return;
+                const result = (res.status === 'Finished' || res.status.includes('Lap')) ? `P${res.position}` : sanitizeHTML(res.status);
+                rows += `<tr class="standings-row"><td>${r.round}</td><td>${sanitizeHTML(label)}</td><td>${result}</td><td>${res.points}</td></tr>`;
+            });
+            // refresh the summary sentence with live stats too
+            const finishes = [];
+            races.forEach(r => {
+                const res = r.Results.find(x => x.Driver.driverId === driverId);
+                if (res && (res.status === 'Finished' || res.status.includes('Lap'))) finishes.push(parseInt(res.position));
+            });
+            const podiums = finishes.filter(p => p <= 3).length;
+            const wins = finishes.filter(p => p === 1).length;
+            const best = finishes.length ? Math.min(...finishes) : null;
+            const summaryEl = document.querySelector('.profile-body > p');
+            if (summaryEl && best) {
+                const lastName = summaryEl.textContent.match(/^(\S+)/)?.[1] || '';
+                let facts = `Across ${races.length} races in 2026, ${lastName} has taken ${podiums} podium${podiums !== 1 ? 's' : ''}`;
+                if (wins) facts += ` and ${wins} win${wins !== 1 ? 's' : ''}`;
+                facts += `, with a best finish of P${best}.`;
+                const link = summaryEl.querySelector('a');
+                if (link) {
+                    summaryEl.innerHTML = summaryEl.innerHTML.split('</a>')[0] + '</a>. ' + facts;
+                } else {
+                    summaryEl.textContent = facts;
+                }
+            }
+        } else if (teamMatch) {
+            const teamId = teamMatch[1];
+            races.forEach(r => {
+                const label = r.Circuit?.Location?.locality || r.raceName.replace(' Grand Prix', '');
+                const teamResults = r.Results.filter(x => x.Constructor.constructorId === teamId);
+                if (!teamResults.length) return;
+                const pts = teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0);
+                const best = Math.min(...teamResults.map(x => parseInt(x.position)));
+                rows += `<tr class="standings-row"><td>${r.round}</td><td>${sanitizeHTML(label)}</td><td>P${best}</td><td>${pts}</td></tr>`;
+            });
+        }
+
+        if (rows) tbody.innerHTML = rows;
+    } catch (e) {
+        // static baked-in table (from last publish) remains as a fallback
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initProfileSeasonLog);
