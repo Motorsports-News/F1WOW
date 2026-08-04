@@ -242,6 +242,18 @@
       "badge": "Driver Market",
       "driver": "",
       "event": "2026 Formula 1 Season"
+    },
+    {
+      "slug": "f1-2027-barcelona-imola-testing-return.html",
+      "title": "Barcelona and Imola Push for 2027 F1 Return as Testing Becomes the Prize",
+      "excerpt": "Barcelona and Imola are negotiating a 2027 F1 comeback, with Barcelona favourite to host pre-season testing if Bahrain cannot go ahead amid Middle East uncertainty.",
+      "date": "2026-08-04",
+      "category": "news",
+      "label": "News",
+      "featuredTitle": "Barcelona and Imola Target F1 Return as Testing Becomes the Prize",
+      "badge": "2027 Calendar",
+      "driver": "",
+      "event": "2027 F1 Calendar"
     }
   ]
 }
