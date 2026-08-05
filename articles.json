@@ -254,6 +254,18 @@
       "badge": "2027 Calendar",
       "driver": "",
       "event": "2027 F1 Calendar"
+    },
+    {
+      "slug": "f1-highest-win-percentage-single-season.html",
+      "title": "Highest Win Percentage in an F1 Season: The All-Time Top 10",
+      "excerpt": "Verstappen's 2023 romp tops the all-time single-season win percentage list at 86.36% (19/22), ahead of Ascari (1952) and Schumacher (2004) - the full top 10 and the story behind each.",
+      "date": "2026-08-05",
+      "category": "news",
+      "label": "Stat Attack",
+      "featuredTitle": "The Most Dominant F1 Seasons Ever: Highest Win Percentages",
+      "badge": "All-Time Record",
+      "driver": "Max Verstappen",
+      "event": "F1 Records"
     }
   ]
 }
