@@ -49,3 +49,48 @@ test('computePaceStats: falls back to a sane spread with too few samples', () =>
     assert.strictEqual(pace.avgSprint, 0);
     assert.strictEqual(pace.stdSprint, 1);
 });
+
+const { runMonteCarlo } = require('../../js/championship-calc-engine.js');
+
+function seededRng(seedStart) {
+    // Deterministic LCG so the Monte Carlo test isn't flaky.
+    let seed = seedStart;
+    return function () {
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+        return seed / 0x7fffffff;
+    };
+}
+
+test('runMonteCarlo: probabilities sum to ~1.0 across all drivers', () => {
+    const drivers = [
+        { id: 'a', currentPoints: 219, eliminated: false, pace: { avgGP: 18, stdGP: 9.8, avgSprint: 5.3, stdSprint: 3 },
+          races: Array.from({ length: 11 }, (_, i) => ({ locked: false, isSprint: i === 4 })) },
+        { id: 'b', currentPoints: 169, eliminated: false, pace: { avgGP: 13.7, stdGP: 5.2, avgSprint: 4.5, stdSprint: 3 },
+          races: Array.from({ length: 11 }, (_, i) => ({ locked: false, isSprint: i === 4 })) }
+    ];
+    const probs = runMonteCarlo(drivers, 500, seededRng(42));
+    const total = Object.values(probs).reduce((a, b) => a + b, 0);
+    assert.ok(Math.abs(total - 1) < 0.01, `expected ~1.0, got ${total}`);
+});
+
+test('runMonteCarlo: a much faster driver wins the large majority of simulations', () => {
+    const drivers = [
+        { id: 'fast', currentPoints: 219, eliminated: false, pace: { avgGP: 20, stdGP: 3, avgSprint: 6, stdSprint: 1 },
+          races: Array.from({ length: 5 }, () => ({ locked: false, isSprint: false })) },
+        { id: 'slow', currentPoints: 219, eliminated: false, pace: { avgGP: 5, stdGP: 3, avgSprint: 1, stdSprint: 1 },
+          races: Array.from({ length: 5 }, () => ({ locked: false, isSprint: false })) }
+    ];
+    const probs = runMonteCarlo(drivers, 500, seededRng(7));
+    assert.ok(probs.fast > 0.9, `expected fast driver to dominate, got ${probs.fast}`);
+});
+
+test('runMonteCarlo: eliminated drivers never win', () => {
+    const drivers = [
+        { id: 'leader', currentPoints: 400, eliminated: false, pace: { avgGP: 10, stdGP: 3, avgSprint: 3, stdSprint: 1 },
+          races: [{ locked: false, isSprint: false }] },
+        { id: 'out', currentPoints: 50, eliminated: true, pace: { avgGP: 25, stdGP: 0.1, avgSprint: 8, stdSprint: 0.1 },
+          races: [{ locked: false, isSprint: false }] }
+    ];
+    const probs = runMonteCarlo(drivers, 200, seededRng(1));
+    assert.strictEqual(probs.out, 0);
+});
