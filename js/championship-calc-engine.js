@@ -59,6 +59,19 @@
         return m + z * s;
     }
 
+    // Rejection-sample a normal draw into [min, max] - NOT clamp. Clamping a raw draw
+    // biases the effective mean toward the boundary for any driver whose distribution
+    // has real mass near/above the cap (measured ~7% low for a realistic high-pace
+    // leader profile in code review) - the wrong direction for this feature, since it
+    // understates exactly the dominant drivers it needs to model credibly.
+    function boundedNormal(m, s, min, max, rng) {
+        for (let attempt = 0; attempt < 20; attempt++) {
+            const v = randNormal(m, s, rng);
+            if (v >= min && v <= max) return v;
+        }
+        return Math.max(min, Math.min(max, randNormal(m, s, rng))); // pathological fallback
+    }
+
     // Each race entry: { locked, isSprint, gpPosition?, sprintPosition? }.
     // Locked races use the user-set finishing position directly; unlocked races
     // are simulated from the driver's own pace (their actual 2026 average/spread).
@@ -69,8 +82,8 @@
                 total += gpPointsFor(race.gpPosition);
                 if (race.isSprint) total += sprintPointsFor(race.sprintPosition);
             } else {
-                total += Math.max(0, Math.min(25, randNormal(pace.avgGP, pace.stdGP, rng)));
-                if (race.isSprint) total += Math.max(0, Math.min(8, randNormal(pace.avgSprint, pace.stdSprint, rng)));
+                total += boundedNormal(pace.avgGP, pace.stdGP, 0, 25, rng);
+                if (race.isSprint) total += boundedNormal(pace.avgSprint, pace.stdSprint, 0, 8, rng);
             }
         });
         return total;
@@ -89,6 +102,12 @@
                     ? d.currentPoints
                     : d.currentPoints + simulateDriverRemainingPoints(d.races, d.pace, rng);
             });
+            // Exact float-equality tie detection is intentional here, not a bug to later
+            // "fix" with an epsilon comparison: locked races contribute exact integer point
+            // totals, and boundedNormal's rejection sampling still lets unlocked draws land
+            // exactly on 0 or 25 (or 0/8 for sprints), so real point-masses exist at those
+            // boundaries. Genuine ties between similar-pace drivers are plausible, not just
+            // theoretical - dividing a "win" across topIds below is the correct handling.
             const maxTotal = Math.max(...Object.values(totals));
             const topIds = Object.keys(totals).filter(id => totals[id] === maxTotal);
             topIds.forEach(id => { wins[id] += 1 / topIds.length; });
@@ -103,7 +122,7 @@
         gpPointsFor, sprintPointsFor,
         maxRemainingPoints, checkElimination,
         mean, stddev, computePaceStats,
-        randNormal, simulateDriverRemainingPoints, runMonteCarlo
+        randNormal, boundedNormal, simulateDriverRemainingPoints, runMonteCarlo
     };
 
     if (typeof module !== 'undefined' && module.exports) {
