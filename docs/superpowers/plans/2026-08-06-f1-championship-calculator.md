@@ -208,6 +208,8 @@ git commit -m "feat: add pace statistics (mean/stddev) to championship calc engi
 
 ### Task 3: Monte Carlo simulation engine
 
+> **AMENDED 2026-08-06, post-implementation:** the original spec below (normal-distribution sampling via `randNormal`/clamping, `pace: {avgGP, stdGP, ...}` driver fixtures) was implemented, then code review found it systematically understates high-pace leaders whose average sits close to the 25-point cap — exactly the real 2026 leader's profile. It was replaced with **empirical resampling**: each simulated race draws a random value from the driver's own real per-race points history instead of a fitted bell curve. `randNormal`/`boundedNormal` were removed as dead code; `simulateDriverRemainingPoints` and `runMonteCarlo` now take a `history: {gpHistory, sprintHistory}` object per driver instead of `pace`. See the amended design spec's Decision 3 for the full "why." **Tasks 5 and 9 below are written against the corrected `history`-based shape already** — the original `pace`-fixture code in this Task 3 section is kept only as a historical record of what was tried and superseded; do not re-implement it.
+
 **Files:**
 - Modify: `js/championship-calc-engine.js`
 - Test: `scripts/tests/championship-calc-engine.test.js`
@@ -453,7 +455,8 @@ async function loadChampionshipCalcData(topN) {
             code: s.Driver.code,
             team: s.Constructors[0].name,
             currentPoints: parseFloat(s.points),
-            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory)
+            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory), // display only (see Task 3 amendment)
+            history: { gpHistory, sprintHistory } // used by the simulation engine
         };
     });
 
@@ -866,7 +869,7 @@ function recomputeResults() {
         id: d.id,
         currentPoints: pointsNow[d.id],
         eliminated: eliminated[d.id],
-        pace: d.pace,
+        history: d.history,
         races: remaining.map(r => {
             const locked = calcState.scenario[d.id]?.[r.round];
             return locked
@@ -1001,7 +1004,8 @@ async function loadConstructorCalcData(topN) {
             code: s.Constructor.name,
             team: s.Constructor.name,
             currentPoints: parseFloat(s.points),
-            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory)
+            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory), // display only (see Task 3 amendment)
+            history: { gpHistory, sprintHistory } // used by the simulation engine
         };
     });
 
