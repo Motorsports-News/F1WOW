@@ -39,8 +39,8 @@
         return Math.sqrt(variance);
     }
 
-    // Floors keep the Monte Carlo engine from collapsing to zero variance on drivers
-    // with very few or very consistent results - some spread is always realistic in F1.
+    // Kept for display purposes only (see design spec Decision 3) - the simulation
+    // itself samples from raw history, not these fitted stats.
     // Returns { avgGP, stdGP, avgSprint, stdSprint }.
     function computePaceStats(gpPointsHistory, sprintPointsHistory) {
         const avgGP = mean(gpPointsHistory);
@@ -67,6 +67,7 @@
     // Locked races use the user-set finishing position directly; unlocked races
     // are simulated by resampling from the driver's own real 2026 per-race history.
     function simulateDriverRemainingPoints(races, history, rng) {
+        history = history || {};
         let total = 0;
         races.forEach(race => {
             if (race.locked) {
