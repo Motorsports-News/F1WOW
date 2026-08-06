@@ -63,9 +63,11 @@ function seededRng(seedStart) {
 
 test('runMonteCarlo: probabilities sum to ~1.0 across all drivers', () => {
     const drivers = [
-        { id: 'a', currentPoints: 219, eliminated: false, pace: { avgGP: 18, stdGP: 9.8, avgSprint: 5.3, stdSprint: 3 },
+        { id: 'a', currentPoints: 219, eliminated: false,
+          history: { gpHistory: [25, 18, 25, 10, 25, 18, 25, 10, 25, 18, 25], sprintHistory: [8, 6] },
           races: Array.from({ length: 11 }, (_, i) => ({ locked: false, isSprint: i === 4 })) },
-        { id: 'b', currentPoints: 169, eliminated: false, pace: { avgGP: 13.7, stdGP: 5.2, avgSprint: 4.5, stdSprint: 3 },
+        { id: 'b', currentPoints: 169, eliminated: false,
+          history: { gpHistory: [18, 15, 12, 15, 18, 10, 12, 15, 10, 12, 15], sprintHistory: [6, 4] },
           races: Array.from({ length: 11 }, (_, i) => ({ locked: false, isSprint: i === 4 })) }
     ];
     const probs = runMonteCarlo(drivers, 500, seededRng(42));
@@ -75,9 +77,11 @@ test('runMonteCarlo: probabilities sum to ~1.0 across all drivers', () => {
 
 test('runMonteCarlo: a much faster driver wins the large majority of simulations', () => {
     const drivers = [
-        { id: 'fast', currentPoints: 219, eliminated: false, pace: { avgGP: 20, stdGP: 3, avgSprint: 6, stdSprint: 1 },
+        { id: 'fast', currentPoints: 219, eliminated: false,
+          history: { gpHistory: [25, 25, 25, 25, 25], sprintHistory: [8, 8] },
           races: Array.from({ length: 5 }, () => ({ locked: false, isSprint: false })) },
-        { id: 'slow', currentPoints: 219, eliminated: false, pace: { avgGP: 5, stdGP: 3, avgSprint: 1, stdSprint: 1 },
+        { id: 'slow', currentPoints: 219, eliminated: false,
+          history: { gpHistory: [2, 4, 2, 4, 2], sprintHistory: [1, 1] },
           races: Array.from({ length: 5 }, () => ({ locked: false, isSprint: false })) }
     ];
     const probs = runMonteCarlo(drivers, 500, seededRng(7));
@@ -86,9 +90,11 @@ test('runMonteCarlo: a much faster driver wins the large majority of simulations
 
 test('runMonteCarlo: eliminated drivers never win', () => {
     const drivers = [
-        { id: 'leader', currentPoints: 400, eliminated: false, pace: { avgGP: 10, stdGP: 3, avgSprint: 3, stdSprint: 1 },
+        { id: 'leader', currentPoints: 400, eliminated: false,
+          history: { gpHistory: [10, 12, 8, 10, 12], sprintHistory: [3, 4] },
           races: [{ locked: false, isSprint: false }] },
-        { id: 'out', currentPoints: 50, eliminated: true, pace: { avgGP: 25, stdGP: 0.1, avgSprint: 8, stdSprint: 0.1 },
+        { id: 'out', currentPoints: 50, eliminated: true,
+          history: { gpHistory: [25, 25, 25], sprintHistory: [8, 8] },
           races: [{ locked: false, isSprint: false }] }
     ];
     const probs = runMonteCarlo(drivers, 200, seededRng(1));

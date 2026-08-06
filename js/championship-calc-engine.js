@@ -50,46 +50,37 @@
         return { avgGP, stdGP, avgSprint, stdSprint };
     }
 
-    function randNormal(m, s, rng) {
+    // Empirical resampling: draw a random value from the driver's own real per-race
+    // points history, instead of fitting a distribution. Naturally bounded (can only
+    // produce values the driver has actually scored) and has no shape assumption to
+    // get wrong - replaces an earlier normal-distribution approach that systematically
+    // understated drivers whose average sits close to the points cap (see design spec
+    // Decision 3 for the full story).
+    function sampleFromHistory(history, rng) {
         rng = rng || Math.random;
-        let u = 0, v = 0;
-        while (u === 0) u = rng();
-        while (v === 0) v = rng();
-        const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-        return m + z * s;
-    }
-
-    // Rejection-sample a normal draw into [min, max] - NOT clamp. Clamping a raw draw
-    // biases the effective mean toward the boundary for any driver whose distribution
-    // has real mass near/above the cap (measured ~7% low for a realistic high-pace
-    // leader profile in code review) - the wrong direction for this feature, since it
-    // understates exactly the dominant drivers it needs to model credibly.
-    function boundedNormal(m, s, min, max, rng) {
-        for (let attempt = 0; attempt < 20; attempt++) {
-            const v = randNormal(m, s, rng);
-            if (v >= min && v <= max) return v;
-        }
-        return Math.max(min, Math.min(max, randNormal(m, s, rng))); // pathological fallback
+        if (!history || !history.length) return 0;
+        const idx = Math.min(Math.floor(rng() * history.length), history.length - 1);
+        return history[idx];
     }
 
     // Each race entry: { locked, isSprint, gpPosition?, sprintPosition? }.
     // Locked races use the user-set finishing position directly; unlocked races
-    // are simulated from the driver's own pace (their actual 2026 average/spread).
-    function simulateDriverRemainingPoints(races, pace, rng) {
+    // are simulated by resampling from the driver's own real 2026 per-race history.
+    function simulateDriverRemainingPoints(races, history, rng) {
         let total = 0;
         races.forEach(race => {
             if (race.locked) {
                 total += gpPointsFor(race.gpPosition);
                 if (race.isSprint) total += sprintPointsFor(race.sprintPosition);
             } else {
-                total += boundedNormal(pace.avgGP, pace.stdGP, 0, 25, rng);
-                if (race.isSprint) total += boundedNormal(pace.avgSprint, pace.stdSprint, 0, 8, rng);
+                total += sampleFromHistory(history.gpHistory, rng);
+                if (race.isSprint) total += sampleFromHistory(history.sprintHistory, rng);
             }
         });
         return total;
     }
 
-    // drivers: [{ id, currentPoints, pace, races, eliminated }]. Eliminated drivers are
+    // drivers: [{ id, currentPoints, history, races, eliminated }]. Eliminated drivers are
     // still included in every simulated season (so probabilities across all drivers sum
     // to 1) but are locked to their current points - they can never register a "win" tie.
     function runMonteCarlo(drivers, simulations, rng) {
@@ -100,13 +91,13 @@
             drivers.forEach(d => {
                 totals[d.id] = d.eliminated
                     ? d.currentPoints
-                    : d.currentPoints + simulateDriverRemainingPoints(d.races, d.pace, rng);
+                    : d.currentPoints + simulateDriverRemainingPoints(d.races, d.history, rng);
             });
             // Exact float-equality tie detection is intentional here, not a bug to later
             // "fix" with an epsilon comparison: locked races contribute exact integer point
-            // totals, and boundedNormal's rejection sampling still lets unlocked draws land
-            // exactly on 0 or 25 (or 0/8 for sprints), so real point-masses exist at those
-            // boundaries. Genuine ties between similar-pace drivers are plausible, not just
+            // totals, and resampled history values are themselves drawn from a finite set of
+            // real (often integer) per-race point values, so real point-masses exist at
+            // shared values. Genuine ties between similar drivers are plausible, not just
             // theoretical - dividing a "win" across topIds below is the correct handling.
             const maxTotal = Math.max(...Object.values(totals));
             const topIds = Object.keys(totals).filter(id => totals[id] === maxTotal);
@@ -122,7 +113,7 @@
         gpPointsFor, sprintPointsFor,
         maxRemainingPoints, checkElimination,
         mean, stddev, computePaceStats,
-        randNormal, boundedNormal, simulateDriverRemainingPoints, runMonteCarlo
+        sampleFromHistory, simulateDriverRemainingPoints, runMonteCarlo
     };
 
     if (typeof module !== 'undefined' && module.exports) {
