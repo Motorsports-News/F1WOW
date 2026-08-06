@@ -31,3 +31,4 @@ build/
 *.tmp
 *.temp
 __pycache__/
+.superpowers/
