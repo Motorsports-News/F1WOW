@@ -266,6 +266,17 @@
       "badge": "All-Time Record",
       "driver": "Max Verstappen",
       "event": "F1 Records"
+    },
+    {
+      "slug": "f1-2026-points-system-explained.html",
+      "title": "F1 2026 Points System Explained: Try the Interactive Calculator",
+      "excerpt": "How F1 scoring works in 2026: Grand Prix and Sprint points, why the fastest-lap bonus point is gone, the red-flag scoring rule most guides miss, and an interactive calculator to work out any race weekend's points live.",
+      "date": "2026-08-06",
+      "category": "technical",
+      "label": "Technical Explainer",
+      "featuredTitle": "How F1 Points Work in 2026: The Interactive Guide",
+      "badge": "Explainer",
+      "event": "F1 Scoring Rules"
     }
   ]
 }
