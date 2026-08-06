@@ -27,10 +27,32 @@
         return bestCase < leaderPoints;
     }
 
+    function mean(arr) {
+        return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+    }
+
+    function stddev(arr, m) {
+        if (arr.length < 2) return null; // not enough samples for a real stddev
+        const variance = arr.reduce((a, b) => a + (b - m) * (b - m), 0) / (arr.length - 1);
+        return Math.sqrt(variance);
+    }
+
+    // Floors keep the Monte Carlo engine from collapsing to zero variance on drivers
+    // with very few or very consistent results - some spread is always realistic in F1.
+    // Returns { avgGP, stdGP, avgSprint, stdSprint }.
+    function computePaceStats(gpPointsHistory, sprintPointsHistory) {
+        const avgGP = mean(gpPointsHistory);
+        const stdGP = Math.max(stddev(gpPointsHistory, avgGP) || 0, 2);
+        const avgSprint = mean(sprintPointsHistory);
+        const stdSprint = Math.max(stddev(sprintPointsHistory, avgSprint) || 0, 1);
+        return { avgGP, stdGP, avgSprint, stdSprint };
+    }
+
     const ChampionshipCalc = {
         GP_POINTS, SPRINT_POINTS,
         gpPointsFor, sprintPointsFor,
-        maxRemainingPoints, checkElimination
+        maxRemainingPoints, checkElimination,
+        mean, stddev, computePaceStats
     };
 
     if (typeof module !== 'undefined' && module.exports) {
