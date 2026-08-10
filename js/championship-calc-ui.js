@@ -185,8 +185,12 @@ function decodeScenario(encoded) {
 }
 
 function updateShareUrl() {
+    // Uses the URL fragment (#s=...), not a query param - a fully-locked scenario
+    // encodes to ~13KB, and a query param is sent to the server as part of the real
+    // HTTP request line on every load (this site is served through a CDN). A hash
+    // fragment never leaves the browser, so there's no request-size risk either way.
     const url = new URL(window.location.href);
-    url.searchParams.set('s', encodeScenario());
+    url.hash = 's=' + encodeScenario();
     window.history.replaceState(null, '', url.toString());
 }
 
@@ -278,9 +282,15 @@ async function switchCalcMode(mode) {
 
 async function initChampionshipCalculator() {
     try {
-        const incoming = new URL(window.location.href).searchParams.get('s');
+        const incoming = new URLSearchParams(window.location.hash.slice(1)).get('s');
         const decoded = incoming ? decodeScenario(incoming) : null;
-        await switchCalcMode(decoded?.mode || 'drivers');
+        // Normalize rather than trust decoded.mode directly - anything other than the
+        // exact literal 'constructors' must fall back to 'drivers', otherwise a typo'd
+        // or hand-edited share link could load constructor data while calcMode itself
+        // still held the garbage string, silently desyncing carsPerEntity/table headers
+        // from what's actually on screen.
+        const decodedMode = decoded?.mode === 'constructors' ? 'constructors' : 'drivers';
+        await switchCalcMode(decodedMode);
         if (decoded?.scenario) {
             calcState.scenario = decoded.scenario;
             renderCarousel();
