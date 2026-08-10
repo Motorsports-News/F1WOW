@@ -1,6 +1,8 @@
 # Auto-generate a per-article social-share card (headline on branded background)
 # for EVERY article in articles.json, and point each article's og:image/twitter:image
 # at its own card. Runs as part of `npm run publish` so new articles get one automatically.
+# Also generates one static share card for the championship calculator (not an
+# article, not in articles.json) - see the bottom of this file.
 from PIL import Image, ImageDraw, ImageFont
 import json, os, re
 

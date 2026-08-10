@@ -1271,6 +1271,7 @@ git commit -m "feat: add championship-calculator share card to og-card generator
 - [ ] Resolve Design Spec Open Question 2 (standalone page vs. section of `championship.html`) with the user before proceeding — this plan built it as a standalone page; confirm that's still wanted.
 - [ ] Add a nav entry (footer, per `CLAUDE.md`'s "header nav is deliberately minimal... full nav lives in the footer" convention).
 - [ ] Add full SEO metadata (title/description/canonical/OG/Twitter/JSON-LD) following the same pattern used for every article this season (see `scripts/gen-points-system.py` for the reference regex-substitution approach).
+- [ ] Regenerate `og-championship-calculator.jpg` with the current leader/probability (`scripts/gen-og-cards.py`'s appended block, Task 14) before removing `noindex` — it was hardcoded from a one-time manual check and real standings will have moved on by whenever this task actually runs.
 - [ ] Decide whether this needs an `articles.json` entry (it's a tool page, not an article — probably not, but confirm) and whether it needs a homepage callout.
 - [ ] Add it to `scripts/generate-sitemap.js`'s scope if it's currently excluded as an experiment-style file, or confirm the glob already picks it up.
 - [ ] Bump the `styles.css`/`script.js` cache-bust version site-wide **only if** this work touched either shared file (it shouldn't have — everything so far is new files) — verify with `git diff --stat styles.css script.js` showing no changes before skipping this step.
