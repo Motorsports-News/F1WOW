@@ -22,6 +22,32 @@
     <script>/* Defer AdSense until idle for faster first paint; literal tag retained in noscript for verification */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669';s.crossOrigin='anonymous';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
 <noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669" crossorigin="anonymous"></script></noscript>
     <meta name="robots" content="noindex, nofollow">
+    <style>
+        .proto-section { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 22px; margin-bottom: 24px; }
+        .proto-section h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.3rem; margin-bottom: 14px; }
+        .calc-carousel-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .calc-carousel-nav button { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 1.1rem; }
+        .calc-carousel-nav button:disabled { opacity: 0.3; cursor: default; }
+        .calc-race-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; }
+        .calc-race-dots { display: flex; gap: 6px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+        .calc-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); cursor: pointer; border: none; }
+        .calc-dot.locked { background: var(--f1-red); }
+        .calc-dot.current { outline: 2px solid #fff; }
+        .scenario-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+        .scenario-table th, .scenario-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .scenario-table select { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; font-family: 'Chakra Petch', sans-serif; }
+        .result-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .result-row:last-child { border-bottom: none; }
+        .result-driver { flex: 0 0 150px; font-weight: 700; }
+        .result-bar-wrap { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 22px; overflow: hidden; }
+        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #b80500); transition: width 0.4s ease; }
+        .result-pct { flex: 0 0 60px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
+        .badge-alive { background: rgba(0,200,80,0.15); color: #3ddc84; }
+        .badge-out { background: rgba(200,0,0,0.15); color: #ff6b6b; }
+        .badge-champ { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .required-line { font-size: 1rem; line-height: 1.7; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; margin-top: 10px; }
+    </style>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -108,6 +134,9 @@
         </div>
     </footer>
 
+    <script src="js/championship-calc-engine.js"></script>
+    <script src="js/championship-calc-data.js"></script>
     <script src="script.js?v=20260730a"></script>
+    <script src="js/championship-calc-ui.js"></script>
 </body>
 </html>
