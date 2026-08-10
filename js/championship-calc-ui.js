@@ -108,6 +108,10 @@ function onScenarioChange(race, changedSelect) {
 
 function recomputeResults() {
     const drivers = calcState.drivers;
+    if (!drivers || drivers.length < 2) {
+        renderResults(drivers || [], {}, {}, false, {}, null);
+        return;
+    }
     const remaining = calcState.remainingRaces;
 
     // Points after applying every locked race for every driver.
@@ -162,6 +166,11 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
     const section = document.getElementById('calcResultsSection');
     section.style.display = 'block';
 
+    if (!drivers || drivers.length < 2) {
+        section.innerHTML = '<h2>Championship Win Probability</h2><p>Not enough driver data to compute a scenario.</p>';
+        return;
+    }
+
     const sorted = [...drivers].sort((a, b) => probabilities[b.id] - probabilities[a.id]);
     const rows = sorted.map(d => {
         const pct = (probabilities[d.id] * 100).toFixed(1);
@@ -176,8 +185,16 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         </div>`;
     }).join('');
 
-    const leader = sorted[0];
-    const rival = sorted[1];
+    // Rival for the required-result sentence is selected by POINTS, not by simulated
+    // probability - probability is unseeded and reruns on every edit, so using it here
+    // would make "who's the rival" flicker between edits from sampling noise alone, and
+    // could name a confusing driver (e.g. a #2-by-points with no unlocked races left can
+    // rank behind a #3-by-points who still has high-variance races to simulate).
+    const leader = drivers.find(d => d.id === leaderId);
+    const rival = [...drivers]
+        .filter(d => d.id !== leaderId)
+        .sort((a, b) => pointsNow[b.id] - pointsNow[a.id])[0];
+
     const remainingRaceCount = calcState.remainingRaces.filter(r =>
         !calcState.scenario[rival.id]?.[r.round]).length;
     const gapInfo = ChampionshipCalc.requiredResultGap(pointsNow[leader.id], pointsNow[rival.id], remainingRaceCount);
