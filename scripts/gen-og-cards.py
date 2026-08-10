@@ -91,3 +91,16 @@ for a in manifest['articles']:
     render(slug, category, headline)
     if patch_meta(slug): n += 1
 print(f'Generated + wired {n} per-article OG cards')
+
+# Championship calculator share card - not an article, generated separately so it
+# never depends on / interacts with the articles.json manifest loop above. Regenerate
+# this manually with fresh numbers whenever the leader/probability changes meaningfully
+# (this script has no live API access of its own - the number below was read from the
+# actual calculator, not fabricated).
+# Note: same slug is passed to both calls deliberately - render() derives the image
+# filename (og-{slug}.jpg) and patch_meta() derives the og:image URL it writes into
+# {slug}.html from that same slug string, so they must match or the page ends up
+# pointing at an image that doesn't exist on disk.
+render('championship-calculator', 'Interactive', 'ANTONELLI: 99% TO WIN THE 2026 TITLE')
+patch_meta('championship-calculator')
+print('Generated championship calculator share card')
