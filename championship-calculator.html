@@ -67,65 +67,47 @@
             </div>
         </div>
     </main>
-<script src="script.js?v=20260730a"></script>
 
-    <script>
-    (function () {
-        const API = 'https://api.jolpi.ca/ergast/f1/2026';
-        const FLAGS = { 'australian':'\u{1F1E6}\u{1F1FA}','chinese':'\u{1F1E8}\u{1F1F3}','japanese':'\u{1F1EF}\u{1F1F5}','miami':'\u{1F1FA}\u{1F1F8}','canadian':'\u{1F1E8}\u{1F1E6}','monaco':'\u{1F1F2}\u{1F1E8}','spanish':'\u{1F1EA}\u{1F1F8}','austrian':'\u{1F1E6}\u{1F1F9}','british':'\u{1F1EC}\u{1F1E7}','belgian':'\u{1F1E7}\u{1F1EA}','hungarian':'\u{1F1ED}\u{1F1FA}','dutch':'\u{1F1F3}\u{1F1F1}','italian':'\u{1F1EE}\u{1F1F9}','madrid':'\u{1F1EA}\u{1F1F8}','azerbaijan':'\u{1F1E6}\u{1F1FF}','singapore':'\u{1F1F8}\u{1F1EC}','united states':'\u{1F1FA}\u{1F1F8}','mexico':'\u{1F1F2}\u{1F1FD}','brazilian':'\u{1F1E7}\u{1F1F7}','las vegas':'\u{1F1FA}\u{1F1F8}','qatar':'\u{1F1F6}\u{1F1E6}','abu dhabi':'\u{1F1E6}\u{1F1EA}' };
-        const flag = n => { n = n.toLowerCase(); for (const k in FLAGS) if (n.includes(k)) return FLAGS[k]; return '\u{1F3C1}'; };
-        const fmt = (d, t) => new Date(d + 'T' + (t || '12:00:00Z')).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-        function sessionRow(label, date, time, now, isRace) {
-            const past = new Date(date + 'T' + (time || '12:00:00Z')).getTime() < now;
-            return '<div class="hub-session' + (isRace ? ' hub-session-race' : '') + (past ? ' done' : '') + '">' +
-                '<span class="hub-session-name">' + label + '</span>' +
-                '<span class="hub-session-time">' + fmt(date, time) + '</span>' +
-                (past ? '<span class="hub-session-done">Completed</span>' : '') + '</div>';
-        }
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <p class="footer-brand">F1wow News</p>
+                    <p class="footer-tagline">Independent Motorsports news &amp; analysis, powered by the @f1wow community.</p>
+                </div>
+                <div class="footer-col">
+                    <p class="footer-heading">Explore</p>
+                    <a href="index.html">Home</a>
+                    <a href="calendar.html">Race Calendar</a>
+                    <a href="championship.html">Standings</a>
+                    <a href="drivers.html">Drivers</a>
+                    <a href="teams.html">Teams</a>
+                    <a href="how-to-watch-f1.html">Watch F1</a>
+                    <a href="race-reports.html">Race Reports</a>
+                    <a href="news.html">F1 News</a>
+                    <a href="technical.html">Technical</a>
+                    <a href="subscribe.html">Newsletter</a>
+                </div>
+                <div class="footer-col">
+                    <p class="footer-heading">Site</p>
+                    <a href="about.html">About Us</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Use</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                </div>
+                <div class="footer-col">
+                    <p class="footer-heading">Follow</p>
+                    <a href="https://instagram.com/f1wow" target="_blank" rel="noopener">Instagram @f1wow</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 F1wow News. This is an unofficial, independent fan website and is not associated with Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trademarks of Formula One Licensing B.V.</p>
+            </div>
+        </div>
+    </footer>
 
-        async function initHub() {
-            try {
-                const data = await cachedJson(API + '.json');
-                const races = data?.MRData?.RaceTable?.Races || [];
-                if (!races.length) return;
-                const now = Date.now();
-                // current weekend counts until 24h after lights-out; else next upcoming; else finale
-                const race = races.find(r => new Date(r.date + 'T' + (r.time || '14:00:00Z')).getTime() + 86400000 > now) || races[races.length - 1];
-
-                document.getElementById('hubRound').textContent = 'Round ' + race.round + ' · 2026';
-                document.getElementById('hubTitle').textContent = flag(race.raceName) + ' ' + race.raceName;
-                document.getElementById('hubCircuit').textContent = race.Circuit.circuitName + ' — ' + race.Circuit.Location.locality + ', ' + race.Circuit.Location.country;
-                document.getElementById('hubTz').textContent = 'All times shown in your local timezone (' + Intl.DateTimeFormat().resolvedOptions().timeZone + ')';
-
-                const S = [['FirstPractice', 'Practice 1'], ['SecondPractice', 'Practice 2'], ['ThirdPractice', 'Practice 3'], ['SprintQualifying', 'Sprint Qualifying'], ['Sprint', 'Sprint'], ['Qualifying', 'Qualifying']];
-                let html = '';
-                S.forEach(([k, label]) => { if (race[k]) html += sessionRow(label, race[k].date, race[k].time, now); });
-                html += sessionRow('Race', race.date, race.time, now, true);
-                document.getElementById('hubSessions').innerHTML = html;
-
-                // Results appear automatically once the API has them
-                try {
-                    const res = await cachedJson(API + '/' + race.round + '/results.json?limit=3');
-                    const podium = res?.MRData?.RaceTable?.Races?.[0]?.Results || [];
-                    if (podium.length) {
-                        document.getElementById('hubResultsSection').hidden = false;
-                        document.getElementById('hubPodium').innerHTML = podium.map(p =>
-                            '<div class="hub-podium-item pos-' + p.position + '">' +
-                            '<span class="hub-podium-pos">P' + p.position + '</span>' +
-                            '<span class="hub-podium-name">' + sanitizeHTML(p.Driver.givenName + ' ' + p.Driver.familyName) + '</span>' +
-                            '<span class="hub-podium-team">' + sanitizeHTML(p.Constructor.name) + '</span></div>').join('');
-                    }
-                } catch (e) { /* no results yet */ }
-            } catch (e) {
-                document.getElementById('hubSessions').innerHTML = '<p style="color: rgba(255,255,255,0.65)">Could not load live data. Check the <a href="calendar.html">calendar</a>.</p>';
-            }
-        }
-
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHub);
-        else initHub();
-    })();
-    </script>
-
+    <script src="script.js?v=20260730a"></script>
 </body>
 </html>

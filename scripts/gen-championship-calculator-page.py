@@ -7,8 +7,15 @@ base = open('race-hub.html', encoding='utf-8').read()
 SLUG = 'championship-calculator.html'
 
 head = base[:base.find('<main')]
-tail_start = base.find('<script src="script.js')
-tail = base[tail_start:]
+
+# Tail = shared footer + shared script.js loader only.
+# race-hub.html's own page-specific inline <script>...initHub()...</script>
+# block (targets #hubRound/#hubSessions/etc, which don't exist on this page)
+# must be excluded, or it throws console errors on every load.
+main_end = base.find('</main>') + len('</main>')
+script_tag_start = base.find('<script src="script.js')
+script_tag_end = base.find('</script>', script_tag_start) + len('</script>')
+tail = base[main_end:script_tag_end] + '\n</body>\n</html>\n'
 
 TITLE = 'F1 2026 Championship Calculator (Prototype)'
 head = re.sub(r'<title>[^<]*</title>', f'<title>{TITLE}</title>', head)
