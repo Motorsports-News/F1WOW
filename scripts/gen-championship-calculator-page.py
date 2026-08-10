@@ -1,6 +1,11 @@
 # Scaffold the championship calculator page shell.
 # NOINDEX + not linked from anywhere yet - only Task 15 (explicitly gated) removes
 # the noindex tag and wires this into nav/sitemap/articles.json.
+#
+# DO NOT RE-RUN this script after Task 7 - unlike other scripts/gen-*.py generators
+# (which target a finished article that's never touched again), championship-calculator.html
+# gets extensive hand-written UI/CSS/JS added directly to it in every task after this one.
+# Re-running this would silently overwrite all of that back to the bare Task 6 shell.
 import re
 
 base = open('race-hub.html', encoding='utf-8').read()
