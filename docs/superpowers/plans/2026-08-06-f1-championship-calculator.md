@@ -931,7 +931,7 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         <div>${rows}</div>
         <div class="required-line">${requiredLine}</div>
         <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:10px;">
-            Model: each driver's unlocked remaining races are simulated from their actual 2026 points-per-race average and spread. First-pass estimate, not an official probability.
+            Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season. First-pass estimate, not an official probability.
         </p>`;
 }
 ```
