@@ -1055,6 +1055,10 @@ git commit -m "feat: add constructor data aggregation to championship calc data 
 
 ### Task 12: Constructors tab (reusing the drivers UI components)
 
+> **AMENDED post-Task-11-review:** two real gaps were found that this task must also close, since they only become live bugs once constructors mode actually exists:
+> 1. `checkElimination`/`maxRemainingPoints` (already fixed in `js/championship-calc-engine.js`, commit `4383b0a`) now accept an optional `carsPerEntity` parameter (default `1`) precisely so constructors' ~2x point ceiling doesn't wrongly trigger "Eliminated" for a team that's actually still alive. The engine *supports* this now, but nothing calls it with `2` yet - this task's Step 2 amendment below wires that up.
+> 2. `.result-driver { flex: 0 0 150px; }` (`championship-calculator.html`) was sized for a 3-letter driver code + badge. Constructor names (`s.Constructor.name`, e.g. "Aston Martin Aramco") will overflow that fixed width. Fixed width to a wrap-friendly minimum instead, added in this task's CSS step.
+
 **Files:**
 - Modify: `championship-calculator.html`
 - Modify: `js/championship-calc-ui.js`
@@ -1074,6 +1078,16 @@ Add matching CSS for `.run-btn` next to the other calculator styles from Task 7 
 
 ```css
 .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; }
+```
+
+Also update `.result-driver`'s fixed width so it doesn't overflow for a full constructor name like "Aston Martin Aramco" (currently sized for a 3-letter driver code):
+
+```css
+.result-driver { flex: 0 0 150px; font-weight: 700; }
+```
+becomes
+```css
+.result-driver { flex: 0 1 190px; font-weight: 700; word-break: break-word; }
 ```
 
 - [ ] **Step 2: Generalize the UI state to support either mode**
@@ -1104,9 +1118,29 @@ document.getElementById('calcTabDrivers').onclick = () => switchCalcMode('driver
 document.getElementById('calcTabConstructors').onclick = () => switchCalcMode('constructors');
 ```
 
+- [ ] **Step 2b: Pass `carsPerEntity` through to the elimination test (the actual fix that makes constructors-mode elimination correct)**
+
+In `js/championship-calc-ui.js`, `recomputeResults()` currently calls `ChampionshipCalc.checkElimination(pointsNow[d.id], leaderPoints, unlockedStandard(d.id), unlockedSprint(d.id))` with no 5th argument (drivers only, ceiling defaults to 1 car). Add a `carsPerEntity` constant derived from `calcMode` and pass it through:
+
+```js
+    const carsPerEntity = calcMode === 'constructors' ? 2 : 1;
+
+    const eliminated = {};
+    drivers.forEach(d => {
+        if (d.id === leaderId) { eliminated[d.id] = false; return; }
+        eliminated[d.id] = ChampionshipCalc.checkElimination(
+            pointsNow[d.id], leaderPoints, unlockedStandard(d.id), unlockedSprint(d.id), carsPerEntity
+        );
+    });
+```
+
+Without this, a trailing constructor would be wrongly flagged "Eliminated" under a single-car point ceiling about half what a real two-car team can still score.
+
 - [ ] **Step 3: Manual verification**
 
 Refresh the page. Click "Constructors" — confirm the standings table, carousel, and probability results all re-render for constructors (team names instead of driver codes, points roughly double). Click back to "Drivers" and confirm it returns to the driver view with a fresh (reset) scenario. Set a scenario in Drivers mode, switch to Constructors, switch back — confirm the Drivers scenario was cleared (acceptable for v1; no cross-mode persistence is expected).
+
+Also specifically verify the `carsPerEntity` fix: in Constructors mode, lock a trailing team into a large-but-not-fully-eliminated points gap relative to the leader (e.g. a gap that's less than a real two-car ceiling but more than a one-car ceiling for the remaining races) and confirm they are NOT flagged "Eliminated" — then confirm a genuinely hopeless gap (impossible even with two cars scoring maximum) still does correctly flip to "Eliminated". Confirm long constructor names (e.g. "Aston Martin Aramco") don't visually overflow/clip in the results section.
 
 - [ ] **Step 4: Commit**
 
