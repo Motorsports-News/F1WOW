@@ -1680,14 +1680,25 @@ document.addEventListener('DOMContentLoaded', initChampionshipBand);
 // before aggregating, or teams get double-counted per-round rows.
 // ============================================
 async function fetchMergedSeasonResults() {
-    const races = [];
-    let offset = 0, total = Infinity;
-    while (offset < total) {
-        const data = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/results.json?limit=100&offset=${offset}`);
-        total = parseInt(data.MRData.total);
-        races.push(...(data.MRData.RaceTable?.Races || []));
-        offset += 100;
+    const LIMIT = 100;
+    // The first page is the only one that has to happen before anything else,
+    // since it's the only way to learn how many total pages exist. Every page
+    // after that has a known, independent offset, so they can all be fetched
+    // in parallel instead of one page waiting on the last - merging by round
+    // (below) doesn't care what order the pages arrive in.
+    const first = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/results.json?limit=${LIMIT}&offset=0`);
+    const total = parseInt(first.MRData.total);
+    const races = [...(first.MRData.RaceTable?.Races || [])];
+
+    const remainingOffsets = [];
+    for (let offset = LIMIT; offset < total; offset += LIMIT) remainingOffsets.push(offset);
+    if (remainingOffsets.length) {
+        const pages = await Promise.all(
+            remainingOffsets.map(offset => cachedJson(`${API_BASE}/${CURRENT_YEAR}/results.json?limit=${LIMIT}&offset=${offset}`))
+        );
+        pages.forEach(data => races.push(...(data.MRData.RaceTable?.Races || [])));
     }
+
     const merged = new Map();
     races.forEach(r => {
         if (!merged.has(r.round)) {

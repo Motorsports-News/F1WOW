@@ -5,17 +5,21 @@
 async function loadChampionshipCalcData(topN) {
     topN = topN || 12;
 
-    const standingsData = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
+    // None of these four depend on each other's response, only on all of them
+    // together for the mapping below - fetching in parallel instead of one after
+    // another cuts load time to roughly the slowest single call instead of the
+    // sum of all four.
+    const [standingsData, scheduleData, mergedResults, sprintData] = await Promise.all([
+        cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`),
+        cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`),
+        fetchMergedSeasonResults(),
+        cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`)
+    ]);
+
     const list = standingsData.MRData.StandingsTable.StandingsLists[0];
     const standings = list.DriverStandings.slice(0, topN);
     const completedRound = parseInt(list.round);
-
-    const scheduleData = await cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`);
     const schedule = scheduleData.MRData.RaceTable.Races;
-
-    const mergedResults = await fetchMergedSeasonResults();
-
-    const sprintData = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`);
     const sprintResults = sprintData.MRData.RaceTable.Races;
 
     const remainingRaces = schedule
@@ -52,19 +56,22 @@ async function loadChampionshipCalcData(topN) {
 async function loadConstructorCalcData(topN) {
     topN = topN || 8;
 
-    const standingsData = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/constructorstandings.json`);
+    // Same independent-fetches-in-parallel reasoning as loadChampionshipCalcData.
+    const [standingsData, scheduleData, mergedResults, sprintData] = await Promise.all([
+        cachedJson(`${API_BASE}/${CURRENT_YEAR}/constructorstandings.json`),
+        cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`),
+        fetchMergedSeasonResults(),
+        cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`)
+    ]);
+
     const list = standingsData.MRData.StandingsTable.StandingsLists[0];
     const standings = list.ConstructorStandings.slice(0, topN);
-
-    const scheduleData = await cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`);
     const schedule = scheduleData.MRData.RaceTable.Races;
     const completedRound = parseInt(list.round);
     const remainingRaces = schedule
         .filter(r => parseInt(r.round) > completedRound)
         .map(r => ({ round: parseInt(r.round), name: r.raceName, date: r.date, isSprint: !!r.Sprint }));
 
-    const mergedResults = await fetchMergedSeasonResults();
-    const sprintData = await cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`);
     const sprintResults = sprintData.MRData.RaceTable.Races;
 
     const constructors = standings.map(s => {
