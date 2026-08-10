@@ -39,6 +39,7 @@ This validates the *engine* is sound. The real build's job is: (a) extend it fro
 - Sensitivity narrative generator ("if X happens, odds move to Y") — v1.x, after the base model is trusted.
 - Push notifications, saved user accounts, community leaderboards (all need a backend the static site doesn't have).
 - Full 20-22 driver grid (top 10-12 only per Decision 2).
+- **Known v1 limitation, found during Task 12's build:** in Constructors mode, manually locking a race still only credits one car's worth of points (max 25 GP / 8 sprint) via the single position dropdown reused from Drivers mode — while a constructor's *simulated* (unlocked) races and its elimination ceiling both correctly use the real two-car total. Locking a race for a team is therefore internally inconsistent with the rest of the model for that same team. The data layer and elimination math are correct; the scenario-editor UI is the piece that would need a second position input per team (or an equivalent) to close this gap. Deferred rather than fixed inline because it's a real UI redesign for Constructors mode, not a bug fix — flag before this leaves prototype status.
 
 ## Open Questions for the Implementation Plan to Resolve
 
