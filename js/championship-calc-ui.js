@@ -229,6 +229,63 @@ function updateShareUrl() {
 
 let calcExploreDriverId = null; // which top-3 entity the user picked to explore, if any
 
+// Shapes a driver/constructor into the { currentPoints, history, races } form
+// findWinningScenarios (and runMonteCarlo) expect - same shape recomputeResults
+// builds for the main simulation, rebuilt locally here for just the two entities
+// the explorer needs rather than threading it through from recomputeResults.
+function buildSimEntity(driver, pointsNow) {
+    return {
+        currentPoints: pointsNow[driver.id],
+        history: driver.history,
+        races: calcState.remainingRaces.map(r => {
+            const locked = calcState.scenario[driver.id]?.[r.round];
+            return locked
+                ? { locked: true, isSprint: r.isSprint, gpPosition: locked.gpPosition, sprintPosition: locked.sprintPosition }
+                : { locked: false, isSprint: r.isSprint };
+        })
+    };
+}
+
+// Turns one simulated trial's race-by-race outcome into a plain-English summary,
+// e.g. "HAM wins 3 of the remaining races and finishes on the podium 4 more times,
+// finishing off the podium the other 5 times." Always exactly describes what that
+// one trial actually did - no rounding/hedging, since it's one concrete draw.
+function summarizeScenarioSide(code, outcome) {
+    const positions = outcome.finishes.map(f => f.gpPosition);
+    const wins = positions.filter(p => p === 1).length;
+    const otherPodiums = positions.filter(p => p !== null && p >= 2 && p <= 3).length;
+    const rest = positions.length - wins - otherPodiums;
+    const parts = [];
+    if (wins) parts.push(`wins ${wins} of the remaining race${wins === 1 ? '' : 's'}`);
+    if (otherPodiums) parts.push(`finishes on the podium ${otherPodiums} more time${otherPodiums === 1 ? '' : 's'}`);
+    if (rest) parts.push(`finishes off the podium the other ${rest} time${rest === 1 ? '' : 's'}`);
+    const summary = parts.length ? parts.join(', ') : 'has no unlocked races left to simulate';
+    return `<strong>${sanitizeHTML(code)}</strong> ${summary}.`;
+}
+
+// Runs the rejection-sampling search and renders up to 3 concrete example scenarios,
+// or an honest "didn't find one" message rather than fabricating a path that doesn't
+// exist in the model - see findWinningScenarios' own comment for why that can happen.
+function renderScenarioExamples(exploreDriver, opponent, pointsNow) {
+    const selEntity = buildSimEntity(exploreDriver, pointsNow);
+    const oppEntity = buildSimEntity(opponent, pointsNow);
+    const examples = ChampionshipCalc.findWinningScenarios(selEntity, oppEntity, 3, 4000);
+
+    if (!examples.length) {
+        return `<p class="calc-scenario-empty">No winning path turned up across 4,000 simulated seasons - ${sanitizeHTML(exploreDriver.code)}'s realistic chance is close to zero even though they're not yet mathematically eliminated.</p>`;
+    }
+
+    const items = examples.map((ex, i) => `
+        <li class="calc-scenario-item">
+            <span class="calc-scenario-num">${i + 1}</span>
+            <div class="calc-scenario-text">
+                <p>${summarizeScenarioSide(exploreDriver.code, ex.selected)}</p>
+                <p>${summarizeScenarioSide(opponent.code, ex.opponent)}</p>
+            </div>
+        </li>`).join('');
+    return `<p class="calc-scenario-heading">Example scenarios where ${sanitizeHTML(exploreDriver.code)} wins it:</p><ul class="calc-scenario-list">${items}</ul>`;
+}
+
 // Lets the user pick ANY of the top 3 (not just the auto-selected leader/rival above)
 // and see that entity's own probability plus the genuine mathematical boundary: how
 // many more points their closest top-3 opponent can score before they're mathematically
@@ -268,10 +325,13 @@ function renderTitlePathExplorer(drivers, pointsNow, probabilities, leaderId) {
             ? `<strong>${sanitizeHTML(exploreDriver.code)} is mathematically eliminated</strong> - even winning every remaining race (a maximum of ${boundary.bestCase} points) can't catch ${sanitizeHTML(opponent.code)}'s current ${pointsNow[opponent.id]} points.`
             : `<strong>${sanitizeHTML(exploreDriver.code)}</strong> is still mathematically alive: their ceiling if they win every remaining race and sprint is <strong>${boundary.bestCase} points</strong>, so <strong>${sanitizeHTML(opponent.code)}</strong> can score at most <strong>${boundary.maxOpponentAllowed} more points</strong> across the remaining season and still be caught.`;
 
+        const scenariosHtml = boundary.eliminated ? '' : renderScenarioExamples(exploreDriver, opponent, pointsNow);
+
         panel = `
         <div class="calc-explore-panel">
             <div class="calc-explore-stat"><span class="calc-explore-pct">${pct}%</span><span class="calc-explore-label">${sanitizeHTML(exploreDriver.code)}'s live win probability</span></div>
             <p class="calc-explore-boundary">${boundaryLine}</p>
+            ${scenariosHtml}
         </div>`;
     }
 

@@ -109,6 +109,13 @@
         .calc-explore-pct { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; }
         .calc-explore-label { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
         .calc-explore-boundary { font-size: 0.95rem; line-height: 1.6; margin: 0; }
+        .calc-scenario-heading { font-size: 0.85rem; color: rgba(255,255,255,0.55); margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .calc-scenario-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+        .calc-scenario-item { display: flex; gap: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px; }
+        .calc-scenario-num { flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--f1-red); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.85rem; }
+        .calc-scenario-text p { font-size: 0.88rem; line-height: 1.55; margin: 0 0 4px; }
+        .calc-scenario-text p:last-child { margin-bottom: 0; }
+        .calc-scenario-empty { font-size: 0.88rem; color: rgba(255,255,255,0.55); margin: 14px 0 0; line-height: 1.6; }
 
         @media (prefers-reduced-motion: reduce) {
             .result-bar, .scenario-table, .calc-tab, .calc-race-chip, .run-btn, .calc-carousel-nav button { transition: none !important; }

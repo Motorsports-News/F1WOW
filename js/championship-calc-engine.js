@@ -6,6 +6,8 @@
 
     const GP_POINTS = { 1: 25, 2: 18, 3: 15, 4: 12, 5: 10, 6: 8, 7: 6, 8: 4, 9: 2, 10: 1 };
     const SPRINT_POINTS = { 1: 8, 2: 7, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2, 8: 1 };
+    const GP_POSITION_FROM_POINTS = { 25: 1, 18: 2, 15: 3, 12: 4, 10: 5, 8: 6, 6: 7, 4: 8, 2: 9, 1: 10 };
+    const SPRINT_POSITION_FROM_POINTS = { 8: 1, 7: 2, 6: 3, 5: 4, 4: 5, 3: 6, 2: 7, 1: 8 };
 
     function gpPointsFor(position) {
         return GP_POINTS[position] || 0;
@@ -138,13 +140,72 @@
         return { eliminated, bestCase, ceiling, maxOpponentAllowed };
     }
 
+    // Reverse of gpPointsFor/sprintPointsFor. null means "outside the points" (P11+
+    // for a GP, P9+ for a sprint) - this also covers a retirement/DNF, since the
+    // underlying data only stores points scored, not finishing/classification status,
+    // so a genuine DNF and a lapped P14 are indistinguishable from points alone.
+    function gpPositionFromPoints(points) {
+        return GP_POSITION_FROM_POINTS[points] || null;
+    }
+    function sprintPositionFromPoints(points) {
+        return SPRINT_POSITION_FROM_POINTS[points] || null;
+    }
+
+    // Like simulateDriverRemainingPoints, but also records the finishing position
+    // implied by each unlocked race's resampled points value. Locked races aren't
+    // included in `finishes` - the user already set them, so they're not part of
+    // "what would need to happen" in a generated scenario.
+    function simulateDetailedOutcome(races, history, rng) {
+        history = history || {};
+        let total = 0;
+        const finishes = [];
+        races.forEach(race => {
+            if (race.locked) {
+                total += gpPointsFor(race.gpPosition);
+                if (race.isSprint) total += sprintPointsFor(race.sprintPosition);
+                return;
+            }
+            const gpPts = sampleFromHistory(history.gpHistory, rng);
+            let sprintPts = 0, sprintPosition = null;
+            if (race.isSprint) {
+                sprintPts = sampleFromHistory(history.sprintHistory, rng);
+                sprintPosition = sprintPositionFromPoints(sprintPts);
+            }
+            total += gpPts + sprintPts;
+            finishes.push({ gpPosition: gpPositionFromPoints(gpPts), sprintPosition });
+        });
+        return { total, finishes };
+    }
+
+    // Rejection-samples full remaining seasons until it finds `count` distinct trials
+    // where `selected` actually ends up ahead of `opponent`, or gives up after
+    // `maxAttempts`. selected/opponent: { currentPoints, history, races } (same shape
+    // runMonteCarlo's driver entries use). For a driver whose true probability is
+    // tiny, finding even one such trial can take many attempts - if none turn up in
+    // the budget, it's more honest to return an empty list than to fabricate one.
+    function findWinningScenarios(selected, opponent, count, maxAttempts, rng) {
+        rng = rng || Math.random;
+        const examples = [];
+        for (let attempt = 0; attempt < maxAttempts && examples.length < count; attempt++) {
+            const selOutcome = simulateDetailedOutcome(selected.races, selected.history, rng);
+            const oppOutcome = simulateDetailedOutcome(opponent.races, opponent.history, rng);
+            const selectedTotal = selected.currentPoints + selOutcome.total;
+            const opponentTotal = opponent.currentPoints + oppOutcome.total;
+            if (selectedTotal > opponentTotal) {
+                examples.push({ selected: selOutcome, opponent: oppOutcome, selectedTotal, opponentTotal });
+            }
+        }
+        return examples;
+    }
+
     const ChampionshipCalc = {
         GP_POINTS, SPRINT_POINTS,
         gpPointsFor, sprintPointsFor,
         maxRemainingPoints, checkElimination,
         mean, stddev, computePaceStats,
         sampleFromHistory, simulateDriverRemainingPoints, runMonteCarlo,
-        requiredResultGap, titleBoundary
+        requiredResultGap, titleBoundary,
+        gpPositionFromPoints, sprintPositionFromPoints, simulateDetailedOutcome, findWinningScenarios
     };
 
     if (typeof module !== 'undefined' && module.exports) {

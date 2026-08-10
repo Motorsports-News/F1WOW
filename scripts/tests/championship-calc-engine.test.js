@@ -201,3 +201,51 @@ test('titleBoundary: carsPerEntity scales the ceiling for constructors', () => {
     assert.strictEqual(oneCar.eliminated, true); // best case 225 < 300
     assert.strictEqual(twoCar.eliminated, false); // best case 350 >= 300
 });
+
+const {
+    gpPositionFromPoints, sprintPositionFromPoints, simulateDetailedOutcome, findWinningScenarios
+} = require('../../js/championship-calc-engine.js');
+
+test('gpPositionFromPoints / sprintPositionFromPoints: reverse the scoring tables, null for outside points', () => {
+    assert.strictEqual(gpPositionFromPoints(25), 1);
+    assert.strictEqual(gpPositionFromPoints(1), 10);
+    assert.strictEqual(gpPositionFromPoints(0), null);
+    assert.strictEqual(sprintPositionFromPoints(8), 1);
+    assert.strictEqual(sprintPositionFromPoints(1), 8);
+    assert.strictEqual(sprintPositionFromPoints(0), null);
+});
+
+test('simulateDetailedOutcome: locked races count toward the total but are not in `finishes`; unlocked races report a position', () => {
+    const races = [
+        { locked: true, isSprint: false, gpPosition: 1 },
+        { locked: false, isSprint: false }
+    ];
+    const history = { gpHistory: [25], sprintHistory: [] }; // single-value history - deterministic regardless of rng
+    const outcome = simulateDetailedOutcome(races, history, () => 0.5);
+    assert.strictEqual(outcome.total, 50); // 25 (locked P1) + 25 (resampled, only possible value)
+    assert.strictEqual(outcome.finishes.length, 1); // only the unlocked race is reported
+    assert.strictEqual(outcome.finishes[0].gpPosition, 1);
+});
+
+test('simulateDetailedOutcome: a zero-points draw reports gpPosition null (outside the points)', () => {
+    const races = [{ locked: false, isSprint: false }];
+    const history = { gpHistory: [0], sprintHistory: [] };
+    const outcome = simulateDetailedOutcome(races, history, () => 0.5);
+    assert.strictEqual(outcome.total, 0);
+    assert.strictEqual(outcome.finishes[0].gpPosition, null);
+});
+
+test('findWinningScenarios: finds examples when selected can plausibly beat opponent', () => {
+    const selected = { currentPoints: 100, history: { gpHistory: [25, 25, 25], sprintHistory: [] }, races: [{ locked: false, isSprint: false }] };
+    const opponent = { currentPoints: 100, history: { gpHistory: [0, 0, 0], sprintHistory: [] }, races: [{ locked: false, isSprint: false }] };
+    const examples = findWinningScenarios(selected, opponent, 3, 200, seededRng(1));
+    assert.ok(examples.length > 0, 'expected to find at least one winning scenario');
+    examples.forEach(ex => assert.ok(ex.selectedTotal > ex.opponentTotal));
+});
+
+test('findWinningScenarios: returns fewer than requested (not an error) when the budget is exhausted', () => {
+    const selected = { currentPoints: 0, history: { gpHistory: [0], sprintHistory: [] }, races: [{ locked: false, isSprint: false }] };
+    const opponent = { currentPoints: 1000, history: { gpHistory: [25], sprintHistory: [] }, races: [{ locked: false, isSprint: false }] };
+    const examples = findWinningScenarios(selected, opponent, 3, 50, seededRng(2));
+    assert.strictEqual(examples.length, 0); // truly impossible within this tiny budget
+});
