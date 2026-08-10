@@ -956,6 +956,8 @@ git commit -m "feat: wire Monte Carlo engine to championship calculator UI"
 
 ### Task 10: Full manual verification checklist (drivers mode)
 
+**Known, deliberately-deferred item from Task 8's code review:** `renderCarousel()` fully re-renders its `<tbody>`/dots/nav on every single edit (including the `<select>` that triggered the change), so keyboard focus is lost after each field a user fills in. Not a blocker for an internal `noindex` prototype, but worth a conscious decision (fix it, or explicitly accept it) before Task 15 launch — this checklist is the right place to surface that decision, not to silently forget it.
+
 **Files:** none — verification only.
 
 - [ ] Run `python server.py`, confirm no duplicate instance is already bound to port 8000 (`CLAUDE.md` — kill duplicates first).
