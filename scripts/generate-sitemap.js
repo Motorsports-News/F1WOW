@@ -11,6 +11,7 @@ const priorities = {
     'index.html': 1.0,
     'calendar.html': 0.7,
     'championship.html': 0.7,
+    'championship-calculator.html': 0.7,
     'predictor.html': 0.7,
     'subscribe.html': 0.6
 };
@@ -18,14 +19,19 @@ const priorities = {
 const changeFreq = {
     'index.html': 'daily',
     'calendar.html': 'weekly',
-    'championship.html': 'weekly'
+    'championship.html': 'weekly',
+    'championship-calculator.html': 'weekly'
 };
 
 async function generateSitemap() {
     // Get all HTML files except in node_modules
     const files = glob.sync('*.html', {
         cwd: __dirname + '/..',
-        ignore: ['node_modules/**', 'test-*.html', 'debug-*.html', '*-demo.html', 'ARTICLE_TEMPLATE.html', 'championship-*.html', 'f1-hero-*.html', 'enhanced-hero-*.html']
+        // championship-calculator.html is a real, launched page - excluded by name
+        // individually below (not by a 'championship-*' wildcard) so it isn't swept up
+        // with the untracked championship-graph-*/matched/professional/standings-interactive
+        // experiment files and the throwaway championship-calculator-prototype.html.
+        ignore: ['node_modules/**', 'test-*.html', 'debug-*.html', '*-demo.html', 'ARTICLE_TEMPLATE.html', 'championship-calculator-prototype.html', 'championship-graph-*.html', 'championship-matched.html', 'championship-professional.html', 'championship-standings-interactive.html', 'f1-hero-*.html', 'enhanced-hero-*.html']
     });
 
     const urls = files.map(file => {
