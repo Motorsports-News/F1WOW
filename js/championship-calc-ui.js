@@ -5,6 +5,10 @@
 let calcState = null; // set by initChampionshipCalculator()
 
 function renderStandings(drivers) {
+    if (!drivers || !drivers.length) {
+        document.getElementById('calcStandingsSection').innerHTML = '<p>No standings data available.</p>';
+        return;
+    }
     const leaderPoints = drivers[0].currentPoints;
     const rows = drivers.map(d => `
         <tr class="standings-row">
@@ -28,11 +32,14 @@ async function initChampionshipCalculator() {
     try {
         const data = await loadChampionshipCalcData(12);
         calcState = { ...data, scenario: {} }; // scenario[driverId][round] = { gpPosition, sprintPosition }
+        renderStandings(calcState.drivers);
         document.getElementById('calcLoading').style.display = 'none';
         document.getElementById('calcApp').style.display = 'block';
-        renderStandings(calcState.drivers);
     } catch (err) {
-        document.getElementById('calcLoading').textContent = 'Failed to load live data: ' + err.message;
+        document.getElementById('calcApp').style.display = 'none';
+        const loading = document.getElementById('calcLoading');
+        loading.style.display = 'block';
+        loading.textContent = 'Failed to load live data: ' + err.message;
     }
 }
 
