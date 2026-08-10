@@ -1711,14 +1711,44 @@ async function initProfileSeasonLog() {
         const races = await fetchMergedSeasonResults();
         let rows = '';
 
+        // Injects the Wins / Podiums / Best / DNFs chip strip above the table.
+        const injectLogChips = (items) => {
+            const scroll = document.querySelector('.season-log-scroll');
+            if (!scroll) return;
+            const prev = scroll.previousElementSibling;
+            if (prev && prev.classList.contains('log-chips')) prev.remove();
+            const div = document.createElement('div');
+            div.className = 'log-chips';
+            div.innerHTML = items.map(it => `<div class="log-chip"><b>${it.n}</b><span>${it.label}</span></div>`).join('');
+            scroll.parentNode.insertBefore(div, scroll);
+        };
+        // Copies the per-entity team colour from the hero onto the table card
+        // so the accent rail / chip stripe matches the driver's/team's livery.
+        const applyProfileLogAccent = () => {
+            const hero = document.querySelector('.profile-hero');
+            const scroll = document.querySelector('.season-log-scroll');
+            if (hero && scroll) {
+                const c = getComputedStyle(hero).getPropertyValue('--team').trim();
+                if (c) scroll.style.setProperty('--team-accent', c);
+            }
+        };
+
         if (driverMatch) {
             const driverId = driverMatch[1];
+            let dnfs = 0;
             races.forEach(r => {
                 const label = r.Circuit?.Location?.locality || r.raceName.replace(' Grand Prix', '');
                 const res = r.Results.find(x => x.Driver.driverId === driverId);
                 if (!res) return;
-                const result = (res.status === 'Finished' || res.status.includes('Lap')) ? `P${res.position}` : sanitizeHTML(res.status);
-                rows += `<tr class="standings-row"><td>${r.round}</td><td>${sanitizeHTML(label)}</td><td>${result}</td><td>${res.points}</td></tr>`;
+                const finished = (res.status === 'Finished' || res.status.includes('Lap'));
+                const pos = parseInt(res.position);
+                let cls = 'standings-row';
+                if (!finished) { cls += ' is-dnf'; dnfs++; }
+                else if (pos === 1) cls += ' is-win';
+                else if (pos <= 3) cls += ' is-podium';
+                else if (pos <= 10) cls += ' is-points';
+                const result = finished ? `P${pos}` : `<abbr title="${sanitizeHTML(res.status)}">DNF</abbr>`;
+                rows += `<tr class="${cls}"><td>${r.round}</td><td>${sanitizeHTML(label)}</td><td>${result}</td><td>${res.points}</td></tr>`;
             });
             // refresh the summary sentence with live stats too
             const finishes = [];
@@ -1729,6 +1759,12 @@ async function initProfileSeasonLog() {
             const podiums = finishes.filter(p => p <= 3).length;
             const wins = finishes.filter(p => p === 1).length;
             const best = finishes.length ? Math.min(...finishes) : null;
+            injectLogChips([
+                { n: wins, label: 'Wins' },
+                { n: podiums, label: 'Podiums' },
+                { n: best ? 'P' + best : '—', label: 'Best' },
+                { n: dnfs, label: 'DNFs' }
+            ]);
             const summaryEl = document.querySelector('.profile-body > p');
             if (summaryEl && best) {
                 const lastName = summaryEl.textContent.match(/^(\S+)/)?.[1] || '';
@@ -1744,17 +1780,32 @@ async function initProfileSeasonLog() {
             }
         } else if (teamMatch) {
             const teamId = teamMatch[1];
+            let tWins = 0, tPodiums = 0, tBest = null, tDnf = 0;
             races.forEach(r => {
                 const label = r.Circuit?.Location?.locality || r.raceName.replace(' Grand Prix', '');
                 const teamResults = r.Results.filter(x => x.Constructor.constructorId === teamId);
                 if (!teamResults.length) return;
                 const pts = teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0);
                 const best = Math.min(...teamResults.map(x => parseInt(x.position)));
-                rows += `<tr class="standings-row"><td>${r.round}</td><td>${sanitizeHTML(label)}</td><td>P${best}</td><td>${pts}</td></tr>`;
+                const anyFinished = teamResults.some(x => x.status === 'Finished' || x.status.includes('Lap'));
+                let cls = 'standings-row';
+                if (!anyFinished) { cls += ' is-dnf'; tDnf++; }
+                else if (best === 1) { cls += ' is-win'; tWins++; }
+                else if (best <= 3) { cls += ' is-podium'; tPodiums++; }
+                else if (best <= 10) cls += ' is-points';
+                if (!tBest || best < tBest) tBest = best;
+                rows += `<tr class="${cls}"><td>${r.round}</td><td>${sanitizeHTML(label)}</td><td>P${best}</td><td>${pts}</td></tr>`;
             });
+            injectLogChips([
+                { n: tWins, label: 'Wins' },
+                { n: tPodiums, label: 'Podiums' },
+                { n: tBest ? 'P' + tBest : '—', label: 'Best' },
+                { n: tDnf, label: 'DNFs' }
+            ]);
         }
 
         if (rows) tbody.innerHTML = rows;
+        applyProfileLogAccent();
     } catch (e) {
         // static baked-in table (from last publish) remains as a fallback
     }

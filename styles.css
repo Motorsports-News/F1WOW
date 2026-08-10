@@ -5398,6 +5398,117 @@ body { font-size: 1rem; }
     letter-spacing: 0.01em;
     margin: 10px 0 16px;
 }
+
+/* ============================================================
+   SEASON LOG TABLE (driver-*.html / team-*.html)
+   Scoped under .season-log-scroll so it never leaks into other
+   .standings-table instances (championship page, articles).
+   --sl-accent picks up the per-entity team colour copied onto
+   the container by script.js (initProfileSeasonLog), falling
+   back to the brand red.
+   ============================================================ */
+.season-log-scroll {
+    --sl-accent: var(--team-accent, var(--f1-red));
+    position: relative;
+    max-height: 460px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 8px 0 26px;
+    background: linear-gradient(180deg, rgba(31, 31, 43, 0.55), rgba(21, 21, 30, 0.55));
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 20px 44px -30px rgba(0, 0, 0, 0.9);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.season-log-scroll::-webkit-scrollbar { width: 9px; }
+.season-log-scroll::-webkit-scrollbar-track { background: transparent; }
+.season-log-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 9px; border: 2px solid transparent; background-clip: padding-box; }
+.season-log-scroll::-webkit-scrollbar-thumb:hover { background: var(--sl-accent); background-clip: padding-box; }
+
+/* Team-colour accent rail down the left edge of the card */
+.season-log-scroll::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--sl-accent);
+    border-radius: 14px 0 0 14px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Stat chip strip injected by script.js (Wins / Podiums / Best / DNFs) */
+.log-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 2px 0 16px; }
+.log-chip {
+    display: flex; flex-direction: column; gap: 3px;
+    min-width: 86px;
+    padding: 10px 15px;
+    background: var(--f1-dark);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--sl-accent);
+    border-radius: 10px;
+}
+.log-chip b {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 1.55rem; line-height: 1;
+    color: var(--f1-white); font-variant-numeric: tabular-nums;
+}
+.log-chip span {
+    font-size: 0.66rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.season-log-scroll table { width: 100%; margin: 0; border-collapse: collapse; font-family: 'Chakra Petch', sans-serif; }
+.season-log-scroll thead th {
+    position: sticky; top: 0; z-index: 2;
+    padding: 13px 18px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.76rem; letter-spacing: 0.17em; text-transform: uppercase;
+    text-align: left; color: var(--text-muted);
+    background: var(--f1-black);
+    border-bottom: 2px solid var(--sl-accent);
+}
+.season-log-scroll thead th:nth-child(1),
+.season-log-scroll thead th:nth-child(3) { text-align: center; }
+.season-log-scroll thead th:nth-child(4) { text-align: right; }
+
+.season-log-scroll tbody td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.96rem; color: var(--f1-silver);
+    font-variant-numeric: tabular-nums;
+    vertical-align: middle;
+}
+.season-log-scroll tbody tr:last-child td { border-bottom: none; }
+.season-log-scroll tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+.season-log-scroll tbody tr { transition: background 0.15s ease; }
+.season-log-scroll tbody tr:hover td { background: rgba(225, 6, 0, 0.07); }
+
+/* Column treatments (work for both live JS rows and static fallback) */
+.season-log-scroll td:nth-child(1) {
+    width: 54px; text-align: center;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    color: var(--text-muted); font-size: 1.04rem;
+}
+.season-log-scroll td:nth-child(2) { color: var(--f1-white); font-weight: 500; }
+.season-log-scroll td:nth-child(3) { text-align: center; font-weight: 700; letter-spacing: 0.02em; }
+.season-log-scroll td:nth-child(4) { text-align: right; font-weight: 700; color: var(--f1-white); padding-right: 20px; }
+.season-log-scroll abbr { text-decoration: none; cursor: help; }
+
+/* Result column stays as plain text — no colour fill (kept clean and on-brand).
+   (Row classes is-win/is-podium/is-points/is-dnf are still attached by JS but
+   carry no visual styling; they only feed the Wins/Podiums/DNFs chips above.) */
+
+@media (max-width: 560px) {
+    .season-log-scroll tbody td,
+    .season-log-scroll thead th { padding: 10px 11px; font-size: 0.9rem; }
+    .season-log-scroll td:nth-child(1) { width: 42px; }
+    .season-log-scroll td:nth-child(4) { padding-right: 13px; }
+    .log-chip { min-width: 74px; padding: 8px 12px; }
+    .log-chip b { font-size: 1.32rem; }
+}
 .profile-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
 .lineup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
 .lineup-card {
