@@ -96,12 +96,13 @@ function onScenarioChange(race, changedSelect) {
     const gpPosition = gpSel.value ? parseInt(gpSel.value) : null;
     const sprintPosition = (race.isSprint && sprintSel && sprintSel.value) ? parseInt(sprintSel.value) : null;
 
+    // Any interaction locks this race for this driver, including picking "outside points"
+    // (gpPosition/sprintPosition null means 0 points, not "untouched" - a previous version
+    // deleted the lock whenever both fields were blank, which silently un-locked "outside
+    // points" back to simulated instead of scoring it as 0, one of the most common scenarios
+    // a user would want to model).
     if (!calcState.scenario[driverId]) calcState.scenario[driverId] = {};
-    if (gpPosition === null && sprintPosition === null) {
-        delete calcState.scenario[driverId][race.round];
-    } else {
-        calcState.scenario[driverId][race.round] = { gpPosition, sprintPosition };
-    }
+    calcState.scenario[driverId][race.round] = { gpPosition, sprintPosition };
     renderCarousel(); // refresh dot-lock indicators
     recomputeResults();
 }
