@@ -30,14 +30,16 @@ async function loadChampionshipCalcData(topN) {
                 return res ? parseFloat(res.points) : null;
             })
             .filter(v => v !== null);
-        const sprintHistory = sprintResults.map(r => {
-            const res = r.SprintResults.find(x => x.Driver.driverId === id);
-            return res ? parseFloat(res.points) : 0;
-        });
+        const sprintHistory = sprintResults
+            .map(r => {
+                const res = r.SprintResults.find(x => x.Driver.driverId === id);
+                return res ? parseFloat(res.points) : null;
+            })
+            .filter(v => v !== null);
         return {
             id,
             code: s.Driver.code,
-            team: s.Constructors[0].name,
+            team: s.Constructors?.[0]?.name || 'Unknown',
             currentPoints: parseFloat(s.points),
             pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory), // display only (see Task 3 amendment)
             history: { gpHistory, sprintHistory } // used by the simulation engine
