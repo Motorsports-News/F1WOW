@@ -44,17 +44,12 @@ function renderCarousel() {
     const race = calcState.remainingRaces[calcCurrentRaceIndex];
     const total = calcState.remainingRaces.length;
 
-    const rows = calcState.drivers.map(d => {
-        const locked = calcState.scenario[d.id]?.[race.round];
-        const gpVal = locked?.gpPosition || '';
-        const sprintVal = locked?.sprintPosition || '';
-        return `
+    const rows = calcState.drivers.map(d => `
         <tr>
             <td>${sanitizeHTML(d.code)}</td>
-            <td><select data-driver="${d.id}" data-kind="gp">${positionOptions(10)}</select></td>
-            <td ${race.isSprint ? '' : 'style="display:none;"'}><select data-driver="${d.id}" data-kind="sprint">${positionOptions(8)}</select></td>
-        </tr>`;
-    }).join('');
+            <td><select data-driver="${sanitizeHTML(d.id)}" data-kind="gp">${positionOptions(10)}</select></td>
+            <td ${race.isSprint ? '' : 'style="display:none;"'}><select data-driver="${sanitizeHTML(d.id)}" data-kind="sprint">${positionOptions(8)}</select></td>
+        </tr>`).join('');
 
     const dots = calcState.remainingRaces.map((r, i) => {
         const hasAnyLock = calcState.drivers.some(d => calcState.scenario[d.id]?.[r.round]);
