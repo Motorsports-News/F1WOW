@@ -191,8 +191,11 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
     // could name a confusing driver (e.g. a #2-by-points with no unlocked races left can
     // rank behind a #3-by-points who still has high-variance races to simulate).
     const leader = drivers.find(d => d.id === leaderId);
-    const rival = [...drivers]
-        .filter(d => d.id !== leaderId)
+    // Only a driver who isn't already eliminated can meaningfully "close the gap" -
+    // an eliminated rival would produce a self-contradictory sentence (telling them to
+    // outscore the leader when they mathematically can't anymore).
+    const contenders = drivers.filter(d => d.id !== leaderId && !eliminated[d.id]);
+    const rival = (contenders.length ? contenders : drivers.filter(d => d.id !== leaderId))
         .sort((a, b) => pointsNow[b.id] - pointsNow[a.id])[0];
 
     const remainingRaceCount = calcState.remainingRaces.filter(r =>
