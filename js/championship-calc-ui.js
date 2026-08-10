@@ -107,7 +107,94 @@ function onScenarioChange(race, changedSelect) {
 }
 
 function recomputeResults() {
-    /* Task 9 fills this in */
+    const drivers = calcState.drivers;
+    const remaining = calcState.remainingRaces;
+
+    // Points after applying every locked race for every driver.
+    const pointsNow = {};
+    drivers.forEach(d => {
+        let pts = d.currentPoints;
+        remaining.forEach(r => {
+            const locked = calcState.scenario[d.id]?.[r.round];
+            if (!locked) return;
+            pts += ChampionshipCalc.gpPointsFor(locked.gpPosition);
+            if (r.isSprint) pts += ChampionshipCalc.sprintPointsFor(locked.sprintPosition);
+        });
+        pointsNow[d.id] = pts;
+    });
+
+    const leaderId = drivers.reduce((a, b) => (pointsNow[a.id] >= pointsNow[b.id] ? a : b)).id;
+    const leaderPoints = pointsNow[leaderId];
+
+    // Elimination uses only *unlocked* remaining races as the "still available" pool -
+    // a locked race is already spent and contributes no further max-possible points.
+    const unlockedStandard = id => remaining.filter(r => !r.isSprint && !calcState.scenario[id]?.[r.round]).length;
+    const unlockedSprint = id => remaining.filter(r => r.isSprint && !calcState.scenario[id]?.[r.round]).length;
+
+    const eliminated = {};
+    drivers.forEach(d => {
+        if (d.id === leaderId) { eliminated[d.id] = false; return; }
+        eliminated[d.id] = ChampionshipCalc.checkElimination(
+            pointsNow[d.id], leaderPoints, unlockedStandard(d.id), unlockedSprint(d.id)
+        );
+    });
+    const isChampion = leaderId && drivers.every(d => d.id === leaderId || eliminated[d.id]);
+
+    // Monte Carlo only needs to simulate each driver's *unlocked* remaining races.
+    const simDrivers = drivers.map(d => ({
+        id: d.id,
+        currentPoints: pointsNow[d.id],
+        eliminated: eliminated[d.id],
+        history: d.history,
+        races: remaining.map(r => {
+            const locked = calcState.scenario[d.id]?.[r.round];
+            return locked
+                ? { locked: true, isSprint: r.isSprint, gpPosition: locked.gpPosition, sprintPosition: locked.sprintPosition }
+                : { locked: false, isSprint: r.isSprint };
+        })
+    }));
+    const probabilities = ChampionshipCalc.runMonteCarlo(simDrivers, 3000);
+
+    renderResults(drivers, pointsNow, eliminated, isChampion, probabilities, leaderId);
+}
+
+function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities, leaderId) {
+    const section = document.getElementById('calcResultsSection');
+    section.style.display = 'block';
+
+    const sorted = [...drivers].sort((a, b) => probabilities[b.id] - probabilities[a.id]);
+    const rows = sorted.map(d => {
+        const pct = (probabilities[d.id] * 100).toFixed(1);
+        const badge = d.id === leaderId && isChampion ? '<span class="badge badge-champ">Champion</span>'
+            : eliminated[d.id] ? '<span class="badge badge-out">Eliminated</span>'
+            : '<span class="badge badge-alive">Alive</span>';
+        return `
+        <div class="result-row">
+            <div class="result-driver">${sanitizeHTML(d.code)} ${badge}</div>
+            <div class="result-bar-wrap"><div class="result-bar" style="width:${pct}%"></div></div>
+            <div class="result-pct">${pct}%</div>
+        </div>`;
+    }).join('');
+
+    const leader = sorted[0];
+    const rival = sorted[1];
+    const remainingRaceCount = calcState.remainingRaces.filter(r =>
+        !calcState.scenario[rival.id]?.[r.round]).length;
+    const gapInfo = ChampionshipCalc.requiredResultGap(pointsNow[leader.id], pointsNow[rival.id], remainingRaceCount);
+
+    const requiredLine = isChampion
+        ? `<strong>${sanitizeHTML(leader.code)} is mathematically champion</strong> under this scenario.`
+        : gapInfo
+            ? `To close the gap, <strong>${sanitizeHTML(rival.code)}</strong> needs to outscore <strong>${sanitizeHTML(leader.code)}</strong> by an average of <strong>${gapInfo.perRaceNeeded} points per race</strong> across the ${gapInfo.racesLeftCount} rounds still open (currently ${gapInfo.gap} points behind).`
+            : '';
+
+    section.innerHTML = `
+        <h2>Championship Win Probability</h2>
+        <div>${rows}</div>
+        <div class="required-line">${requiredLine}</div>
+        <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:10px;">
+            Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season. First-pass estimate, not an official probability.
+        </p>`;
 }
 
 async function initChampionshipCalculator() {
@@ -116,6 +203,7 @@ async function initChampionshipCalculator() {
         calcState = { ...data, scenario: {} }; // scenario[driverId][round] = { gpPosition, sprintPosition }
         renderStandings(calcState.drivers);
         renderCarousel();
+        recomputeResults();
         document.getElementById('calcLoading').style.display = 'none';
         document.getElementById('calcApp').style.display = 'block';
     } catch (err) {
