@@ -100,3 +100,39 @@ test('runMonteCarlo: eliminated drivers never win', () => {
     const probs = runMonteCarlo(drivers, 200, seededRng(1));
     assert.strictEqual(probs.out, 0);
 });
+
+const { simulateDriverRemainingPoints } = require('../../js/championship-calc-engine.js');
+
+test('simulateDriverRemainingPoints: mix of a locked race and an unlocked race sums correctly', () => {
+    // Locked race: P1 with sprint P1 -> 25 + 8 = 33 exact points, taken from gpPosition/sprintPosition
+    // directly (not resampled). Unlocked race: resampled from gpHistory via the seeded rng.
+    // With seededRng(3), the first rng() call is 0.5415987374920392, which against a 3-item
+    // gpHistory ([10, 20, 30]) resolves to index 1 -> value 20 (verified by running
+    // sampleFromHistory with the same seed independently before writing this assertion).
+    const history = { gpHistory: [10, 20, 30], sprintHistory: [4, 5, 6] };
+    const races = [
+        { locked: true, isSprint: true, gpPosition: 1, sprintPosition: 1 },
+        { locked: false, isSprint: false }
+    ];
+    const total = simulateDriverRemainingPoints(races, history, seededRng(3));
+    assert.strictEqual(total, 53); // 33 (locked) + 20 (resampled gpHistory[1])
+});
+
+test('simulateDriverRemainingPoints: missing history does not throw and contributes 0 for unlocked races', () => {
+    const races = [
+        { locked: false, isSprint: false },
+        { locked: true, isSprint: false, gpPosition: 3 }
+    ];
+    assert.doesNotThrow(() => simulateDriverRemainingPoints(races, undefined, seededRng(9)));
+    const total = simulateDriverRemainingPoints(races, undefined, seededRng(9));
+    assert.strictEqual(total, 15); // unlocked race contributes 0 (no history to sample from); locked P3 = 15
+
+    // Also verify the same guard holds when the driver has no `history` field at all,
+    // exercised through the public runMonteCarlo entry point.
+    const drivers = [
+        { id: 'x', currentPoints: 100, eliminated: false, races: [{ locked: false, isSprint: false }] }
+    ];
+    assert.doesNotThrow(() => runMonteCarlo(drivers, 1, seededRng(9)));
+    const probs = runMonteCarlo(drivers, 1, seededRng(9));
+    assert.strictEqual(probs.x, 1); // sole driver, unlocked race added 0 -> total stays at currentPoints
+});
