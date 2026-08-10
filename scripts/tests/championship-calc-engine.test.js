@@ -31,6 +31,22 @@ test('checkElimination: false when the gap is still closeable', () => {
     assert.strictEqual(checkElimination(200, 219, 10, 2), false);
 });
 
+test('maxRemainingPoints: carsPerEntity scales the ceiling for constructors', () => {
+    assert.strictEqual(maxRemainingPoints(10, 2, 1), maxRemainingPoints(10, 2)); // default is 1, unchanged
+    assert.strictEqual(maxRemainingPoints(10, 2, 2), maxRemainingPoints(10, 2) * 2);
+});
+
+test('checkElimination: carsPerEntity changes the verdict for the same points gap', () => {
+    const trailingPoints = 0;
+    const leaderPoints = 150;
+    const standardRacesLeft = 5;
+    const sprintWeekendsLeft = 0;
+    // Driver-scale (default, 1 car): ceiling 5*25=125 < 150 gap -> eliminated
+    assert.strictEqual(checkElimination(trailingPoints, leaderPoints, standardRacesLeft, sprintWeekendsLeft), true);
+    // Constructor-scale (2 cars): ceiling 5*25*2=250 >= 150 gap -> not eliminated
+    assert.strictEqual(checkElimination(trailingPoints, leaderPoints, standardRacesLeft, sprintWeekendsLeft, 2), false);
+});
+
 const { computePaceStats } = require('../../js/championship-calc-engine.js');
 
 test('computePaceStats: average and spread from real per-race points', () => {

@@ -15,15 +15,17 @@
         return SPRINT_POINTS[position] || 0;
     }
 
-    function maxRemainingPoints(standardRacesLeft, sprintWeekendsLeft) {
-        return standardRacesLeft * 25 + sprintWeekendsLeft * 33;
+    function maxRemainingPoints(standardRacesLeft, sprintWeekendsLeft, carsPerEntity) {
+        carsPerEntity = carsPerEntity || 1;
+        return (standardRacesLeft * 25 + sprintWeekendsLeft * 33) * carsPerEntity;
     }
 
     // Standard F1 elimination test: even if the trailing driver wins every remaining
     // race/sprint (best case) and the leader scores zero for the rest of the season
     // (worst case for the leader), can the trailing driver still catch them?
-    function checkElimination(driverPoints, leaderPoints, standardRacesLeft, sprintWeekendsLeft) {
-        const bestCase = driverPoints + maxRemainingPoints(standardRacesLeft, sprintWeekendsLeft);
+    // carsPerEntity scales the ceiling for constructors (2 cars) vs drivers (1, the default).
+    function checkElimination(driverPoints, leaderPoints, standardRacesLeft, sprintWeekendsLeft, carsPerEntity) {
+        const bestCase = driverPoints + maxRemainingPoints(standardRacesLeft, sprintWeekendsLeft, carsPerEntity);
         return bestCase < leaderPoints;
     }
 
