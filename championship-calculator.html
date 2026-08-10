@@ -68,6 +68,11 @@
         .scenario-table th, .scenario-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
         .scenario-table tr.calc-locked-row { background: rgba(225,6,0,0.06); }
         .scenario-table select { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; font-family: 'Chakra Petch', sans-serif; }
+        /* The OPEN dropdown list is a separate OS-level popup, not styled by the
+           select's own (semi-transparent) background - without an explicit, solid
+           color here it falls back to the browser default (white bg), leaving the
+           white option text invisible against it. */
+        .scenario-table select option { background: var(--f1-dark); color: #fff; }
         .calc-pts-preview { display: inline-block; min-width: 40px; text-align: center; font-size: 0.78rem; font-weight: 800; color: rgba(255,255,255,0.35); font-variant-numeric: tabular-nums; }
         .calc-pts-preview.has-pts { color: var(--f1-red); }
 
