@@ -10,11 +10,15 @@ function renderStandings(drivers) {
         document.getElementById('calcStandingsSection').innerHTML = '<p>No standings data available.</p>';
         return;
     }
+    // Constructors mode reuses this same renderer (calcState.drivers holds constructor
+    // entries there), but a constructor's code/team are the same full name - showing
+    // both a "Driver" and "Team" column would just duplicate that name across two cells.
+    const isConstructors = calcMode === 'constructors';
     const leaderPoints = drivers[0].currentPoints;
     const rows = drivers.map(d => `
         <tr class="standings-row">
             <td>${sanitizeHTML(d.code)}</td>
-            <td>${sanitizeHTML(d.team)}</td>
+            ${isConstructors ? '' : `<td>${sanitizeHTML(d.team)}</td>`}
             <td>${d.currentPoints}</td>
             <td>${d.currentPoints === leaderPoints ? '—' : '-' + (leaderPoints - d.currentPoints)}</td>
         </tr>`).join('');
@@ -22,8 +26,8 @@ function renderStandings(drivers) {
     document.getElementById('calcStandingsSection').innerHTML = `
         <h2>Current Standings</h2>
         <div class="standings-container">
-            <table class="standings-table" aria-label="Current driver standings">
-                <thead><tr><th>Driver</th><th>Team</th><th>Points</th><th>Gap to Leader</th></tr></thead>
+            <table class="standings-table" aria-label="Current ${isConstructors ? 'constructor' : 'driver'} standings">
+                <thead><tr><th>${isConstructors ? 'Team' : 'Driver'}</th>${isConstructors ? '' : '<th>Team</th>'}<th>Points</th><th>Gap to Leader</th></tr></thead>
                 <tbody>${rows}</tbody>
             </table>
         </div>`;
@@ -65,7 +69,7 @@ function renderCarousel() {
             <button id="calcNextRace" ${calcCurrentRaceIndex === total - 1 ? 'disabled' : ''}>Next &rsaquo;</button>
         </div>
         <table class="scenario-table">
-            <thead><tr><th>Driver</th><th>GP Finish</th><th ${race.isSprint ? '' : 'style="display:none;"'}>Sprint Finish</th></tr></thead>
+            <thead><tr><th>${calcMode === 'constructors' ? 'Team' : 'Driver'}</th><th>GP Finish</th><th ${race.isSprint ? '' : 'style="display:none;"'}>Sprint Finish</th></tr></thead>
             <tbody>${rows}</tbody>
         </table>
         <div class="calc-race-dots">${dots}</div>`;
@@ -221,12 +225,22 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         </p>`;
 }
 
+let calcModeRequestId = 0;
+
 async function switchCalcMode(mode) {
     calcMode = mode;
     document.getElementById('calcTabDrivers').style.opacity = mode === 'drivers' ? '1' : '0.5';
     document.getElementById('calcTabConstructors').style.opacity = mode === 'constructors' ? '1' : '0.5';
 
+    // Guard against a rapid double-click starting a second switch before the first
+    // one's fetch resolves - without this, an older, slower-resolving fetch could
+    // overwrite calcState *after* a newer click already settled on the other mode,
+    // leaving calcMode and calcState.drivers referring to two different modes (which
+    // would silently break the carsPerEntity elimination math below).
+    const myRequestId = ++calcModeRequestId;
     const data = mode === 'drivers' ? await loadChampionshipCalcData(12) : await loadConstructorCalcData(8);
+    if (myRequestId !== calcModeRequestId) return; // a newer switchCalcMode call has since started - drop this stale result
+
     calcState = { ...data, scenario: {} };
     calcCurrentRaceIndex = 0;
     renderStandings(calcState.drivers);
