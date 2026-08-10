@@ -168,6 +168,26 @@ function recomputeResults() {
     const probabilities = ChampionshipCalc.runMonteCarlo(simDrivers, 3000);
 
     renderResults(drivers, pointsNow, eliminated, isChampion, probabilities, leaderId);
+    updateShareUrl();
+}
+
+function encodeScenario() {
+    const payload = { mode: calcMode, scenario: calcState.scenario };
+    return btoa(encodeURIComponent(JSON.stringify(payload)));
+}
+
+function decodeScenario(encoded) {
+    try {
+        return JSON.parse(decodeURIComponent(atob(encoded)));
+    } catch (e) {
+        return null;
+    }
+}
+
+function updateShareUrl() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('s', encodeScenario());
+    window.history.replaceState(null, '', url.toString());
 }
 
 function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities, leaderId) {
@@ -222,7 +242,15 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         <div class="required-line">${requiredLine}</div>
         <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:10px;">
             Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season. First-pass estimate, not an official probability.
-        </p>`;
+        </p>
+        <button class="run-btn" id="calcCopyLink" style="margin-top:14px;">Copy Shareable Link</button>`;
+
+    document.getElementById('calcCopyLink').onclick = () => {
+        navigator.clipboard.writeText(window.location.href);
+        const btn = document.getElementById('calcCopyLink');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy Shareable Link'; }, 1500);
+    };
 }
 
 let calcModeRequestId = 0;
@@ -250,7 +278,14 @@ async function switchCalcMode(mode) {
 
 async function initChampionshipCalculator() {
     try {
-        await switchCalcMode('drivers');
+        const incoming = new URL(window.location.href).searchParams.get('s');
+        const decoded = incoming ? decodeScenario(incoming) : null;
+        await switchCalcMode(decoded?.mode || 'drivers');
+        if (decoded?.scenario) {
+            calcState.scenario = decoded.scenario;
+            renderCarousel();
+            recomputeResults();
+        }
         document.getElementById('calcTabDrivers').onclick = () => switchCalcMode('drivers');
         document.getElementById('calcTabConstructors').onclick = () => switchCalcMode('constructors');
         document.getElementById('calcLoading').style.display = 'none';
