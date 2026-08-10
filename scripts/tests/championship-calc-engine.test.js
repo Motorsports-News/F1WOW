@@ -136,3 +136,15 @@ test('simulateDriverRemainingPoints: missing history does not throw and contribu
     const probs = runMonteCarlo(drivers, 1, seededRng(9));
     assert.strictEqual(probs.x, 1); // sole driver, unlocked race added 0 -> total stays at currentPoints
 });
+
+const { requiredResultGap } = require('../../js/championship-calc-engine.js');
+
+test('requiredResultGap: computes points-per-race needed to close the gap', () => {
+    const r = requiredResultGap(219, 169, 11); // leader 219, rival 169, 11 races left
+    assert.strictEqual(r.gap, 50);
+    assert.strictEqual(r.perRaceNeeded, Math.round((50 / 11) * 10) / 10);
+});
+
+test('requiredResultGap: returns null when there is no gap to close (rival already ahead)', () => {
+    assert.strictEqual(requiredResultGap(169, 219, 11), null);
+});

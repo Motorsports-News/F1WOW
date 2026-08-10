@@ -109,12 +109,23 @@
         return probabilities;
     }
 
+    // Plain-English "how far behind, and by how much per race" framing - the v1
+    // required-results output. (A full combinatorial "guaranteed clinch" search is
+    // a v1.x feature, deliberately out of scope here - see design spec.)
+    function requiredResultGap(leaderPoints, rivalPoints, racesLeftCount) {
+        const gap = leaderPoints - rivalPoints;
+        if (gap <= 0) return null;
+        const perRaceNeeded = racesLeftCount > 0 ? Math.round((gap / racesLeftCount) * 10) / 10 : gap;
+        return { gap, perRaceNeeded, racesLeftCount };
+    }
+
     const ChampionshipCalc = {
         GP_POINTS, SPRINT_POINTS,
         gpPointsFor, sprintPointsFor,
         maxRemainingPoints, checkElimination,
         mean, stddev, computePaceStats,
-        sampleFromHistory, simulateDriverRemainingPoints, runMonteCarlo
+        sampleFromHistory, simulateDriverRemainingPoints, runMonteCarlo,
+        requiredResultGap
     };
 
     if (typeof module !== 'undefined' && module.exports) {
