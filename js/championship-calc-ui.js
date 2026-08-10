@@ -5,6 +5,8 @@
 let calcState = null; // set by initChampionshipCalculator()
 let calcMode = 'drivers';
 
+const STANDINGS_VISIBLE = 5;
+
 function renderStandings(drivers) {
     if (!drivers || !drivers.length) {
         document.getElementById('calcStandingsSection').innerHTML = '<p>No standings data available.</p>';
@@ -15,21 +17,33 @@ function renderStandings(drivers) {
     // both a "Driver" and "Team" column would just duplicate that name across two cells.
     const isConstructors = calcMode === 'constructors';
     const leaderPoints = drivers[0].currentPoints;
-    const rows = drivers.map(d => `
+    const rowHtml = d => `
         <tr class="standings-row">
             <td>${sanitizeHTML(d.code)}</td>
             ${isConstructors ? '' : `<td>${sanitizeHTML(d.team)}</td>`}
             <td>${d.currentPoints}</td>
             <td>${d.currentPoints === leaderPoints ? '—' : '-' + (leaderPoints - d.currentPoints)}</td>
-        </tr>`).join('');
+        </tr>`;
+
+    const visible = drivers.slice(0, STANDINGS_VISIBLE).map(rowHtml).join('');
+    const rest = drivers.slice(STANDINGS_VISIBLE);
+    // Everyone beyond the top 5 is supporting context, not the point of the page -
+    // collapse it behind a native <details> disclosure instead of always showing all
+    // 12+ rows (no JS state needed, keyboard/screen-reader accessible for free).
+    const restBlock = rest.length
+        ? `<details class="calc-more-toggle"><summary>${rest.length} more</summary>
+            <table class="standings-table" aria-hidden="true"><tbody>${rest.map(rowHtml).join('')}</tbody></table>
+           </details>`
+        : '';
 
     document.getElementById('calcStandingsSection').innerHTML = `
         <h2>Current Standings</h2>
         <div class="standings-container">
             <table class="standings-table" aria-label="Current ${isConstructors ? 'constructor' : 'driver'} standings">
                 <thead><tr><th>${isConstructors ? 'Team' : 'Driver'}</th>${isConstructors ? '' : '<th>Team</th>'}<th>Points</th><th>Gap to Leader</th></tr></thead>
-                <tbody>${rows}</tbody>
+                <tbody>${visible}</tbody>
             </table>
+            ${restBlock}
         </div>`;
 }
 
@@ -40,39 +54,52 @@ function ordinalLabel(p) {
 }
 
 function positionOptions(max) {
-    let opts = '<option value="">— (outside points)</option>';
+    let opts = '<option value="" title="Outside the points (P11+ or DNF)">—</option>';
     for (let p = 1; p <= max; p++) opts += `<option value="${p}">${ordinalLabel(p)}</option>`;
     return opts;
 }
+
+const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function renderCarousel() {
     const race = calcState.remainingRaces[calcCurrentRaceIndex];
     const total = calcState.remainingRaces.length;
 
-    const rows = calcState.drivers.map(d => `
-        <tr>
+    const rows = calcState.drivers.map(d => {
+        const locked = calcState.scenario[d.id]?.[race.round];
+        const pts = locked
+            ? ChampionshipCalc.gpPointsFor(locked.gpPosition) + (race.isSprint ? ChampionshipCalc.sprintPointsFor(locked.sprintPosition) : 0)
+            : null;
+        const ptsLabel = pts === null ? '&ndash;' : (pts > 0 ? '+' + pts : '0');
+        return `
+        <tr class="${locked ? 'calc-locked-row' : ''}">
             <td>${sanitizeHTML(d.code)}</td>
             <td><select data-driver="${sanitizeHTML(d.id)}" data-kind="gp">${positionOptions(10)}</select></td>
             <td ${race.isSprint ? '' : 'style="display:none;"'}><select data-driver="${sanitizeHTML(d.id)}" data-kind="sprint">${positionOptions(8)}</select></td>
-        </tr>`).join('');
-
-    const dots = calcState.remainingRaces.map((r, i) => {
-        const hasAnyLock = calcState.drivers.some(d => calcState.scenario[d.id]?.[r.round]);
-        return `<button class="calc-dot ${hasAnyLock ? 'locked' : ''} ${i === calcCurrentRaceIndex ? 'current' : ''}" data-index="${i}" title="Round ${r.round}: ${sanitizeHTML(r.name)}"></button>`;
+            <td><span class="calc-pts-preview ${pts > 0 ? 'has-pts' : ''}">${ptsLabel}</span></td>
+        </tr>`;
     }).join('');
 
-    document.getElementById('calcCarouselSection').innerHTML = `
+    // Round chips show the actual round number and lock state at a glance, instead
+    // of an unlabeled row of identical dots.
+    const chips = calcState.remainingRaces.map((r, i) => {
+        const hasAnyLock = calcState.drivers.some(d => calcState.scenario[d.id]?.[r.round]);
+        return `<button class="calc-race-chip ${hasAnyLock ? 'locked' : ''} ${i === calcCurrentRaceIndex ? 'current' : ''}" data-index="${i}" title="Round ${r.round}: ${sanitizeHTML(r.name)}">${r.round}</button>`;
+    }).join('');
+
+    const section = document.getElementById('calcCarouselSection');
+    section.innerHTML = `
         <h2>Set Race Results</h2>
         <div class="calc-carousel-nav">
             <button id="calcPrevRace" ${calcCurrentRaceIndex === 0 ? 'disabled' : ''}>&lsaquo; Prev</button>
             <span class="calc-race-label">Round ${race.round} — ${sanitizeHTML(race.name)}${race.isSprint ? ' (Sprint)' : ''}</span>
             <button id="calcNextRace" ${calcCurrentRaceIndex === total - 1 ? 'disabled' : ''}>Next &rsaquo;</button>
         </div>
-        <table class="scenario-table">
-            <thead><tr><th>${calcMode === 'constructors' ? 'Team' : 'Driver'}</th><th>GP Finish</th><th ${race.isSprint ? '' : 'style="display:none;"'}>Sprint Finish</th></tr></thead>
+        <table class="scenario-table" style="opacity:${REDUCE_MOTION ? '1' : '0'};">
+            <thead><tr><th>${calcMode === 'constructors' ? 'Team' : 'Driver'}</th><th>GP Finish</th><th ${race.isSprint ? '' : 'style="display:none;"'}>Sprint Finish</th><th>Points</th></tr></thead>
             <tbody>${rows}</tbody>
         </table>
-        <div class="calc-race-dots">${dots}</div>`;
+        <div class="calc-race-chips">${chips}</div>`;
 
     // restore selected values now that the DOM elements exist
     calcState.drivers.forEach(d => {
@@ -86,12 +113,18 @@ function renderCarousel() {
 
     document.getElementById('calcPrevRace').onclick = () => { calcCurrentRaceIndex--; renderCarousel(); };
     document.getElementById('calcNextRace').onclick = () => { calcCurrentRaceIndex++; renderCarousel(); };
-    document.querySelectorAll('.calc-dot').forEach(dot => {
-        dot.onclick = () => { calcCurrentRaceIndex = parseInt(dot.dataset.index); renderCarousel(); };
+    document.querySelectorAll('.calc-race-chip').forEach(chip => {
+        chip.onclick = () => { calcCurrentRaceIndex = parseInt(chip.dataset.index); renderCarousel(); };
     });
     document.querySelectorAll('.scenario-table select').forEach(sel => {
         sel.onchange = () => { onScenarioChange(race, sel); };
     });
+
+    // Quick crossfade so a race/tab switch reads as a response, not a hard swap.
+    if (!REDUCE_MOTION) {
+        const table = section.querySelector('.scenario-table');
+        requestAnimationFrame(() => requestAnimationFrame(() => { table.style.opacity = '1'; }));
+    }
 }
 
 function onScenarioChange(race, changedSelect) {
@@ -204,7 +237,7 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
     }
 
     const sorted = [...drivers].sort((a, b) => probabilities[b.id] - probabilities[a.id]);
-    const rows = sorted.map(d => {
+    const rowHtml = d => {
         const pct = (probabilities[d.id] * 100).toFixed(1);
         const badge = d.id === leaderId && isChampion ? '<span class="badge badge-champ">Champion</span>'
             : eliminated[d.id] ? '<span class="badge badge-out">Eliminated</span>'
@@ -212,10 +245,25 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         return `
         <div class="result-row">
             <div class="result-driver">${sanitizeHTML(d.code)} ${badge}</div>
-            <div class="result-bar-wrap"><div class="result-bar" style="width:${pct}%"></div></div>
+            <div class="result-bar-wrap"><div class="result-bar" data-pct="${pct}"></div></div>
             <div class="result-pct">${pct}%</div>
         </div>`;
-    }).join('');
+    };
+
+    // A driver with a rounded 0.0% chance isn't wrong to show, but nine identical
+    // near-zero bars in a row is pure repetition once the title fight has a clear
+    // top few - collapse the long tail behind a disclosure instead of always
+    // rendering every row at full visual weight.
+    const SIGNIFICANT_THRESHOLD = 1;
+    const significant = sorted.filter(d => probabilities[d.id] * 100 >= SIGNIFICANT_THRESHOLD);
+    const tail = sorted.filter(d => probabilities[d.id] * 100 < SIGNIFICANT_THRESHOLD);
+    const shown = significant.length >= 1 ? significant : sorted; // never collapse down to zero visible rows
+    const hidden = shown === sorted ? [] : tail;
+
+    const rows = shown.map(rowHtml).join('');
+    const tailBlock = hidden.length
+        ? `<details class="calc-tail-toggle"><summary>+${hidden.length} more, all under ${SIGNIFICANT_THRESHOLD}%</summary>${hidden.map(rowHtml).join('')}</details>`
+        : '';
 
     // Rival for the required-result sentence is selected by POINTS, not by simulated
     // probability - probability is unseeded and reruns on every edit, so using it here
@@ -243,6 +291,7 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
     section.innerHTML = `
         <h2>Championship Win Probability</h2>
         <div>${rows}</div>
+        ${tailBlock}
         <div class="required-line">${requiredLine}</div>
         <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:10px;">
             Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season. First-pass estimate, not an official probability.
@@ -255,14 +304,26 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         btn.textContent = 'Copied!';
         setTimeout(() => { btn.textContent = 'Copy Shareable Link'; }, 1500);
     };
+
+    // Bars are inserted at width:0 (see .result-bar's CSS default) - fill them to
+    // their real value one frame later so the transition actually has something to
+    // animate from, instead of the target width just appearing already-painted.
+    const bars = section.querySelectorAll('.result-bar');
+    if (REDUCE_MOTION) {
+        bars.forEach(bar => { bar.style.width = bar.dataset.pct + '%'; });
+    } else {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            bars.forEach(bar => { bar.style.width = bar.dataset.pct + '%'; });
+        }));
+    }
 }
 
 let calcModeRequestId = 0;
 
 async function switchCalcMode(mode) {
     calcMode = mode;
-    document.getElementById('calcTabDrivers').style.opacity = mode === 'drivers' ? '1' : '0.5';
-    document.getElementById('calcTabConstructors').style.opacity = mode === 'constructors' ? '1' : '0.5';
+    document.getElementById('calcTabDrivers').classList.toggle('active', mode === 'drivers');
+    document.getElementById('calcTabConstructors').classList.toggle('active', mode === 'constructors');
 
     // Guard against a rapid double-click starting a second switch before the first
     // one's fetch resolves - without this, an older, slower-resolving fetch could

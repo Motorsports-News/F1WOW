@@ -23,33 +23,65 @@
 <noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669" crossorigin="anonymous"></script></noscript>
     <meta name="robots" content="noindex, nofollow">
     <style>
-        .proto-section { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 22px; margin-bottom: 24px; }
+        .proto-section { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 22px; margin-bottom: 20px; }
         .proto-section h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.3rem; margin-bottom: 14px; }
+        .proto-section-compact { padding: 16px 22px; }
+
+        /* Results is the payoff of this whole tool - give it more visual weight than
+           the supporting sections instead of three identical stacked cards. */
+        .calc-hero { background: linear-gradient(180deg, rgba(225,6,0,0.07), var(--f1-dark) 65%); border: 1px solid var(--border-color); border-top: 2px solid var(--f1-red); border-radius: 12px; padding: 26px; margin-bottom: 20px; }
+        .calc-hero h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; margin-bottom: 16px; }
+
+        .calc-mode-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .calc-tab { background: transparent; border: 1px solid var(--border-color); color: rgba(255,255,255,0.6); border-radius: 999px; padding: 8px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease; }
+        .calc-tab:hover { border-color: var(--f1-red); color: #fff; }
+        .calc-tab.active { background: var(--f1-red); border-color: var(--f1-red); color: #fff; }
+
         .calc-carousel-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-        .calc-carousel-nav button { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 1.1rem; }
+        .calc-carousel-nav button { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 1.1rem; transition: background 0.15s ease; }
+        .calc-carousel-nav button:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
         .calc-carousel-nav button:disabled { opacity: 0.3; cursor: default; }
         .calc-race-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; }
-        .calc-race-dots { display: flex; gap: 6px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
-        .calc-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); cursor: pointer; border: none; }
-        .calc-dot.locked { background: var(--f1-red); }
-        .calc-dot.current { outline: 2px solid #fff; }
+
+        /* Round chips replace bare dots - shows the actual round number and lock state
+           at a glance instead of an abstract row of identical circles. */
+        .calc-race-chips { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
+        .calc-race-chip { min-width: 32px; height: 26px; padding: 0 6px; border-radius: 6px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: rgba(255,255,255,0.65); font-size: 0.72rem; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+        .calc-race-chip:hover { border-color: var(--f1-red); color: #fff; }
+        .calc-race-chip.locked { background: var(--f1-red); border-color: var(--f1-red); color: #fff; }
+        .calc-race-chip.current { outline: 2px solid #fff; outline-offset: 1px; }
+
+        .scenario-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; transition: opacity 0.18s ease; }
+        .scenario-table th, .scenario-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .scenario-table tr.calc-locked-row { background: rgba(225,6,0,0.06); }
+        .scenario-table select { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; font-family: 'Chakra Petch', sans-serif; }
+        .calc-pts-preview { display: inline-block; min-width: 40px; text-align: center; font-size: 0.78rem; font-weight: 800; color: rgba(255,255,255,0.35); font-variant-numeric: tabular-nums; }
+        .calc-pts-preview.has-pts { color: var(--f1-red); }
+
         .standings-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
         .standings-table th, .standings-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .scenario-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-        .scenario-table th, .scenario-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .scenario-table select { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; font-family: 'Chakra Petch', sans-serif; }
+
+        .calc-more-toggle summary, .calc-tail-toggle summary { cursor: pointer; padding: 10px 0; color: rgba(255,255,255,0.5); font-size: 0.85rem; list-style: none; }
+        .calc-more-toggle summary::-webkit-details-marker, .calc-tail-toggle summary::-webkit-details-marker { display: none; }
+        .calc-more-toggle summary:hover, .calc-tail-toggle summary:hover { color: #fff; }
+
         .result-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
         .result-row:last-child { border-bottom: none; }
         .result-driver { flex: 0 1 190px; font-weight: 700; word-break: break-word; }
-        .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; }
+        .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
+        .run-btn:hover { background: #b80500; }
         .result-bar-wrap { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 22px; overflow: hidden; }
-        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #b80500); transition: width 0.4s ease; }
+        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #b80500); width: 0%; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
         .result-pct { flex: 0 0 60px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
         .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
         .badge-alive { background: rgba(0,200,80,0.15); color: #3ddc84; }
         .badge-out { background: rgba(200,0,0,0.15); color: #ff6b6b; }
         .badge-champ { background: rgba(255,193,7,0.15); color: #ffc107; }
-        .required-line { font-size: 1rem; line-height: 1.7; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; margin-top: 10px; }
+        .required-line { font-size: 1rem; line-height: 1.7; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; margin-top: 14px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .result-bar, .scenario-table, .calc-tab, .calc-race-chip, .run-btn, .calc-carousel-nav button { transition: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -90,13 +122,13 @@
             <div id="calcLoading" style="text-align:center;padding:40px;color:rgba(255,255,255,0.5);">Loading live standings and season data&hellip;</div>
 
             <div id="calcApp" style="display:none;">
-                <div class="calc-mode-tabs" style="display:flex;gap:10px;margin-bottom:20px;">
-                    <button id="calcTabDrivers" class="run-btn" style="opacity:1;">Drivers</button>
-                    <button id="calcTabConstructors" class="run-btn" style="opacity:0.5;">Constructors</button>
+                <div class="calc-mode-tabs">
+                    <button id="calcTabDrivers" class="calc-tab active">Drivers</button>
+                    <button id="calcTabConstructors" class="calc-tab">Constructors</button>
                 </div>
-                <section class="proto-section" id="calcStandingsSection"></section>
+                <section class="calc-hero" id="calcResultsSection" style="display:none;"></section>
                 <section class="proto-section" id="calcCarouselSection"></section>
-                <section class="proto-section" id="calcResultsSection" style="display:none;"></section>
+                <section class="proto-section proto-section-compact" id="calcStandingsSection"></section>
             </div>
         </div>
     </main>
