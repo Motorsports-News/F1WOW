@@ -97,6 +97,19 @@
         .badge-champ { background: rgba(255,193,7,0.15); color: #ffc107; }
         .required-line { font-size: 1rem; line-height: 1.7; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; margin-top: 14px; }
 
+        .calc-explore { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border-color); }
+        .calc-explore h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; margin-bottom: 6px; }
+        .calc-explore-intro { font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 12px; }
+        .calc-explore-chips { display: flex; gap: 8px; margin-bottom: 4px; }
+        .calc-explore-chip { background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: #fff; border-radius: 999px; padding: 7px 18px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+        .calc-explore-chip:hover { border-color: var(--f1-red); }
+        .calc-explore-chip.active { background: var(--f1-red); border-color: var(--f1-red); }
+        .calc-explore-panel { margin-top: 14px; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; }
+        .calc-explore-stat { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+        .calc-explore-pct { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; }
+        .calc-explore-label { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+        .calc-explore-boundary { font-size: 0.95rem; line-height: 1.6; margin: 0; }
+
         @media (prefers-reduced-motion: reduce) {
             .result-bar, .scenario-table, .calc-tab, .calc-race-chip, .run-btn, .calc-carousel-nav button { transition: none !important; }
         }

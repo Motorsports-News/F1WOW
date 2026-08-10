@@ -227,6 +227,63 @@ function updateShareUrl() {
     window.history.replaceState(null, '', url.toString());
 }
 
+let calcExploreDriverId = null; // which top-3 entity the user picked to explore, if any
+
+// Lets the user pick ANY of the top 3 (not just the auto-selected leader/rival above)
+// and see that entity's own probability plus the genuine mathematical boundary: how
+// many more points their closest top-3 opponent can score before they're mathematically
+// done. This is deliberately the deterministic best-case/worst-case boundary, not a full
+// combinatorial "every possible path" search (out of scope - see design spec).
+function renderTitlePathExplorer(drivers, pointsNow, probabilities, leaderId) {
+    // By points, not by simulated probability - same flicker-avoidance reasoning as the
+    // required-result rival pick (probability is unseeded and reruns on every edit).
+    const topByPoints = [...drivers].sort((a, b) => pointsNow[b.id] - pointsNow[a.id]).slice(0, 3);
+    if (topByPoints.length < 2) return ''; // need at least two entities for "vs" math to mean anything
+
+    if (calcExploreDriverId && !topByPoints.some(d => d.id === calcExploreDriverId)) {
+        calcExploreDriverId = null; // the previously-explored entity fell out of the top 3
+    }
+
+    const chips = topByPoints.map(d =>
+        `<button class="calc-explore-chip ${d.id === calcExploreDriverId ? 'active' : ''}" data-driver="${sanitizeHTML(d.id)}">${sanitizeHTML(d.code)}</button>`
+    ).join('');
+
+    const exploreDriver = topByPoints.find(d => d.id === calcExploreDriverId);
+    let panel = '';
+    if (exploreDriver) {
+        const opponent = topByPoints
+            .filter(d => d.id !== exploreDriver.id)
+            .sort((a, b) => pointsNow[b.id] - pointsNow[a.id])[0];
+
+        const remaining = calcState.remainingRaces.filter(r => !calcState.scenario[exploreDriver.id]?.[r.round]);
+        const standardLeft = remaining.filter(r => !r.isSprint).length;
+        const sprintLeft = remaining.filter(r => r.isSprint).length;
+        const carsPerEntity = calcMode === 'constructors' ? 2 : 1;
+        const boundary = ChampionshipCalc.titleBoundary(
+            pointsNow[exploreDriver.id], pointsNow[opponent.id], standardLeft, sprintLeft, carsPerEntity
+        );
+        const pct = (probabilities[exploreDriver.id] * 100).toFixed(1);
+
+        const boundaryLine = boundary.eliminated
+            ? `<strong>${sanitizeHTML(exploreDriver.code)} is mathematically eliminated</strong> - even winning every remaining race (a maximum of ${boundary.bestCase} points) can't catch ${sanitizeHTML(opponent.code)}'s current ${pointsNow[opponent.id]} points.`
+            : `<strong>${sanitizeHTML(exploreDriver.code)}</strong> is still mathematically alive: their ceiling if they win every remaining race and sprint is <strong>${boundary.bestCase} points</strong>, so <strong>${sanitizeHTML(opponent.code)}</strong> can score at most <strong>${boundary.maxOpponentAllowed} more points</strong> across the remaining season and still be caught.`;
+
+        panel = `
+        <div class="calc-explore-panel">
+            <div class="calc-explore-stat"><span class="calc-explore-pct">${pct}%</span><span class="calc-explore-label">${sanitizeHTML(exploreDriver.code)}'s live win probability</span></div>
+            <p class="calc-explore-boundary">${boundaryLine}</p>
+        </div>`;
+    }
+
+    return `
+    <div class="calc-explore">
+        <h3>Title Path Explorer</h3>
+        <p class="calc-explore-intro">Pick any of the top 3 to see their live odds and the exact points math behind them.</p>
+        <div class="calc-explore-chips">${chips}</div>
+        ${panel}
+    </div>`;
+}
+
 function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities, leaderId) {
     const section = document.getElementById('calcResultsSection');
     section.style.display = 'block';
@@ -293,10 +350,18 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         <div>${rows}</div>
         ${tailBlock}
         <div class="required-line">${requiredLine}</div>
+        ${renderTitlePathExplorer(drivers, pointsNow, probabilities, leaderId)}
         <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:10px;">
             Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season. First-pass estimate, not an official probability.
         </p>
         <button class="run-btn" id="calcCopyLink" style="margin-top:14px;">Copy Shareable Link</button>`;
+
+    document.querySelectorAll('.calc-explore-chip').forEach(chip => {
+        chip.onclick = () => {
+            calcExploreDriverId = calcExploreDriverId === chip.dataset.driver ? null : chip.dataset.driver;
+            renderResults(drivers, pointsNow, eliminated, isChampion, probabilities, leaderId);
+        };
+    });
 
     document.getElementById('calcCopyLink').onclick = () => {
         navigator.clipboard.writeText(window.location.href);

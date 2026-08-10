@@ -172,3 +172,32 @@ test('requiredResultGap: returns null when there are no races left to close the 
 test('requiredResultGap: returns null for a tie (no gap to close)', () => {
     assert.strictEqual(requiredResultGap(200, 200, 5), null);
 });
+
+const { titleBoundary } = require('../../js/championship-calc-engine.js');
+
+test('titleBoundary: trailing driver still alive - computes ceiling and max opponent allowance', () => {
+    // Selected has 169, opponent (leader) has 219. 11 standard races + 1 sprint left, 1 car.
+    // Ceiling = 11*25 + 1*33 = 308. Best case = 169 + 308 = 477.
+    const r = titleBoundary(169, 219, 11, 1, 1);
+    assert.strictEqual(r.ceiling, 308);
+    assert.strictEqual(r.bestCase, 477);
+    assert.strictEqual(r.eliminated, false);
+    assert.strictEqual(r.maxOpponentAllowed, 477 - 219); // 258
+});
+
+test('titleBoundary: eliminated driver - maxOpponentAllowed clamps to 0, not negative', () => {
+    // Selected has 50, opponent has 400, only 1 race left (ceiling 25) -> best case 75, eliminated.
+    const r = titleBoundary(50, 400, 1, 0, 1);
+    assert.strictEqual(r.eliminated, true);
+    assert.strictEqual(r.bestCase, 75);
+    assert.strictEqual(r.maxOpponentAllowed, 0);
+});
+
+test('titleBoundary: carsPerEntity scales the ceiling for constructors', () => {
+    const oneCar = titleBoundary(100, 300, 5, 0, 1);
+    const twoCar = titleBoundary(100, 300, 5, 0, 2);
+    assert.strictEqual(oneCar.ceiling, 125);
+    assert.strictEqual(twoCar.ceiling, 250);
+    assert.strictEqual(oneCar.eliminated, true); // best case 225 < 300
+    assert.strictEqual(twoCar.eliminated, false); // best case 350 >= 300
+});

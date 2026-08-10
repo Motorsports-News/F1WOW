@@ -124,13 +124,27 @@
         return { gap, perRaceNeeded, racesLeftCount };
     }
 
+    // The genuine best-case/worst-case boundary for a selected driver's title chances,
+    // as opposed to requiredResultGap's simplified "average points per race" framing.
+    // Answers "how much can the opponent still score before I'm mathematically done?"
+    // rather than "what average pace would close the gap" - the two can read very
+    // differently for a driver who's a long way back with few races left, where no
+    // realistic average pace exists but the driver isn't eliminated yet either.
+    function titleBoundary(selectedPoints, opponentPoints, standardRacesLeft, sprintWeekendsLeft, carsPerEntity) {
+        const ceiling = maxRemainingPoints(standardRacesLeft, sprintWeekendsLeft, carsPerEntity);
+        const bestCase = selectedPoints + ceiling;
+        const eliminated = checkElimination(selectedPoints, opponentPoints, standardRacesLeft, sprintWeekendsLeft, carsPerEntity);
+        const maxOpponentAllowed = Math.max(0, bestCase - opponentPoints);
+        return { eliminated, bestCase, ceiling, maxOpponentAllowed };
+    }
+
     const ChampionshipCalc = {
         GP_POINTS, SPRINT_POINTS,
         gpPointsFor, sprintPointsFor,
         maxRemainingPoints, checkElimination,
         mean, stddev, computePaceStats,
         sampleFromHistory, simulateDriverRemainingPoints, runMonteCarlo,
-        requiredResultGap
+        requiredResultGap, titleBoundary
     };
 
     if (typeof module !== 'undefined' && module.exports) {
