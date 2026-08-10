@@ -112,10 +112,13 @@
     // Plain-English "how far behind, and by how much per race" framing - the v1
     // required-results output. (A full combinatorial "guaranteed clinch" search is
     // a v1.x feature, deliberately out of scope here - see design spec.)
+    // Callers should pair this with checkElimination() before displaying it - an
+    // arithmetically correct "needs N points/race" can still describe an impossible
+    // scenario (e.g. N > 25) if the rival is actually already eliminated.
     function requiredResultGap(leaderPoints, rivalPoints, racesLeftCount) {
         const gap = leaderPoints - rivalPoints;
-        if (gap <= 0) return null;
-        const perRaceNeeded = racesLeftCount > 0 ? Math.round((gap / racesLeftCount) * 10) / 10 : gap;
+        if (gap <= 0 || racesLeftCount <= 0) return null;
+        const perRaceNeeded = Math.round((gap / racesLeftCount) * 10) / 10;
         return { gap, perRaceNeeded, racesLeftCount };
     }
 

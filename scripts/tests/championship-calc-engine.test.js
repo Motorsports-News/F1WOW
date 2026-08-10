@@ -148,3 +148,11 @@ test('requiredResultGap: computes points-per-race needed to close the gap', () =
 test('requiredResultGap: returns null when there is no gap to close (rival already ahead)', () => {
     assert.strictEqual(requiredResultGap(169, 219, 11), null);
 });
+
+test('requiredResultGap: returns null when there are no races left to close the gap', () => {
+    assert.strictEqual(requiredResultGap(219, 169, 0), null);
+});
+
+test('requiredResultGap: returns null for a tie (no gap to close)', () => {
+    assert.strictEqual(requiredResultGap(200, 200, 5), null);
+});
