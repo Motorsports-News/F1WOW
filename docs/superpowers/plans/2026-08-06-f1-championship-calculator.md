@@ -1011,10 +1011,13 @@ async function loadConstructorCalcData(topN) {
             const teamResults = r.Results.filter(x => x.Constructor.constructorId === id);
             return teamResults.length ? teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0) : null;
         }).filter(v => v !== null);
+        // Same null-exclusion pattern as gpHistory (and as the Task 5 fix for drivers'
+        // sprintHistory) - a round with no entries for this team is excluded rather than
+        // defaulted to 0, so a future mid-season team change can't inject a spurious 0.
         const sprintHistory = sprintResults.map(r => {
             const teamResults = r.SprintResults.filter(x => x.Constructor.constructorId === id);
-            return teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0);
-        });
+            return teamResults.length ? teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0) : null;
+        }).filter(v => v !== null);
         return {
             id,
             code: s.Constructor.name,
