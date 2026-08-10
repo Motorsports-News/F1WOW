@@ -3,6 +3,7 @@
 // (championship-calc-data.js), sanitizeHTML (script.js).
 
 let calcState = null; // set by initChampionshipCalculator()
+let calcMode = 'drivers';
 
 function renderStandings(drivers) {
     if (!drivers || !drivers.length) {
@@ -136,11 +137,13 @@ function recomputeResults() {
     const unlockedStandard = id => remaining.filter(r => !r.isSprint && !calcState.scenario[id]?.[r.round]).length;
     const unlockedSprint = id => remaining.filter(r => r.isSprint && !calcState.scenario[id]?.[r.round]).length;
 
+    const carsPerEntity = calcMode === 'constructors' ? 2 : 1;
+
     const eliminated = {};
     drivers.forEach(d => {
         if (d.id === leaderId) { eliminated[d.id] = false; return; }
         eliminated[d.id] = ChampionshipCalc.checkElimination(
-            pointsNow[d.id], leaderPoints, unlockedStandard(d.id), unlockedSprint(d.id)
+            pointsNow[d.id], leaderPoints, unlockedStandard(d.id), unlockedSprint(d.id), carsPerEntity
         );
     });
     const isChampion = leaderId && drivers.every(d => d.id === leaderId || eliminated[d.id]);
@@ -218,13 +221,24 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         </p>`;
 }
 
+async function switchCalcMode(mode) {
+    calcMode = mode;
+    document.getElementById('calcTabDrivers').style.opacity = mode === 'drivers' ? '1' : '0.5';
+    document.getElementById('calcTabConstructors').style.opacity = mode === 'constructors' ? '1' : '0.5';
+
+    const data = mode === 'drivers' ? await loadChampionshipCalcData(12) : await loadConstructorCalcData(8);
+    calcState = { ...data, scenario: {} };
+    calcCurrentRaceIndex = 0;
+    renderStandings(calcState.drivers);
+    renderCarousel();
+    recomputeResults();
+}
+
 async function initChampionshipCalculator() {
     try {
-        const data = await loadChampionshipCalcData(12);
-        calcState = { ...data, scenario: {} }; // scenario[driverId][round] = { gpPosition, sprintPosition }
-        renderStandings(calcState.drivers);
-        renderCarousel();
-        recomputeResults();
+        await switchCalcMode('drivers');
+        document.getElementById('calcTabDrivers').onclick = () => switchCalcMode('drivers');
+        document.getElementById('calcTabConstructors').onclick = () => switchCalcMode('constructors');
         document.getElementById('calcLoading').style.display = 'none';
         document.getElementById('calcApp').style.display = 'block';
     } catch (err) {

@@ -40,7 +40,8 @@
         .scenario-table select { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; font-family: 'Chakra Petch', sans-serif; }
         .result-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
         .result-row:last-child { border-bottom: none; }
-        .result-driver { flex: 0 0 150px; font-weight: 700; }
+        .result-driver { flex: 0 1 190px; font-weight: 700; word-break: break-word; }
+        .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; }
         .result-bar-wrap { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 22px; overflow: hidden; }
         .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #b80500); transition: width 0.4s ease; }
         .result-pct { flex: 0 0 60px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -89,6 +90,10 @@
             <div id="calcLoading" style="text-align:center;padding:40px;color:rgba(255,255,255,0.5);">Loading live standings and season data&hellip;</div>
 
             <div id="calcApp" style="display:none;">
+                <div class="calc-mode-tabs" style="display:flex;gap:10px;margin-bottom:20px;">
+                    <button id="calcTabDrivers" class="run-btn" style="opacity:1;">Drivers</button>
+                    <button id="calcTabConstructors" class="run-btn" style="opacity:0.5;">Constructors</button>
+                </div>
                 <section class="proto-section" id="calcStandingsSection"></section>
                 <section class="proto-section" id="calcCarouselSection"></section>
                 <section class="proto-section" id="calcResultsSection" style="display:none;"></section>
