@@ -208,6 +208,8 @@ git commit -m "feat: add pace statistics (mean/stddev) to championship calc engi
 
 ### Task 3: Monte Carlo simulation engine
 
+> **AMENDED 2026-08-06, post-implementation:** the original spec below (normal-distribution sampling via `randNormal`/clamping, `pace: {avgGP, stdGP, ...}` driver fixtures) was implemented, then code review found it systematically understates high-pace leaders whose average sits close to the 25-point cap — exactly the real 2026 leader's profile. It was replaced with **empirical resampling**: each simulated race draws a random value from the driver's own real per-race points history instead of a fitted bell curve. `randNormal`/`boundedNormal` were removed as dead code; `simulateDriverRemainingPoints` and `runMonteCarlo` now take a `history: {gpHistory, sprintHistory}` object per driver instead of `pace`. See the amended design spec's Decision 3 for the full "why." **Tasks 5 and 9 below are written against the corrected `history`-based shape already** — the original `pace`-fixture code in this Task 3 section is kept only as a historical record of what was tried and superseded; do not re-implement it.
+
 **Files:**
 - Modify: `js/championship-calc-engine.js`
 - Test: `scripts/tests/championship-calc-engine.test.js`
@@ -453,7 +455,8 @@ async function loadChampionshipCalcData(topN) {
             code: s.Driver.code,
             team: s.Constructors[0].name,
             currentPoints: parseFloat(s.points),
-            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory)
+            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory), // display only (see Task 3 amendment)
+            history: { gpHistory, sprintHistory } // used by the simulation engine
         };
     });
 
@@ -531,18 +534,32 @@ Follow this repo's established pattern for scaffolding a new full page (see `scr
 
 Create `scripts/gen-championship-calculator-page.py`:
 
+> **AMENDED post-implementation:** the original tail-extraction below (`tail = base[tail_start:]` to end-of-file) had a real bug — it captured `race-hub.html`'s own page-specific inline `<script>...initHub()...</script>` block (targets `#hubRound`/`#hubSessions`/etc, which don't exist on the new page), throwing console errors on every load. Fixed to slice only `</main>` through the end of the shared `script.js` tag, then append `</body></html>` explicitly. The code block below already reflects the corrected version.
+
 ```python
 # Scaffold the championship calculator page shell.
 # NOINDEX + not linked from anywhere yet - only Task 15 (explicitly gated) removes
 # the noindex tag and wires this into nav/sitemap/articles.json.
+#
+# DO NOT RE-RUN this script after Task 7 - unlike other scripts/gen-*.py generators
+# (which target a finished article that's never touched again), championship-calculator.html
+# gets extensive hand-written UI/CSS/JS added directly to it in every task after this one.
+# Re-running this would silently overwrite all of that back to the bare Task 6 shell.
 import re
 
 base = open('race-hub.html', encoding='utf-8').read()
 SLUG = 'championship-calculator.html'
 
 head = base[:base.find('<main')]
-tail_start = base.find('<script src="script.js')
-tail = base[tail_start:]
+
+# Tail = shared footer + shared script.js loader only.
+# race-hub.html's own page-specific inline <script>...initHub()...</script>
+# block (targets #hubRound/#hubSessions/etc, which don't exist on this page)
+# must be excluded, or it throws console errors on every load.
+main_end = base.find('</main>') + len('</main>')
+script_tag_start = base.find('<script src="script.js')
+script_tag_end = base.find('</script>', script_tag_start) + len('</script>')
+tail = base[main_end:script_tag_end] + '\n</body>\n</html>\n'
 
 TITLE = 'F1 2026 Championship Calculator (Prototype)'
 head = re.sub(r'<title>[^<]*</title>', f'<title>{TITLE}</title>', head)
@@ -866,7 +883,7 @@ function recomputeResults() {
         id: d.id,
         currentPoints: pointsNow[d.id],
         eliminated: eliminated[d.id],
-        pace: d.pace,
+        history: d.history,
         races: remaining.map(r => {
             const locked = calcState.scenario[d.id]?.[r.round];
             return locked
@@ -914,7 +931,7 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         <div>${rows}</div>
         <div class="required-line">${requiredLine}</div>
         <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:10px;">
-            Model: each driver's unlocked remaining races are simulated from their actual 2026 points-per-race average and spread. First-pass estimate, not an official probability.
+            Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season. First-pass estimate, not an official probability.
         </p>`;
 }
 ```
@@ -938,6 +955,8 @@ git commit -m "feat: wire Monte Carlo engine to championship calculator UI"
 ---
 
 ### Task 10: Full manual verification checklist (drivers mode)
+
+**Known, deliberately-deferred item from Task 8's code review:** `renderCarousel()` fully re-renders its `<tbody>`/dots/nav on every single edit (including the `<select>` that triggered the change), so keyboard focus is lost after each field a user fills in. Not a blocker for an internal `noindex` prototype, but worth a conscious decision (fix it, or explicitly accept it) before Task 15 launch — this checklist is the right place to surface that decision, not to silently forget it.
 
 **Files:** none — verification only.
 
@@ -992,16 +1011,20 @@ async function loadConstructorCalcData(topN) {
             const teamResults = r.Results.filter(x => x.Constructor.constructorId === id);
             return teamResults.length ? teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0) : null;
         }).filter(v => v !== null);
+        // Same null-exclusion pattern as gpHistory (and as the Task 5 fix for drivers'
+        // sprintHistory) - a round with no entries for this team is excluded rather than
+        // defaulted to 0, so a future mid-season team change can't inject a spurious 0.
         const sprintHistory = sprintResults.map(r => {
             const teamResults = r.SprintResults.filter(x => x.Constructor.constructorId === id);
-            return teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0);
-        });
+            return teamResults.length ? teamResults.reduce((sum, x) => sum + parseFloat(x.points), 0) : null;
+        }).filter(v => v !== null);
         return {
             id,
             code: s.Constructor.name,
             team: s.Constructor.name,
             currentPoints: parseFloat(s.points),
-            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory)
+            pace: ChampionshipCalc.computePaceStats(gpHistory, sprintHistory), // display only (see Task 3 amendment)
+            history: { gpHistory, sprintHistory } // used by the simulation engine
         };
     });
 
@@ -1032,6 +1055,10 @@ git commit -m "feat: add constructor data aggregation to championship calc data 
 
 ### Task 12: Constructors tab (reusing the drivers UI components)
 
+> **AMENDED post-Task-11-review:** two real gaps were found that this task must also close, since they only become live bugs once constructors mode actually exists:
+> 1. `checkElimination`/`maxRemainingPoints` (already fixed in `js/championship-calc-engine.js`, commit `4383b0a`) now accept an optional `carsPerEntity` parameter (default `1`) precisely so constructors' ~2x point ceiling doesn't wrongly trigger "Eliminated" for a team that's actually still alive. The engine *supports* this now, but nothing calls it with `2` yet - this task's Step 2 amendment below wires that up.
+> 2. `.result-driver { flex: 0 0 150px; }` (`championship-calculator.html`) was sized for a 3-letter driver code + badge. Constructor names (`s.Constructor.name`, e.g. "Aston Martin Aramco") will overflow that fixed width. Fixed width to a wrap-friendly minimum instead, added in this task's CSS step.
+
 **Files:**
 - Modify: `championship-calculator.html`
 - Modify: `js/championship-calc-ui.js`
@@ -1051,6 +1078,16 @@ Add matching CSS for `.run-btn` next to the other calculator styles from Task 7 
 
 ```css
 .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; }
+```
+
+Also update `.result-driver`'s fixed width so it doesn't overflow for a full constructor name like "Aston Martin Aramco" (currently sized for a 3-letter driver code):
+
+```css
+.result-driver { flex: 0 0 150px; font-weight: 700; }
+```
+becomes
+```css
+.result-driver { flex: 0 1 190px; font-weight: 700; word-break: break-word; }
 ```
 
 - [ ] **Step 2: Generalize the UI state to support either mode**
@@ -1081,9 +1118,29 @@ document.getElementById('calcTabDrivers').onclick = () => switchCalcMode('driver
 document.getElementById('calcTabConstructors').onclick = () => switchCalcMode('constructors');
 ```
 
+- [ ] **Step 2b: Pass `carsPerEntity` through to the elimination test (the actual fix that makes constructors-mode elimination correct)**
+
+In `js/championship-calc-ui.js`, `recomputeResults()` currently calls `ChampionshipCalc.checkElimination(pointsNow[d.id], leaderPoints, unlockedStandard(d.id), unlockedSprint(d.id))` with no 5th argument (drivers only, ceiling defaults to 1 car). Add a `carsPerEntity` constant derived from `calcMode` and pass it through:
+
+```js
+    const carsPerEntity = calcMode === 'constructors' ? 2 : 1;
+
+    const eliminated = {};
+    drivers.forEach(d => {
+        if (d.id === leaderId) { eliminated[d.id] = false; return; }
+        eliminated[d.id] = ChampionshipCalc.checkElimination(
+            pointsNow[d.id], leaderPoints, unlockedStandard(d.id), unlockedSprint(d.id), carsPerEntity
+        );
+    });
+```
+
+Without this, a trailing constructor would be wrongly flagged "Eliminated" under a single-car point ceiling about half what a real two-car team can still score.
+
 - [ ] **Step 3: Manual verification**
 
 Refresh the page. Click "Constructors" — confirm the standings table, carousel, and probability results all re-render for constructors (team names instead of driver codes, points roughly double). Click back to "Drivers" and confirm it returns to the driver view with a fresh (reset) scenario. Set a scenario in Drivers mode, switch to Constructors, switch back — confirm the Drivers scenario was cleared (acceptable for v1; no cross-mode persistence is expected).
+
+Also specifically verify the `carsPerEntity` fix: in Constructors mode, lock a trailing team into a large-but-not-fully-eliminated points gap relative to the leader (e.g. a gap that's less than a real two-car ceiling but more than a one-car ceiling for the remaining races) and confirm they are NOT flagged "Eliminated" — then confirm a genuinely hopeless gap (impossible even with two cars scoring maximum) still does correctly flip to "Eliminated". Confirm long constructor names (e.g. "Aston Martin Aramco") don't visually overflow/clip in the results section.
 
 - [ ] **Step 4: Commit**
 
@@ -1214,6 +1271,7 @@ git commit -m "feat: add championship-calculator share card to og-card generator
 - [ ] Resolve Design Spec Open Question 2 (standalone page vs. section of `championship.html`) with the user before proceeding — this plan built it as a standalone page; confirm that's still wanted.
 - [ ] Add a nav entry (footer, per `CLAUDE.md`'s "header nav is deliberately minimal... full nav lives in the footer" convention).
 - [ ] Add full SEO metadata (title/description/canonical/OG/Twitter/JSON-LD) following the same pattern used for every article this season (see `scripts/gen-points-system.py` for the reference regex-substitution approach).
+- [ ] Regenerate `og-championship-calculator.jpg` with the current leader/probability (`scripts/gen-og-cards.py`'s appended block, Task 14) before removing `noindex` — it was hardcoded from a one-time manual check and real standings will have moved on by whenever this task actually runs.
 - [ ] Decide whether this needs an `articles.json` entry (it's a tool page, not an article — probably not, but confirm) and whether it needs a homepage callout.
 - [ ] Add it to `scripts/generate-sitemap.js`'s scope if it's currently excluded as an experiment-style file, or confirm the glob already picks it up.
 - [ ] Bump the `styles.css`/`script.js` cache-bust version site-wide **only if** this work touched either shared file (it shouldn't have — everything so far is new files) — verify with `git diff --stat styles.css script.js` showing no changes before skipping this step.

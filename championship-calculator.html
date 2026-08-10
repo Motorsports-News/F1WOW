@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 2026 Championship Calculator - F1wow News</title>
+    <meta name="description" content="Simulate the rest of the 2026 F1 season race by race and see live championship win probabilities, updated instantly as you set results.">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://f1wownews.com/championship-calculator.html">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://f1wownews.com/championship-calculator.html">
+    <meta property="og:title" content="F1 2026 Championship Calculator - F1wow News">
+    <meta property="og:description" content="Simulate the rest of the 2026 F1 season race by race and see live championship win probabilities, updated instantly as you set results.">
+    <meta property="og:image" content="https://f1wownews.com/og-championship-calculator.jpg">
+    <meta property="og:site_name" content="F1wow News">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://f1wownews.com/championship-calculator.html">
+    <meta name="twitter:title" content="F1 2026 Championship Calculator - F1wow News">
+    <meta name="twitter:description" content="Simulate the rest of the 2026 F1 season race by race and see live championship win probabilities, updated instantly as you set results.">
+    <meta name="twitter:image" content="https://f1wownews.com/og-championship-calculator.jpg">
+    <meta name="twitter:site" content="@f1wow">
+
+    <link rel="stylesheet" href="styles.css?v=20260729a">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"></noscript>
+    <!-- Google Analytics -->
+    <script>/* Defer GA4 library until idle; inline dataLayer config below queues events until it loads */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-HWLHEWCYP2';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
+    <!-- Google AdSense -->
+    <script>/* Defer AdSense until idle for faster first paint; literal tag retained in noscript for verification */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669';s.crossOrigin='anonymous';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
+<noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669" crossorigin="anonymous"></script></noscript>
+    <style>
+        .proto-section { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 22px; margin-bottom: 20px; }
+        .proto-section h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.3rem; margin-bottom: 14px; }
+        .proto-section-compact { padding: 16px 22px; }
+
+        /* Results is the payoff of this whole tool - give it more visual weight than
+           the supporting sections instead of three identical stacked cards. */
+        .calc-hero { background: linear-gradient(180deg, rgba(225,6,0,0.07), var(--f1-dark) 65%); border: 1px solid var(--border-color); border-top: 2px solid var(--f1-red); border-radius: 12px; padding: 26px; margin-bottom: 20px; }
+        .calc-hero h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; margin-bottom: 16px; }
+
+        .calc-mode-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .calc-tab { background: transparent; border: 1px solid var(--border-color); color: rgba(255,255,255,0.6); border-radius: 999px; padding: 8px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease; }
+        .calc-tab:hover { border-color: var(--f1-red); color: #fff; }
+        .calc-tab.active { background: var(--f1-red); border-color: var(--f1-red); color: #fff; }
+
+        .calc-carousel-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .calc-carousel-nav button { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 1.1rem; transition: background 0.15s ease; }
+        .calc-carousel-nav button:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
+        .calc-carousel-nav button:disabled { opacity: 0.3; cursor: default; }
+        .calc-race-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; }
+
+        /* Round chips replace bare dots - shows the actual round number and lock state
+           at a glance instead of an abstract row of identical circles. */
+        .calc-race-chips { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
+        .calc-race-chip { min-width: 32px; height: 26px; padding: 0 6px; border-radius: 6px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: rgba(255,255,255,0.65); font-size: 0.72rem; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+        .calc-race-chip:hover { border-color: var(--f1-red); color: #fff; }
+        .calc-race-chip.locked { background: var(--f1-red); border-color: var(--f1-red); color: #fff; }
+        .calc-race-chip.current { outline: 2px solid #fff; outline-offset: 1px; }
+
+        .scenario-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; transition: opacity 0.18s ease; }
+        .scenario-table th, .scenario-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .scenario-table tr.calc-locked-row { background: rgba(225,6,0,0.06); }
+        .scenario-table select { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; font-family: 'Chakra Petch', sans-serif; }
+        .calc-pts-preview { display: inline-block; min-width: 40px; text-align: center; font-size: 0.78rem; font-weight: 800; color: rgba(255,255,255,0.35); font-variant-numeric: tabular-nums; }
+        .calc-pts-preview.has-pts { color: var(--f1-red); }
+
+        .standings-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+        .standings-table th, .standings-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
+
+        .calc-more-toggle summary, .calc-tail-toggle summary { cursor: pointer; padding: 10px 0; color: rgba(255,255,255,0.5); font-size: 0.85rem; list-style: none; }
+        .calc-more-toggle summary::-webkit-details-marker, .calc-tail-toggle summary::-webkit-details-marker { display: none; }
+        .calc-more-toggle summary:hover, .calc-tail-toggle summary:hover { color: #fff; }
+
+        .result-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .result-row:last-child { border-bottom: none; }
+        .result-driver { flex: 0 1 190px; font-weight: 700; word-break: break-word; }
+        .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
+        .run-btn:hover { background: #b80500; }
+        .result-bar-wrap { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 22px; overflow: hidden; }
+        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #b80500); width: 0%; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        .result-pct { flex: 0 0 60px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
+        .badge-alive { background: rgba(0,200,80,0.15); color: #3ddc84; }
+        .badge-out { background: rgba(200,0,0,0.15); color: #ff6b6b; }
+        .badge-champ { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .required-line { font-size: 1rem; line-height: 1.7; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; margin-top: 14px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .result-bar, .scenario-table, .calc-tab, .calc-race-chip, .run-btn, .calc-carousel-nav button { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="brand brand-link" aria-label="F1wow News - Home">
+                <p class="brand-title">F1wow <span class="brand-accent">News</span></p>
+                <span class="subtitle">Powered by F1wow</span>
+            </a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu" aria-expanded="false">
+                <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <nav class="nav" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="https://instagram.com/f1wow" target="_blank" rel="noopener" class="nav-link nav-link-social" aria-label="F1wow on Instagram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+        <main class="main" id="main">
+        <div class="proto-wrap" style="max-width:980px;margin:0 auto;padding:30px 20px 60px;">
+            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:2rem;margin-bottom:6px;">F1 2026 Championship Calculator</h1>
+            <p style="color:var(--text-muted);margin-bottom:30px;">Live standings, a 12-race scenario editor, and a Monte Carlo win-probability model for the rest of the 2026 season.</p>
+
+            <div id="calcLoading" style="text-align:center;padding:40px;color:rgba(255,255,255,0.5);">Loading live standings and season data&hellip;</div>
+
+            <div id="calcApp" style="display:none;">
+                <div class="calc-mode-tabs">
+                    <button id="calcTabDrivers" class="calc-tab active">Drivers</button>
+                    <button id="calcTabConstructors" class="calc-tab">Constructors</button>
+                </div>
+                <section class="calc-hero" id="calcResultsSection" style="display:none;"></section>
+                <section class="proto-section" id="calcCarouselSection"></section>
+                <section class="proto-section proto-section-compact" id="calcStandingsSection"></section>
+            </div>
+        </div>
+    </main>
+
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <p class="footer-brand">F1wow News</p>
+                    <p class="footer-tagline">Independent Motorsports news &amp; analysis, powered by the @f1wow community.</p>
+                </div>
+                <div class="footer-col">
+                    <p class="footer-heading">Explore</p>
+                    <a href="index.html">Home</a>
+                    <a href="calendar.html">Race Calendar</a>
+                    <a href="championship.html">Standings</a>
+                    <a href="championship-calculator.html">Championship Calculator</a>
+                    <a href="drivers.html">Drivers</a>
+                    <a href="teams.html">Teams</a>
+                    <a href="how-to-watch-f1.html">Watch F1</a>
+                    <a href="race-reports.html">Race Reports</a>
+                    <a href="news.html">F1 News</a>
+                    <a href="technical.html">Technical</a>
+                    <a href="subscribe.html">Newsletter</a>
+                </div>
+                <div class="footer-col">
+                    <p class="footer-heading">Site</p>
+                    <a href="about.html">About Us</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Use</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                </div>
+                <div class="footer-col">
+                    <p class="footer-heading">Follow</p>
+                    <a href="https://instagram.com/f1wow" target="_blank" rel="noopener">Instagram @f1wow</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 F1wow News. This is an unofficial, independent fan website and is not associated with Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trademarks of Formula One Licensing B.V.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/championship-calc-engine.js"></script>
+    <script src="js/championship-calc-data.js"></script>
+    <script src="script.js?v=20260730a"></script>
+    <script src="js/championship-calc-ui.js"></script>
+</body>
+</html>
