@@ -116,8 +116,8 @@ function renderTracker(section, leader, rival, probabilities, cumulative, TEAM_H
     const maxPoints = Math.max(...leaderPts, ...rivalPts, 1);
     const n = leaderPts.length;
 
-    const width = 500, height = 200;
-    const padding = { top: 14, right: 14, bottom: 14, left: 14 };
+    const width = 500, height = 110;
+    const padding = { top: 10, right: 10, bottom: 10, left: 10 };
     const chartW = width - padding.left - padding.right;
     const chartH = height - padding.top - padding.bottom;
 
