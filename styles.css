@@ -5218,11 +5218,15 @@ body { font-size: 1rem; }
     font-variant-numeric: tabular-nums;
 }
 
-/* Title Fight Tracker - sits below the standings above, inside the same section */
-.title-tracker {
-    margin-top: 18px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+/* Championship Battle: standings (left) + Title Fight Tracker (right) */
+.battle-band-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+}
+@media (max-width: 860px) {
+    .battle-band-columns { grid-template-columns: 1fr; gap: 20px; }
 }
 .title-tracker-head {
     display: flex;
@@ -5241,18 +5245,37 @@ body { font-size: 1rem; }
 }
 .title-tracker-note { font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); }
 .title-tracker-graph {
+    position: relative;
     background: var(--f1-dark);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 8px 10px;
 }
 .title-tracker-svg { width: 100%; height: auto; display: block; }
+.title-tracker-dot-hit { cursor: pointer; }
 .title-tracker-label {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 13px;
     dominant-baseline: middle;
 }
+.title-tracker-tooltip {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    background: #0c0c11;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-left-width: 3px;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    z-index: 5;
+}
+.title-tracker-tooltip.visible { opacity: 1; visibility: visible; }
 .title-tracker-link {
     display: inline-block;
     margin-top: 10px;

@@ -1,18 +1,21 @@
-// Homepage "Title Fight Tracker": leader vs closest rival, season-so-far points
-// graph. Sits below the existing Championship Battle standings - deliberately
-// does NOT touch or replace that block.
+// Homepage "Title Fight Tracker": top 3 drivers' season-so-far points graph,
+// sitting beside (not below) the existing Championship Battle standings.
+// Same race-by-race draw-in animation as championship.html's progression
+// graph, click a dot to see that race's cumulative points.
 // Depends on globals from script.js: cachedJson, API_BASE, CURRENT_YEAR,
 // fetchMergedSeasonResults, sanitizeHTML.
+const TRACKER_SECONDS_PER_RACE = 0.35;
+const trackerPrefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let trackerInView = false;
+let trackerAnimated = false;
+
 async function initHomepageTracker() {
     const section = document.getElementById('titleTracker');
     if (!section) return;
 
-    const TEAM_HEX = {
-        'Mercedes': '#27F4D2', 'Ferrari': '#F91536', 'McLaren': '#FF8700',
-        'Red Bull': '#3671C6', 'Red Bull Racing': '#3671C6', 'Alpine F1 Team': '#FF87BC',
-        'Alpine': '#FF87BC', 'RB F1 Team': '#5E8FAA', 'Haas F1 Team': '#B6BABD',
-        'Williams': '#64C4FF', 'Audi': '#C92D4B', 'Sauber': '#C92D4B', 'Aston Martin': '#229971'
-    };
+    // By finishing position, not by team - two of the top 3 are often
+    // teammates (same team color), which would make their lines indistinguishable.
+    const POSITION_COLORS = ['#E10600', '#27F4D2', '#FFB800'];
 
     try {
         const standingsPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
@@ -24,7 +27,7 @@ async function initHomepageTracker() {
         ]);
 
         const list = standingsData.MRData.StandingsTable.StandingsLists[0];
-        const standings = list.DriverStandings.slice(0, 2);
+        const standings = list.DriverStandings.slice(0, 3);
         const sprintResults = sprintData.MRData.RaceTable.Races;
 
         if (standings.length < 2 || !mergedResults.length) {
@@ -32,54 +35,65 @@ async function initHomepageTracker() {
             return;
         }
 
-        const [leaderStanding, rivalStanding] = standings;
-        const shape = s => ({
+        const drivers = standings.map((s, i) => ({
             id: s.Driver.driverId,
             code: s.Driver.code,
             name: `${s.Driver.givenName} ${s.Driver.familyName}`,
             team: s.Constructors?.[0]?.name || 'Unknown',
-            currentPoints: parseFloat(s.points)
-        });
-        const leader = shape(leaderStanding);
-        const rival = shape(rivalStanding);
+            currentPoints: parseFloat(s.points),
+            color: POSITION_COLORS[i] || '#B6BABD'
+        }));
 
-        // Season-so-far cumulative points for just the two drivers shown, round by round.
-        const cumulative = { [leader.id]: [], [rival.id]: [] };
-        const running = { [leader.id]: 0, [rival.id]: 0 };
+        // Season-so-far cumulative points for each driver shown, round by round.
+        const roundLabels = [];
+        const cumulative = {};
+        const running = {};
+        drivers.forEach(d => { cumulative[d.id] = []; running[d.id] = 0; });
         mergedResults.forEach(r => {
-            [leader.id, rival.id].forEach(id => {
-                const res = r.Results.find(x => x.Driver.driverId === id);
-                if (res) running[id] += parseFloat(res.points);
+            drivers.forEach(d => {
+                const res = r.Results.find(x => x.Driver.driverId === d.id);
+                if (res) running[d.id] += parseFloat(res.points);
             });
             const sprintRound = sprintResults.find(sr => sr.round === r.round);
             if (sprintRound) {
-                [leader.id, rival.id].forEach(id => {
-                    const res = sprintRound.SprintResults.find(x => x.Driver.driverId === id);
-                    if (res) running[id] += parseFloat(res.points);
+                drivers.forEach(d => {
+                    const res = sprintRound.SprintResults.find(x => x.Driver.driverId === d.id);
+                    if (res) running[d.id] += parseFloat(res.points);
                 });
             }
-            cumulative[leader.id].push(running[leader.id]);
-            cumulative[rival.id].push(running[rival.id]);
+            roundLabels.push(r.Circuit?.Location?.locality || r.raceName.replace(' Grand Prix', ''));
+            drivers.forEach(d => cumulative[d.id].push(running[d.id]));
         });
 
-        renderTracker(section, leader, rival, cumulative, TEAM_HEX);
+        renderTracker(section, drivers, cumulative, roundLabels);
     } catch (e) {
         section.hidden = true;
     }
 }
 
-function renderTracker(section, leader, rival, cumulative, TEAM_HEX) {
-    const leaderColor = TEAM_HEX[leader.team] || '#E10600';
-    const rivalColor = TEAM_HEX[rival.team] || '#B6BABD';
+// Pushes label y-positions apart just enough to stay readable when two or
+// more drivers' lines finish close together, same idea as championship.html's
+// tooltip clamping but for N labels instead of a single cursor-following box.
+function declutterLabels(items, minGap, top, bottom) {
+    const sorted = [...items].sort((a, b) => a.y - b.y);
+    for (let i = 1; i < sorted.length; i++) {
+        if (sorted[i].y - sorted[i - 1].y < minGap) sorted[i].y = sorted[i - 1].y + minGap;
+    }
+    const overflow = sorted[sorted.length - 1].y - bottom;
+    if (overflow > 0) sorted.forEach(item => { item.y -= overflow; });
+    if (sorted[0].y < top) {
+        const under = top - sorted[0].y;
+        sorted.forEach(item => { item.y += under; });
+    }
+    return sorted;
+}
 
-    const leaderPts = cumulative[leader.id];
-    const rivalPts = cumulative[rival.id];
-    const maxPoints = Math.max(...leaderPts, ...rivalPts, 1);
-    const n = leaderPts.length;
+function renderTracker(section, drivers, cumulative, roundLabels) {
+    const n = roundLabels.length;
+    const maxPoints = Math.max(...drivers.map(d => Math.max(...cumulative[d.id])), 1);
 
-    const width = 500, height = 130;
-    // Extra right margin reserves room for the endpoint code+points labels.
-    const padding = { top: 14, right: 84, bottom: 14, left: 10 };
+    const width = 500, height = 150;
+    const padding = { top: 14, right: 80, bottom: 14, left: 8 };
     const chartW = width - padding.left - padding.right;
     const chartH = height - padding.top - padding.bottom;
 
@@ -87,46 +101,130 @@ function renderTracker(section, leader, rival, cumulative, TEAM_HEX) {
         x: padding.left + (n > 1 ? (chartW / (n - 1)) * i : chartW / 2),
         y: padding.top + chartH - (pts / maxPoints) * chartH
     }));
-    const leaderCoords = coordsFor(leaderPts);
-    const rivalCoords = coordsFor(rivalPts);
-    const toPointsAttr = coords => coords.map(c => `${c.x},${c.y}`).join(' ');
-    const dotsFor = (coords, color) => coords.map(c =>
-        `<circle cx="${c.x}" cy="${c.y}" r="2.5" fill="${color}" />`
+
+    const perDriver = drivers.map(d => ({ driver: d, coords: coordsFor(cumulative[d.id]) }));
+
+    const lines = perDriver.map(({ driver, coords }) =>
+        `<polyline class="title-tracker-line" points="${coords.map(c => `${c.x},${c.y}`).join(' ')}" fill="none" stroke="${driver.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`
     ).join('');
 
-    // Endpoint labels sit at the real data y-position, nudged apart only when
-    // the two lines finish close enough together to overlap the text.
-    let leaderLabelY = leaderCoords[leaderCoords.length - 1].y;
-    let rivalLabelY = rivalCoords[rivalCoords.length - 1].y;
-    const lastX = leaderCoords[leaderCoords.length - 1].x;
-    const MIN_GAP = 16;
-    if (Math.abs(rivalLabelY - leaderLabelY) < MIN_GAP) {
-        const mid = (leaderLabelY + rivalLabelY) / 2;
-        const half = MIN_GAP / 2;
-        if (leaderLabelY <= rivalLabelY) { leaderLabelY = mid - half; rivalLabelY = mid + half; }
-        else { leaderLabelY = mid + half; rivalLabelY = mid - half; }
-    }
-    leaderLabelY = Math.min(Math.max(leaderLabelY, padding.top + 4), height - padding.bottom - 4);
-    rivalLabelY = Math.min(Math.max(rivalLabelY, padding.top + 4), height - padding.bottom - 4);
+    const dots = perDriver.map(({ driver, coords }) => coords.map((c, i) => `
+        <circle class="title-tracker-dot" cx="${c.x}" cy="${c.y}" r="3" fill="${driver.color}" stroke="#15151E" stroke-width="1.5" data-i="${i}"></circle>
+        <circle class="title-tracker-dot-hit" cx="${c.x}" cy="${c.y}" r="9" fill="transparent"
+            onclick="showTrackerPoint(event, '${sanitizeHTML(roundLabels[i]).replace(/'/g, "\\'")}', ${cumulative[driver.id][i]}, '${driver.color}', '${sanitizeHTML(driver.code)}')"></circle>
+    `).join('')).join('');
+
+    const rawLabels = perDriver.map(({ driver, coords }) => ({
+        y: coords[coords.length - 1].y, driver
+    }));
+    const declutteredLabels = declutterLabels(rawLabels, 15, padding.top + 4, height - padding.bottom - 4);
+    const lastX = perDriver[0].coords[perDriver[0].coords.length - 1].x;
+    const labelsHtml = declutteredLabels.map(({ y, driver }) =>
+        `<text x="${lastX + 8}" y="${y + 4}" class="title-tracker-label" fill="${driver.color}">${sanitizeHTML(driver.code)} ${driver.currentPoints}</text>`
+    ).join('');
 
     section.innerHTML = `
         <div class="title-tracker-head">
             <h3>Title Fight Tracker</h3>
-            <span class="title-tracker-note">How the top two title contenders have scored, race by race</span>
+            <span class="title-tracker-note">Season points so far &ndash; click a dot for that race's total</span>
         </div>
         <div class="title-tracker-graph">
             <svg viewBox="0 0 ${width} ${height}" class="title-tracker-svg" preserveAspectRatio="xMidYMid meet">
-                <polyline points="${toPointsAttr(rivalCoords)}" fill="none" stroke="${rivalColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                <polyline points="${toPointsAttr(leaderCoords)}" fill="none" stroke="${leaderColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                ${dotsFor(rivalCoords, rivalColor)}
-                ${dotsFor(leaderCoords, leaderColor)}
-                <text x="${lastX + 8}" y="${leaderLabelY + 4}" class="title-tracker-label" fill="${leaderColor}">${sanitizeHTML(leader.code)} ${leader.currentPoints}</text>
-                <text x="${lastX + 8}" y="${rivalLabelY + 4}" class="title-tracker-label" fill="${rivalColor}">${sanitizeHTML(rival.code)} ${rival.currentPoints}</text>
+                ${lines}
+                ${dots}
+                ${labelsHtml}
             </svg>
         </div>
         <a href="championship-calculator.html" class="title-tracker-link">Explore full title scenarios &rarr;</a>
     `;
     section.hidden = false;
+
+    const graph = section.querySelector('.title-tracker-graph');
+    const lineEls = graph.querySelectorAll('.title-tracker-line');
+    lineEls.forEach(p => {
+        const len = p.getTotalLength();
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+    });
+    if (!trackerPrefersReducedMotion) {
+        graph.querySelectorAll('.title-tracker-dot').forEach(d => { d.style.opacity = '0'; });
+    }
+
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => {
+            entries.forEach(en => {
+                if (en.isIntersecting && !trackerInView) {
+                    trackerInView = true;
+                    playTrackerAnimation(graph, n);
+                }
+            });
+        }, { threshold: 0.25 }).observe(graph);
+    } else {
+        playTrackerAnimation(graph, n);
+    }
 }
+
+// Same technique as championship.html's playGraphAnimation(): draw each line
+// in race-by-race via stroke-dashoffset, fading each dot in as the line
+// reaches it, then strip the inline styles once done so nothing else
+// (a future re-render, browser zoom) is left fighting leftover transitions.
+function playTrackerAnimation(graph, roundCount) {
+    if (trackerAnimated) return;
+    trackerAnimated = true;
+    const lines = graph.querySelectorAll('.title-tracker-line');
+    const dots = graph.querySelectorAll('.title-tracker-dot');
+    if (trackerPrefersReducedMotion) {
+        lines.forEach(p => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
+        dots.forEach(d => { d.style.opacity = ''; });
+        return;
+    }
+    const total = Math.max(1, roundCount - 1) * TRACKER_SECONDS_PER_RACE;
+    lines.forEach(p => {
+        p.style.transition = `stroke-dashoffset ${total}s linear`;
+        requestAnimationFrame(() => { p.style.strokeDashoffset = '0'; });
+    });
+    dots.forEach(d => {
+        const i = parseInt(d.dataset.i || '0', 10);
+        d.style.transition = `opacity 0.25s ease ${(i * TRACKER_SECONDS_PER_RACE).toFixed(2)}s`;
+        requestAnimationFrame(() => { d.style.opacity = '1'; });
+    });
+    setTimeout(() => {
+        lines.forEach(p => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
+        dots.forEach(d => { d.style.transition = ''; d.style.opacity = ''; });
+    }, (total + 0.5) * 1000);
+}
+
+// Click-a-dot tooltip - deliberately simpler than championship.html's hover
+// tooltip (no logo/position, just the one number the click was asking for),
+// since this widget's tap targets are small hit-circles, not full data points.
+function showTrackerPoint(evt, label, points, color, code) {
+    evt.stopPropagation();
+    const graph = evt.currentTarget.closest('.title-tracker-graph');
+    let tip = graph.querySelector('.title-tracker-tooltip');
+    if (!tip) {
+        tip = document.createElement('div');
+        tip.className = 'title-tracker-tooltip';
+        graph.appendChild(tip);
+    }
+    tip.style.borderColor = color;
+    tip.innerHTML = `<strong style="color:${color}">${code}</strong> &middot; ${label}: <strong>${points} pts</strong>`;
+    tip.classList.add('visible'); // show first so it's measurable, then clamp inside the graph card
+
+    const graphRect = graph.getBoundingClientRect();
+    const circleRect = evt.currentTarget.getBoundingClientRect();
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = circleRect.left - graphRect.left + circleRect.width / 2;
+    let top = circleRect.top - graphRect.top;
+    left = Math.min(Math.max(left, tw / 2 + 4), graphRect.width - tw / 2 - 4);
+    top = Math.max(top, th + 4);
+    tip.style.left = `${left}px`;
+    tip.style.top = `${top}px`;
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.title-tracker-dot-hit')) {
+        document.querySelectorAll('.title-tracker-tooltip.visible').forEach(t => t.classList.remove('visible'));
+    }
+});
 
 document.addEventListener('DOMContentLoaded', initHomepageTracker);
