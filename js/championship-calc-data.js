@@ -2,23 +2,39 @@
 // Depends on globals from script.js: cachedJson, API_BASE, CURRENT_YEAR, fetchMergedSeasonResults.
 // Browser-only - not required() by the Node engine tests (see Task 5 notes in the plan).
 
-async function loadChampionshipCalcData(topN) {
+// onStandingsReady(quickDrivers), if given, fires as soon as the standings fetch
+// resolves - typically well before the schedule/full-season-results/sprint fetches
+// finish, since those need a second, dependent round of pagination. Lets the caller
+// render something real immediately instead of one long blocking spinner for
+// everything. quickDrivers only has id/code/team/currentPoints (enough for
+// renderStandings) - no history/pace yet, those need the other fetches.
+async function loadChampionshipCalcData(topN, onStandingsReady) {
     topN = topN || 12;
 
-    // None of these four depend on each other's response, only on all of them
-    // together for the mapping below - fetching in parallel instead of one after
-    // another cuts load time to roughly the slowest single call instead of the
-    // sum of all four.
-    const [standingsData, scheduleData, mergedResults, sprintData] = await Promise.all([
-        cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`),
-        cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`),
-        fetchMergedSeasonResults(),
-        cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`)
-    ]);
+    // Start every fetch immediately so none of them wait on each other - but await
+    // the standings one alone first so its callback can fire as early as possible.
+    const standingsPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
+    const scheduleDataPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`);
+    const mergedResultsPromise = fetchMergedSeasonResults();
+    const sprintDataPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`);
 
+    const standingsData = await standingsPromise;
     const list = standingsData.MRData.StandingsTable.StandingsLists[0];
     const standings = list.DriverStandings.slice(0, topN);
     const completedRound = parseInt(list.round);
+
+    if (onStandingsReady) {
+        onStandingsReady(standings.map(s => ({
+            id: s.Driver.driverId,
+            code: s.Driver.code,
+            team: s.Constructors?.[0]?.name || 'Unknown',
+            currentPoints: parseFloat(s.points)
+        })));
+    }
+
+    const [scheduleData, mergedResults, sprintData] = await Promise.all([
+        scheduleDataPromise, mergedResultsPromise, sprintDataPromise
+    ]);
     const schedule = scheduleData.MRData.RaceTable.Races;
     const sprintResults = sprintData.MRData.RaceTable.Races;
 
@@ -53,21 +69,33 @@ async function loadChampionshipCalcData(topN) {
     return { drivers, remainingRaces, completedRound };
 }
 
-async function loadConstructorCalcData(topN) {
+// Same early-callback reasoning as loadChampionshipCalcData's onStandingsReady.
+async function loadConstructorCalcData(topN, onStandingsReady) {
     topN = topN || 8;
 
-    // Same independent-fetches-in-parallel reasoning as loadChampionshipCalcData.
-    const [standingsData, scheduleData, mergedResults, sprintData] = await Promise.all([
-        cachedJson(`${API_BASE}/${CURRENT_YEAR}/constructorstandings.json`),
-        cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`),
-        fetchMergedSeasonResults(),
-        cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`)
-    ]);
+    const standingsPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}/constructorstandings.json`);
+    const scheduleDataPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}.json?limit=30`);
+    const mergedResultsPromise = fetchMergedSeasonResults();
+    const sprintDataPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}/sprint.json?limit=200`);
 
+    const standingsData = await standingsPromise;
     const list = standingsData.MRData.StandingsTable.StandingsLists[0];
     const standings = list.ConstructorStandings.slice(0, topN);
-    const schedule = scheduleData.MRData.RaceTable.Races;
     const completedRound = parseInt(list.round);
+
+    if (onStandingsReady) {
+        onStandingsReady(standings.map(s => ({
+            id: s.Constructor.constructorId,
+            code: s.Constructor.name,
+            team: s.Constructor.name,
+            currentPoints: parseFloat(s.points)
+        })));
+    }
+
+    const [scheduleData, mergedResults, sprintData] = await Promise.all([
+        scheduleDataPromise, mergedResultsPromise, sprintDataPromise
+    ]);
+    const schedule = scheduleData.MRData.RaceTable.Races;
     const remainingRaces = schedule
         .filter(r => parseInt(r.round) > completedRound)
         .map(r => ({ round: parseInt(r.round), name: r.raceName, date: r.date, isSprint: !!r.Sprint }));

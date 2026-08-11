@@ -469,10 +469,25 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
 
 let calcModeRequestId = 0;
 
+// Reveals the app shell and renders standings the moment they're ready, with a
+// placeholder for the carousel/results sections (which need the slower
+// schedule/full-season-results/sprint fetches too) instead of waiting for
+// everything before showing anything real.
+function showStandingsEarly(quickDrivers) {
+    document.getElementById('calcLoading').style.display = 'none';
+    document.getElementById('calcApp').style.display = 'block';
+    renderStandings(quickDrivers);
+    const carouselSection = document.getElementById('calcCarouselSection');
+    if (!carouselSection.dataset.ready) {
+        carouselSection.innerHTML = '<p style="color:rgba(255,255,255,0.5);padding:10px 0;">Loading the remaining race calendar…</p>';
+    }
+}
+
 async function switchCalcMode(mode) {
     calcMode = mode;
     document.getElementById('calcTabDrivers').classList.toggle('active', mode === 'drivers');
     document.getElementById('calcTabConstructors').classList.toggle('active', mode === 'constructors');
+    document.getElementById('calcCarouselSection').removeAttribute('data-ready');
 
     // Guard against a rapid double-click starting a second switch before the first
     // one's fetch resolves - without this, an older, slower-resolving fetch could
@@ -480,11 +495,18 @@ async function switchCalcMode(mode) {
     // leaving calcMode and calcState.drivers referring to two different modes (which
     // would silently break the carsPerEntity elimination math below).
     const myRequestId = ++calcModeRequestId;
-    const data = mode === 'drivers' ? await loadChampionshipCalcData(12) : await loadConstructorCalcData(8);
+    const onStandingsReady = (quickDrivers) => {
+        if (myRequestId !== calcModeRequestId) return; // a newer switch has since started
+        showStandingsEarly(quickDrivers);
+    };
+    const data = mode === 'drivers'
+        ? await loadChampionshipCalcData(12, onStandingsReady)
+        : await loadConstructorCalcData(8, onStandingsReady);
     if (myRequestId !== calcModeRequestId) return; // a newer switchCalcMode call has since started - drop this stale result
 
     calcState = { ...data, scenario: {} };
     calcCurrentRaceIndex = 0;
+    document.getElementById('calcCarouselSection').dataset.ready = 'true';
     renderStandings(calcState.drivers);
     renderCarousel();
     recomputeResults();
@@ -508,13 +530,27 @@ async function initChampionshipCalculator() {
         }
         document.getElementById('calcTabDrivers').onclick = () => switchCalcMode('drivers');
         document.getElementById('calcTabConstructors').onclick = () => switchCalcMode('constructors');
+        // Standings-ready already revealed calcApp/hid calcLoading in the common case -
+        // these two lines only do anything on the rare path where the whole load
+        // finished so fast the early callback and the final render landed together,
+        // or (more importantly) they're harmless no-ops otherwise since both elements
+        // are already in their target state by the time we get here.
         document.getElementById('calcLoading').style.display = 'none';
         document.getElementById('calcApp').style.display = 'block';
     } catch (err) {
-        document.getElementById('calcApp').style.display = 'none';
         const loading = document.getElementById('calcLoading');
-        loading.style.display = 'block';
-        loading.textContent = 'Failed to load live data: ' + err.message;
+        // If standings already rendered successfully before the slower fetches failed,
+        // don't tear the whole app back down to a bare error screen - the standings
+        // the user can already see are still real and correct, only the carousel/
+        // results (which need the rest of the data) never arrived.
+        if (document.getElementById('calcApp').style.display === 'block') {
+            document.getElementById('calcCarouselSection').innerHTML =
+                `<p style="color:#ff6b6b;padding:10px 0;">Couldn't load the race calendar/results data: ${sanitizeHTML(err.message)}. Standings above are still live.</p>`;
+        } else {
+            document.getElementById('calcApp').style.display = 'none';
+            loading.style.display = 'block';
+            loading.textContent = 'Failed to load live data: ' + err.message;
+        }
     }
 }
 
