@@ -58,7 +58,11 @@
 
         /* Round chips replace bare dots - shows the actual round number and lock state
            at a glance instead of an abstract row of identical circles. */
-        .calc-race-chips { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
+        .calc-race-chips-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+        .calc-race-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+        .calc-reset-btn { background: transparent; border: 1px solid var(--border-color); color: rgba(255,255,255,0.6); border-radius: 6px; padding: 6px 12px; font-family: 'Chakra Petch', sans-serif; font-size: 0.82rem; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; white-space: nowrap; }
+        .calc-reset-btn:hover:not(:disabled) { border-color: var(--f1-red); color: #fff; }
+        .calc-reset-btn:disabled { opacity: 0.35; cursor: default; }
         .calc-race-chip { min-width: 32px; height: 26px; padding: 0 6px; border-radius: 6px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: rgba(255,255,255,0.65); font-size: 0.72rem; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
         .calc-race-chip:hover { border-color: var(--f1-red); color: #fff; }
         .calc-race-chip.locked { background: var(--f1-red); border-color: var(--f1-red); color: #fff; }
@@ -79,9 +83,11 @@
         .standings-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
         .standings-table th, .standings-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
 
-        .calc-more-toggle summary, .calc-tail-toggle summary { cursor: pointer; padding: 10px 0; color: rgba(255,255,255,0.5); font-size: 0.85rem; list-style: none; }
-        .calc-more-toggle summary::-webkit-details-marker, .calc-tail-toggle summary::-webkit-details-marker { display: none; }
-        .calc-more-toggle summary:hover, .calc-tail-toggle summary:hover { color: #fff; }
+        .calc-tail-toggle summary { cursor: pointer; padding: 10px 0; color: rgba(255,255,255,0.5); font-size: 0.85rem; list-style: none; }
+        .calc-tail-toggle summary::-webkit-details-marker { display: none; }
+        .calc-tail-toggle summary:hover { color: #fff; }
+        .calc-standings-more-btn { display: block; margin-top: 8px; padding: 8px 0; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 0.85rem; font-family: 'Chakra Petch', sans-serif; cursor: pointer; text-align: left; }
+        .calc-standings-more-btn:hover { color: #fff; }
 
         .result-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
         .result-row:last-child { border-bottom: none; }

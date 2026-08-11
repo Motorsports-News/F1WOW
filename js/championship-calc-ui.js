@@ -17,23 +17,24 @@ function renderStandings(drivers) {
     // both a "Driver" and "Team" column would just duplicate that name across two cells.
     const isConstructors = calcMode === 'constructors';
     const leaderPoints = drivers[0].currentPoints;
-    const rowHtml = d => `
-        <tr class="standings-row">
+    const rowHtml = (d, hidden) => `
+        <tr class="standings-row${hidden ? ' calc-standings-hidden-row' : ''}" ${hidden ? 'style="display:none;"' : ''}>
             <td>${sanitizeHTML(d.code)}</td>
             ${isConstructors ? '' : `<td>${sanitizeHTML(d.team)}</td>`}
             <td>${d.currentPoints}</td>
             <td>${d.currentPoints === leaderPoints ? '—' : '-' + (leaderPoints - d.currentPoints)}</td>
         </tr>`;
 
-    const visible = drivers.slice(0, STANDINGS_VISIBLE).map(rowHtml).join('');
-    const rest = drivers.slice(STANDINGS_VISIBLE);
     // Everyone beyond the top 5 is supporting context, not the point of the page -
-    // collapse it behind a native <details> disclosure instead of always showing all
-    // 12+ rows (no JS state needed, keyboard/screen-reader accessible for free).
-    const restBlock = rest.length
-        ? `<details class="calc-more-toggle"><summary>${rest.length} more</summary>
-            <table class="standings-table" aria-hidden="true"><tbody>${rest.map(rowHtml).join('')}</tbody></table>
-           </details>`
+    // collapse it by default. These rows live in the SAME <tbody> as the visible
+    // ones (just display:none) rather than a second separate <table>, so the
+    // columns stay properly aligned and the toggle button below is a normal
+    // sibling of the table, not something that visually floats apart from it.
+    const visible = drivers.slice(0, STANDINGS_VISIBLE).map(d => rowHtml(d, false)).join('');
+    const rest = drivers.slice(STANDINGS_VISIBLE);
+    const hiddenRows = rest.map(d => rowHtml(d, true)).join('');
+    const toggleBtn = rest.length
+        ? `<button class="calc-standings-more-btn" id="calcStandingsMoreBtn" aria-expanded="false">${rest.length} more</button>`
         : '';
 
     document.getElementById('calcStandingsSection').innerHTML = `
@@ -41,10 +42,23 @@ function renderStandings(drivers) {
         <div class="standings-container">
             <table class="standings-table" aria-label="Current ${isConstructors ? 'constructor' : 'driver'} standings">
                 <thead><tr><th>${isConstructors ? 'Team' : 'Driver'}</th>${isConstructors ? '' : '<th>Team</th>'}<th>Points</th><th>Gap to Leader</th></tr></thead>
-                <tbody>${visible}</tbody>
+                <tbody>${visible}${hiddenRows}</tbody>
             </table>
-            ${restBlock}
+            ${toggleBtn}
         </div>`;
+
+    const moreBtn = document.getElementById('calcStandingsMoreBtn');
+    if (moreBtn) {
+        moreBtn.onclick = () => {
+            const section = document.getElementById('calcStandingsSection');
+            const willExpand = moreBtn.getAttribute('aria-expanded') !== 'true';
+            section.querySelectorAll('.calc-standings-hidden-row').forEach(row => {
+                row.style.display = willExpand ? '' : 'none';
+            });
+            moreBtn.setAttribute('aria-expanded', String(willExpand));
+            moreBtn.textContent = willExpand ? 'Show fewer' : `${rest.length} more`;
+        };
+    }
 }
 
 let calcCurrentRaceIndex = 0;
@@ -87,6 +101,8 @@ function renderCarousel() {
         return `<button class="calc-race-chip ${hasAnyLock ? 'locked' : ''} ${i === calcCurrentRaceIndex ? 'current' : ''}" data-index="${i}" title="Round ${r.round}: ${sanitizeHTML(r.name)}">${r.round}</button>`;
     }).join('');
 
+    const hasAnyScenario = Object.values(calcState.scenario).some(perRound => Object.keys(perRound).length > 0);
+
     const section = document.getElementById('calcCarouselSection');
     section.innerHTML = `
         <h2>Set Race Results</h2>
@@ -99,7 +115,10 @@ function renderCarousel() {
             <thead><tr><th>${calcMode === 'constructors' ? 'Team' : 'Driver'}</th><th>GP Finish</th><th ${race.isSprint ? '' : 'style="display:none;"'}>Sprint Finish</th><th>Points</th></tr></thead>
             <tbody>${rows}</tbody>
         </table>
-        <div class="calc-race-chips">${chips}</div>`;
+        <div class="calc-race-chips-row">
+            <div class="calc-race-chips">${chips}</div>
+            <button class="calc-reset-btn" id="calcResetScenario" title="Clear every locked race and return to the current live standings" ${hasAnyScenario ? '' : 'disabled'}>&#8635; Reset to current</button>
+        </div>`;
 
     // restore selected values now that the DOM elements exist
     calcState.drivers.forEach(d => {
@@ -119,6 +138,11 @@ function renderCarousel() {
     document.querySelectorAll('.scenario-table select').forEach(sel => {
         sel.onchange = () => { onScenarioChange(race, sel); };
     });
+    document.getElementById('calcResetScenario').onclick = () => {
+        calcState.scenario = {}; // clears every locked race for every driver, back to live standings
+        renderCarousel();
+        recomputeResults();
+    };
 
     // Quick crossfade so a race/tab switch reads as a response, not a hard swap.
     if (!REDUCE_MOTION) {
