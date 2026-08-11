@@ -13,9 +13,12 @@ async function initHomepageTracker() {
     const section = document.getElementById('titleTracker');
     if (!section) return;
 
-    // By finishing position, not by team - two of the top 3 are often
-    // teammates (same team color), which would make their lines indistinguishable.
-    const POSITION_COLORS = ['#E10600', '#27F4D2', '#FFB800'];
+    const TEAM_HEX = {
+        'Mercedes': '#27F4D2', 'Ferrari': '#F91536', 'McLaren': '#FF8700',
+        'Red Bull': '#3671C6', 'Red Bull Racing': '#3671C6', 'Alpine F1 Team': '#FF87BC',
+        'Alpine': '#FF87BC', 'RB F1 Team': '#5E8FAA', 'Haas F1 Team': '#B6BABD',
+        'Williams': '#64C4FF', 'Audi': '#C92D4B', 'Sauber': '#C92D4B', 'Aston Martin': '#229971'
+    };
 
     try {
         const standingsPromise = cachedJson(`${API_BASE}/${CURRENT_YEAR}/driverstandings.json`);
@@ -35,14 +38,25 @@ async function initHomepageTracker() {
             return;
         }
 
-        const drivers = standings.map((s, i) => ({
-            id: s.Driver.driverId,
-            code: s.Driver.code,
-            name: `${s.Driver.givenName} ${s.Driver.familyName}`,
-            team: s.Constructors?.[0]?.name || 'Unknown',
-            currentPoints: parseFloat(s.points),
-            color: POSITION_COLORS[i] || '#B6BABD'
-        }));
+        // Real team color per driver - but two of the top 3 are often teammates,
+        // so the second driver sharing an already-used color gets a dashed line
+        // instead of a different color, to keep the actual team color intact.
+        const usedColors = new Set();
+        const drivers = standings.map(s => {
+            const team = s.Constructors?.[0]?.name || 'Unknown';
+            const color = TEAM_HEX[team] || '#B6BABD';
+            const dashed = usedColors.has(color);
+            usedColors.add(color);
+            return {
+                id: s.Driver.driverId,
+                code: s.Driver.code,
+                name: `${s.Driver.givenName} ${s.Driver.familyName}`,
+                team,
+                currentPoints: parseFloat(s.points),
+                color,
+                dashed
+            };
+        });
 
         // Season-so-far cumulative points for each driver shown, round by round.
         const roundLabels = [];
@@ -105,7 +119,7 @@ function renderTracker(section, drivers, cumulative, roundLabels) {
     const perDriver = drivers.map(d => ({ driver: d, coords: coordsFor(cumulative[d.id]) }));
 
     const lines = perDriver.map(({ driver, coords }) =>
-        `<polyline class="title-tracker-line" points="${coords.map(c => `${c.x},${c.y}`).join(' ')}" fill="none" stroke="${driver.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`
+        `<polyline class="title-tracker-line${driver.dashed ? ' title-tracker-line-dashed' : ''}" points="${coords.map(c => `${c.x},${c.y}`).join(' ')}" fill="none" stroke="${driver.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`
     ).join('');
 
     const dots = perDriver.map(({ driver, coords }) => coords.map((c, i) => `

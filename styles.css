@@ -5252,6 +5252,9 @@ body { font-size: 1rem; }
     padding: 6px 8px;
 }
 .title-tracker-svg { width: 100%; height: auto; display: block; }
+/* Teammates share a team color - the second one gets a dashed line so the
+   two stay visually distinct without touching the actual team color. */
+.title-tracker-line-dashed { stroke-dasharray: 7 5; }
 .title-tracker-dot-hit { cursor: pointer; }
 .title-tracker-label {
     font-family: 'Barlow Condensed', sans-serif;
