@@ -5234,7 +5234,7 @@ body { font-size: 1rem; }
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 .title-tracker-head h3 {
     font-family: 'Barlow Condensed', sans-serif;
@@ -5249,7 +5249,7 @@ body { font-size: 1rem; }
     background: var(--f1-dark);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    padding: 8px 10px;
+    padding: 6px 8px;
 }
 .title-tracker-svg { width: 100%; height: auto; display: block; }
 .title-tracker-dot-hit { cursor: pointer; }
@@ -5278,7 +5278,7 @@ body { font-size: 1rem; }
 .title-tracker-tooltip.visible { opacity: 1; visibility: visible; }
 .title-tracker-link {
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 6px;
     color: var(--f1-white);
     text-decoration: none;
     font-weight: 600;

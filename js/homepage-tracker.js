@@ -92,8 +92,8 @@ function renderTracker(section, drivers, cumulative, roundLabels) {
     const n = roundLabels.length;
     const maxPoints = Math.max(...drivers.map(d => Math.max(...cumulative[d.id])), 1);
 
-    const width = 500, height = 150;
-    const padding = { top: 14, right: 80, bottom: 14, left: 8 };
+    const width = 500, height = 65;
+    const padding = { top: 6, right: 66, bottom: 6, left: 6 };
     const chartW = width - padding.left - padding.right;
     const chartH = height - padding.top - padding.bottom;
 
