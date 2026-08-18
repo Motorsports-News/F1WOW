@@ -325,6 +325,18 @@
       "badge": "Upgrade Watch",
       "driver": "Charles Leclerc",
       "event": "2026 Italian Grand Prix"
+    },
+    {
+      "slug": "leclerc-20-pole-club-only-non-champion.html",
+      "title": "Leclerc: The Only 20-Pole Driver Never to Be Champion",
+      "excerpt": "A stat graphic from F1GuyDan lays it bare: 14 of the 15 drivers with more than 20 pole positions became world champion - Charles Leclerc is the only one who has not. The full club table, his 34 poles and 9 wins, and what 2026 says about his odds.",
+      "date": "2026-08-18",
+      "category": "news",
+      "label": "Stat Attack",
+      "featuredTitle": "The 20-Pole Club: Every Member a Champion - Except Charles Leclerc",
+      "badge": "Stat Attack",
+      "driver": "Charles Leclerc",
+      "event": "F1 Records"
     }
   ]
 }
