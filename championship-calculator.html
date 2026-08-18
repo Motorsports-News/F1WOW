@@ -68,17 +68,43 @@
         .calc-race-chip.locked { background: var(--f1-red); border-color: var(--f1-red); color: #fff; }
         .calc-race-chip.current { outline: 2px solid #fff; outline-offset: 1px; }
 
-        .scenario-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; transition: opacity 0.18s ease; }
-        .scenario-table th, .scenario-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .scenario-table tr.calc-locked-row { background: rgba(225,6,0,0.06); }
-        .scenario-table select { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; font-family: 'Chakra Petch', sans-serif; }
-        /* The OPEN dropdown list is a separate OS-level popup, not styled by the
-           select's own (semi-transparent) background - without an explicit, solid
-           color here it falls back to the browser default (white bg), leaving the
-           white option text invisible against it. */
-        .scenario-table select option { background: var(--f1-dark); color: #fff; }
-        .calc-pts-preview { display: inline-block; min-width: 40px; text-align: center; font-size: 0.78rem; font-weight: 800; color: rgba(255,255,255,0.35); font-variant-numeric: tabular-nums; }
-        .calc-pts-preview.has-pts { color: var(--f1-red); }
+        /* Drag-to-order boards: every remaining round is a board of point-paying
+           slots. Drag (or tap) a driver chip from the pool into a slot to lock an
+           exact result; anything left in the pool stays simulated by the model. */
+        .calc-boards { display: grid; grid-template-columns: 1fr; gap: 18px; transition: opacity 0.18s ease; }
+        @media (min-width: 880px) {
+            .calc-boards.calc-boards-split { grid-template-columns: 1fr 1fr; align-items: start; }
+        }
+        .calc-board { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; }
+        .calc-board-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+        .calc-board-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: 0.02em; }
+        .calc-board-hint { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
+        .calc-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        @media (min-width: 640px) { .calc-slots { grid-template-columns: 1fr 1fr 1fr; } }
+        .calc-slot { display: grid; grid-template-columns: 28px 26px 1fr; align-items: center; min-height: 40px; padding: 3px 6px 3px 8px; border: 1px dashed rgba(255,255,255,0.18); border-radius: 7px; background: rgba(255,255,255,0.02); }
+        .calc-slot.drop-hot { border-style: solid; border-color: var(--f1-red); background: rgba(225,6,0,0.1); }
+        .calc-slot-pos { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.88rem; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
+        .calc-slot[data-pos="1"] .calc-slot-pos { color: var(--f1-red); }
+        .calc-slot-pts { font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.38); font-variant-numeric: tabular-nums; }
+        .calc-slot-empty { font-size: 0.66rem; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .calc-chip { display: flex; align-items: center; gap: 7px; width: 100%; min-height: 32px; padding: 3px 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.02em; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: border-color 0.15s ease, background 0.15s ease; }
+        .calc-chip:hover, .calc-chip:focus-visible { border-color: var(--f1-red); background: rgba(225,6,0,0.12); outline: none; }
+        .calc-chip-bar { flex: 0 0 4px; width: 4px; height: 18px; border-radius: 2px; }
+        .calc-chip-ghost { position: fixed; z-index: 9999; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.55); cursor: grabbing; }
+        .calc-chip-lifted { opacity: 0.3; }
+        body.calc-dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+
+        .calc-dnf { margin-top: 8px; padding: 8px 10px; border: 1px dashed rgba(255,107,107,0.45); border-radius: 7px; }
+        .calc-dnf.drop-hot { border-style: solid; background: rgba(225,6,0,0.1); }
+        .calc-dnf-label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,107,107,0.8); margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+        .calc-dnf-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .calc-pool { margin-top: 8px; padding: 8px 10px; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; background: rgba(255,255,255,0.02); }
+        .calc-pool.drop-hot { border-color: var(--f1-red); }
+        .calc-pool-label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+        .calc-pool-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .calc-pool-chips .calc-chip, .calc-dnf-chips .calc-chip { width: auto; }
+        .calc-drag-help { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: 12px; line-height: 1.5; }
 
         .standings-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
         .standings-table th, .standings-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
@@ -124,7 +150,7 @@
         .calc-scenario-empty { font-size: 0.88rem; color: rgba(255,255,255,0.55); margin: 14px 0 0; line-height: 1.6; }
 
         @media (prefers-reduced-motion: reduce) {
-            .result-bar, .scenario-table, .calc-tab, .calc-race-chip, .run-btn, .calc-carousel-nav button { transition: none !important; }
+            .result-bar, .calc-boards, .calc-chip, .calc-tab, .calc-race-chip, .run-btn, .calc-carousel-nav button { transition: none !important; }
         }
     </style>
 </head>
@@ -218,9 +244,9 @@
         </div>
     </footer>
 
-    <script src="js/championship-calc-engine.js"></script>
+    <script src="js/championship-calc-engine.js?v=20260818a"></script>
     <script src="js/championship-calc-data.js"></script>
     <script src="script.js?v=20260811f"></script>
-    <script src="js/championship-calc-ui.js"></script>
+    <script src="js/championship-calc-ui.js?v=20260818a"></script>
 </body>
 </html>

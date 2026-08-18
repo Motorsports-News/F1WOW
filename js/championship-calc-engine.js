@@ -67,19 +67,34 @@
         return history[idx];
     }
 
-    // Each race entry: { locked, isSprint, gpPosition?, sprintPosition? }.
-    // Locked races use the user-set finishing position directly; unlocked races
-    // are simulated by resampling from the driver's own real 2026 per-race history.
+    // Each race entry: { isSprint, gpLocked, gpPosition?, sprintLocked, sprintPosition? }.
+    // Legacy entries ({ locked: true, ... }) lock both sides at once. The two sides can
+    // also be locked independently (drag-to-order boards): a sprint weekend where the
+    // user set the GP result but left the sprint simulated is gpLocked without
+    // sprintLocked. Locked sides use the user-set finishing position directly; unlocked
+    // sides are simulated by resampling from the driver's own real 2026 per-race history.
+    function gpIsLocked(race) {
+        return !!(race.locked || race.gpLocked);
+    }
+    function sprintIsLocked(race) {
+        return !!(race.locked || race.sprintLocked);
+    }
+
     function simulateDriverRemainingPoints(races, history, rng) {
         history = history || {};
         let total = 0;
         races.forEach(race => {
-            if (race.locked) {
+            if (gpIsLocked(race)) {
                 total += gpPointsFor(race.gpPosition);
-                if (race.isSprint) total += sprintPointsFor(race.sprintPosition);
             } else {
                 total += sampleFromHistory(history.gpHistory, rng);
-                if (race.isSprint) total += sampleFromHistory(history.sprintHistory, rng);
+            }
+            if (race.isSprint) {
+                if (sprintIsLocked(race)) {
+                    total += sprintPointsFor(race.sprintPosition);
+                } else {
+                    total += sampleFromHistory(history.sprintHistory, rng);
+                }
             }
         });
         return total;
@@ -140,6 +155,46 @@
         return { eliminated, bestCase, ceiling, maxOpponentAllowed };
     }
 
+    // ---- Partial-lock variants (drag-to-order boards) ----
+    // A lock entry for one round may now be partial on sprint weekends: an absent
+    // gpPosition/sprintPosition key means that side is still open (simulated,
+    // still scoreable), while an explicit null means locked at zero (P11+/DNF).
+    // Legacy entries from old share links always carry both keys, so they resolve
+    // to "nothing still available" exactly as before. These helpers replace the
+    // count-based maxRemainingPoints/checkElimination/titleBoundary math whenever
+    // the scenario can contain partial locks.
+
+    // Max points still on the table for ONE car in a single remaining race.
+    function raceMaxAvailable(isSprint, locked) {
+        if (!locked) return isSprint ? 33 : 25;
+        let max = 0;
+        if (locked.gpPosition === undefined) max += 25;
+        if (isSprint && locked.sprintPosition === undefined) max += 8;
+        return max;
+    }
+
+    // races: [{ isSprint, round }]; locksByRound: { [round]: { gpPosition?, sprintPosition? } }.
+    function availablePointsRemaining(races, locksByRound, carsPerEntity) {
+        carsPerEntity = carsPerEntity || 1;
+        const total = races.reduce((sum, r) =>
+            sum + raceMaxAvailable(!!r.isSprint, locksByRound ? locksByRound[r.round] : undefined), 0);
+        return total * carsPerEntity;
+    }
+
+    function checkEliminationFromAvailable(driverPoints, leaderPoints, availableMax) {
+        return driverPoints + availableMax < leaderPoints;
+    }
+
+    function titleBoundaryFromAvailable(selectedPoints, opponentPoints, availableMax) {
+        const bestCase = selectedPoints + availableMax;
+        return {
+            eliminated: bestCase < opponentPoints,
+            bestCase,
+            ceiling: availableMax,
+            maxOpponentAllowed: Math.max(0, bestCase - opponentPoints)
+        };
+    }
+
     // Reverse of gpPointsFor/sprintPointsFor. null means "outside the points" (P11+
     // for a GP, P9+ for a sprint) - this also covers a retirement/DNF, since the
     // underlying data only stores points scored, not finishing/classification status,
@@ -152,27 +207,36 @@
     }
 
     // Like simulateDriverRemainingPoints, but also records the finishing position
-    // implied by each unlocked race's resampled points value. Locked races aren't
-    // included in `finishes` - the user already set them, so they're not part of
-    // "what would need to happen" in a generated scenario.
+    // implied by each unlocked side's resampled points value. Sides the user locked
+    // aren't included in `finishes` - the user already set them, so they're not part
+    // of "what would need to happen" in a generated scenario. A partially-locked
+    // sprint weekend contributes a finish entry only for its simulated GP side.
     function simulateDetailedOutcome(races, history, rng) {
         history = history || {};
         let total = 0;
         const finishes = [];
         races.forEach(race => {
-            if (race.locked) {
-                total += gpPointsFor(race.gpPosition);
-                if (race.isSprint) total += sprintPointsFor(race.sprintPosition);
-                return;
-            }
-            const gpPts = sampleFromHistory(history.gpHistory, rng);
+            const gpLocked = gpIsLocked(race);
+            const spLocked = sprintIsLocked(race);
+            const gpPts = gpLocked
+                ? gpPointsFor(race.gpPosition)
+                : sampleFromHistory(history.gpHistory, rng);
             let sprintPts = 0, sprintPosition = null;
             if (race.isSprint) {
-                sprintPts = sampleFromHistory(history.sprintHistory, rng);
-                sprintPosition = sprintPositionFromPoints(sprintPts);
+                if (spLocked) {
+                    sprintPts = sprintPointsFor(race.sprintPosition);
+                } else {
+                    sprintPts = sampleFromHistory(history.sprintHistory, rng);
+                    sprintPosition = sprintPositionFromPoints(sprintPts);
+                }
             }
             total += gpPts + sprintPts;
-            finishes.push({ gpPosition: gpPositionFromPoints(gpPts), sprintPosition });
+            if (!gpLocked) {
+                finishes.push({
+                    gpPosition: gpPositionFromPoints(gpPts),
+                    sprintPosition: race.isSprint && !spLocked ? sprintPosition : null
+                });
+            }
         });
         return { total, finishes };
     }
@@ -205,6 +269,7 @@
         mean, stddev, computePaceStats,
         sampleFromHistory, simulateDriverRemainingPoints, runMonteCarlo,
         requiredResultGap, titleBoundary,
+        raceMaxAvailable, availablePointsRemaining, checkEliminationFromAvailable, titleBoundaryFromAvailable,
         gpPositionFromPoints, sprintPositionFromPoints, simulateDetailedOutcome, findWinningScenarios
     };
 

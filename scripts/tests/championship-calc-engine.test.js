@@ -206,6 +206,96 @@ const {
     gpPositionFromPoints, sprintPositionFromPoints, simulateDetailedOutcome, findWinningScenarios
 } = require('../../js/championship-calc-engine.js');
 
+const {
+    raceMaxAvailable, availablePointsRemaining, checkEliminationFromAvailable, titleBoundaryFromAvailable
+} = require('../../js/championship-calc-engine.js');
+
+test('raceMaxAvailable: unlocked race offers the full haul, locked keys close that side', () => {
+    assert.strictEqual(raceMaxAvailable(false, undefined), 25);
+    assert.strictEqual(raceMaxAvailable(true, undefined), 33);
+    // Legacy fully-locked entry (both keys present, values or nulls) -> nothing left
+    assert.strictEqual(raceMaxAvailable(false, { gpPosition: 1 }), 0);
+    assert.strictEqual(raceMaxAvailable(true, { gpPosition: null, sprintPosition: null }), 0);
+    assert.strictEqual(raceMaxAvailable(true, { gpPosition: 1, sprintPosition: 3 }), 0);
+    // Partial locks: absent key = that side still open
+    assert.strictEqual(raceMaxAvailable(true, { gpPosition: 1 }), 8);        // GP set, sprint open
+    assert.strictEqual(raceMaxAvailable(true, { sprintPosition: null }), 25); // sprint locked at 0, GP open
+    assert.strictEqual(raceMaxAvailable(true, { gpPosition: null }), 8);      // GP locked at 0, sprint open
+});
+
+test('availablePointsRemaining: sums per-race availability and scales for constructors', () => {
+    const races = [
+        { round: 12, isSprint: false },
+        { round: 13, isSprint: true },
+        { round: 14, isSprint: false }
+    ];
+    const locks = { 12: { gpPosition: 1 } }; // round 12 fully locked (non-sprint entry)
+    // 0 (r12) + 33 (r13 sprint weekend open) + 25 (r14) = 58
+    assert.strictEqual(availablePointsRemaining(races, locks), 58);
+    assert.strictEqual(availablePointsRemaining(races, locks, 2), 116);
+    assert.strictEqual(availablePointsRemaining(races, undefined), 83);
+    assert.strictEqual(availablePointsRemaining([], undefined), 0);
+});
+
+test('checkEliminationFromAvailable / titleBoundaryFromAvailable: partial-lock boundary math', () => {
+    assert.strictEqual(checkEliminationFromAvailable(100, 200, 99), true);   // 199 < 200
+    assert.strictEqual(checkEliminationFromAvailable(100, 200, 100), false); // 200 is reachable (tie = alive)
+
+    const alive = titleBoundaryFromAvailable(169, 219, 58);
+    assert.strictEqual(alive.eliminated, false);
+    assert.strictEqual(alive.bestCase, 227);
+    assert.strictEqual(alive.maxOpponentAllowed, 8);
+
+    const out = titleBoundaryFromAvailable(50, 400, 25);
+    assert.strictEqual(out.eliminated, true);
+    assert.strictEqual(out.maxOpponentAllowed, 0); // clamped, not negative
+});
+
+test('simulateDriverRemainingPoints: per-side locks on a sprint weekend', () => {
+    const history = { gpHistory: [25], sprintHistory: [8] }; // single-value histories -> deterministic
+    const races = [
+        { isSprint: true, gpLocked: true, gpPosition: 2, sprintLocked: false }, // 18 + resampled 8
+        { isSprint: true, gpLocked: false, sprintLocked: true, sprintPosition: null } // resampled 25 + 0
+    ];
+    const total = simulateDriverRemainingPoints(races, history, () => 0.5);
+    assert.strictEqual(total, 18 + 8 + 25 + 0);
+});
+
+test('simulateDetailedOutcome: partial locks only report the simulated sides', () => {
+    const history = { gpHistory: [25], sprintHistory: [8] };
+    const races = [
+        { isSprint: true, gpLocked: true, gpPosition: 1, sprintLocked: false },
+        { isSprint: true, gpLocked: false, sprintLocked: true, sprintPosition: 1 }
+    ];
+    const outcome = simulateDetailedOutcome(races, history, () => 0.5);
+    // Race 1: GP locked -> no finish entry for it. Race 2: GP open -> one entry, sprint locked -> null
+    assert.strictEqual(outcome.finishes.length, 1);
+    assert.strictEqual(outcome.finishes[0].gpPosition, 1);
+    assert.strictEqual(outcome.finishes[0].sprintPosition, null);
+    // totals: r1 = 25 + 8 (sampled), r2 = 25 (sampled) + 8 (locked)
+    assert.strictEqual(outcome.total, 66);
+});
+
+test('runMonteCarlo: probabilities still sum to ~1 with partial locks', () => {
+    const drivers = [
+        { id: 'a', currentPoints: 100, eliminated: false,
+          history: { gpHistory: [25, 18], sprintHistory: [8, 6] },
+          races: [
+              { isSprint: true, gpLocked: true, gpPosition: 1, sprintLocked: false },
+              { isSprint: false, gpLocked: false }
+          ] },
+        { id: 'b', currentPoints: 100, eliminated: false,
+          history: { gpHistory: [18, 15], sprintHistory: [6, 4] },
+          races: [
+              { isSprint: true, gpLocked: false, sprintLocked: true, sprintPosition: 2 },
+              { isSprint: false, gpLocked: false }
+          ] }
+    ];
+    const probs = runMonteCarlo(drivers, 400, seededRng(11));
+    const total = Object.values(probs).reduce((a, b) => a + b, 0);
+    assert.ok(Math.abs(total - 1) < 0.01, `expected ~1.0, got ${total}`);
+});
+
 test('gpPositionFromPoints / sprintPositionFromPoints: reverse the scoring tables, null for outside points', () => {
     assert.strictEqual(gpPositionFromPoints(25), 1);
     assert.strictEqual(gpPositionFromPoints(1), 10);
