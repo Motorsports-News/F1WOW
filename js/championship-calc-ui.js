@@ -78,6 +78,13 @@ const BOARD_META = {
     sprint: { key: 'sprintPosition', slots: 8, label: 'Sprint', pointsFor: p => ChampionshipCalc.sprintPointsFor(p) }
 };
 
+// Simulation volume and the fixed seed behind the deterministic probabilities:
+// the same scenario always produces the same numbers for every visitor, reload
+// and browser (see runMonteCarloStable in the engine), so a shared link is a
+// promise the recipient sees exactly what the sender saw.
+const CALC_SIM_TRIALS = 10000;
+const CALC_SIM_SEED = 2026;
+
 const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // --- Scenario state helpers -------------------------------------------------
@@ -128,6 +135,68 @@ function unplacedDrivers(race, kind) {
         const entry = boardEntry(d.id, race.round);
         return !entry || entry[key] === undefined;
     });
+}
+
+// --- Drama presets ------------------------------------------------------------
+// One-tap scenario fillers. Each preset REPLACES the whole scenario - they're
+// starting points for the user to then tweak chip by chip, not additive edits -
+// and they're derived from live standings order so the "leader" is whoever is
+// actually leading right now (or the top constructor in constructors mode).
+
+function presetEntities() {
+    const ordered = [...calcState.drivers].sort((a, b) => b.currentPoints - a.currentPoints);
+    return { leader: ordered[0] || null, rival: ordered[1] || null };
+}
+
+// One entity locked to the same `position` (1 = wins everything, null = scores
+// zero everywhere) in every remaining race, both sides of sprint weekends.
+function seasonSweepScenario(entity, position) {
+    if (!entity) return {};
+    const perRound = {};
+    calcState.remainingRaces.forEach(r => {
+        perRound[r.round] = r.isSprint
+            ? { gpPosition: position, sprintPosition: position }
+            : { gpPosition: position };
+    });
+    return { [entity.id]: perRound };
+}
+
+const CALC_DRAMA_PRESETS = [
+    {
+        id: 'leader-dnf-next', label: 'Leader DNFs next race',
+        describe: (leader, rival, race) => leader && race ? `${leader.code} scores 0 in Round ${race.round} (${race.name})` : '',
+        build: () => {
+            const race = calcState.remainingRaces[0];
+            const { leader } = presetEntities();
+            if (!leader || !race) return {};
+            const locked = race.isSprint ? { gpPosition: null, sprintPosition: null } : { gpPosition: null };
+            return { [leader.id]: { [race.round]: locked } };
+        }
+    },
+    {
+        id: 'clean-sweep', label: 'Leader wins every race',
+        describe: leader => leader ? `${leader.code} takes P1 in every remaining round` : '',
+        build: () => seasonSweepScenario(presetEntities().leader, 1)
+    },
+    {
+        id: 'full-meltdown', label: 'Leader scores zero',
+        describe: leader => leader ? `${leader.code} locked at 0 points in every remaining round` : '',
+        build: () => seasonSweepScenario(presetEntities().leader, null)
+    },
+    {
+        id: 'rival-wins-out', label: 'Rival wins every race',
+        describe: (leader, rival) => rival ? `${rival.code} takes P1 in every remaining round` : '',
+        build: () => seasonSweepScenario(presetEntities().rival, 1)
+    }
+];
+
+function applyPreset(presetId) {
+    const preset = CALC_DRAMA_PRESETS.find(p => p.id === presetId);
+    if (!preset || !calcState.drivers.length) return;
+    calcState.scenario = preset.build();
+    calcCurrentRaceIndex = 0; // every preset acts from the next race onward - show it
+    renderCarousel();
+    recomputeResults();
 }
 
 function chipLabel(d) {
@@ -189,6 +258,12 @@ function renderCarousel() {
 
     const hasAnyScenario = Object.values(calcState.scenario).some(perRound => Object.keys(perRound).length > 0);
 
+    const { leader, rival } = presetEntities();
+    const presetChips = CALC_DRAMA_PRESETS.map(p => {
+        const detail = p.describe(leader, rival, calcState.remainingRaces[0]) || p.label;
+        return `<button type="button" class="calc-preset-chip" data-preset="${p.id}" title="${sanitizeHTML(detail)}">${p.label}</button>`;
+    }).join('');
+
     const section = document.getElementById('calcCarouselSection');
     section.innerHTML = `
         <h2>Set Race Results</h2>
@@ -199,6 +274,10 @@ function renderCarousel() {
         </div>
         <div class="calc-boards ${race.isSprint ? 'calc-boards-split' : ''}" style="opacity:${REDUCE_MOTION ? '1' : '0'};">${boards}</div>
         <p class="calc-drag-help">Drag a driver into a position — or tap a driver to drop them into the first free spot. Tap a placed driver to send them back to the pool, or drop them on the zero-points zone to lock a DNF.</p>
+        <div class="calc-presets" role="group" aria-label="Drama presets - one-tap starting scenarios">
+            <span class="calc-presets-label">Drama presets</span>
+            ${presetChips}
+        </div>
         <div class="calc-race-chips-row">
             <div class="calc-race-chips">${chips}</div>
             <button class="calc-reset-btn" id="calcResetScenario" title="Clear every locked race and return to the current live standings" ${hasAnyScenario ? '' : 'disabled'}>&#8635; Reset to current</button>
@@ -208,6 +287,9 @@ function renderCarousel() {
     document.getElementById('calcNextRace').onclick = () => { calcCurrentRaceIndex++; renderCarousel(); };
     document.querySelectorAll('.calc-race-chip').forEach(chip => {
         chip.onclick = () => { calcCurrentRaceIndex = parseInt(chip.dataset.index); renderCarousel(); };
+    });
+    document.querySelectorAll('.calc-preset-chip').forEach(btn => {
+        btn.onclick = () => applyPreset(btn.dataset.preset);
     });
     document.getElementById('calcResetScenario').onclick = () => {
         calcState.scenario = {}; // clears every locked race for every driver, back to live standings
@@ -473,7 +555,7 @@ function recomputeResults() {
             };
         })
     }));
-    const probabilities = ChampionshipCalc.runMonteCarlo(simDrivers, 3000);
+    const probabilities = ChampionshipCalc.runMonteCarloStable(simDrivers, CALC_SIM_TRIALS, CALC_SIM_SEED);
 
     renderResults(drivers, pointsNow, eliminated, isChampion, probabilities, leaderId);
     updateShareUrl();
@@ -696,7 +778,7 @@ function renderResults(drivers, pointsNow, eliminated, isChampion, probabilities
         <div class="required-line">${requiredLine}</div>
         ${renderTitlePathExplorer(drivers, pointsNow, probabilities, leaderId)}
         <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:10px;">
-            Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season. First-pass estimate, not an official probability.
+            Model: each driver's unlocked remaining races are resampled from their own actual 2026 race-by-race results this season, across ${CALC_SIM_TRIALS.toLocaleString('en-US')} simulated seasons. Same scenario always gives the same numbers. First-pass estimate, not an official probability.
         </p>
         <button class="run-btn" id="calcCopyLink" style="margin-top:14px;">Copy Shareable Link</button>`;
 

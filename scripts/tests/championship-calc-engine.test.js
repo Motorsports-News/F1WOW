@@ -339,3 +339,123 @@ test('findWinningScenarios: returns fewer than requested (not an error) when the
     const examples = findWinningScenarios(selected, opponent, 3, 50, seededRng(2));
     assert.strictEqual(examples.length, 0); // truly impossible within this tiny budget
 });
+
+const { runMonteCarloStable, hashUnit } = require('../../js/championship-calc-engine.js');
+
+test('runMonteCarloStable: identical inputs + seed -> byte-identical probabilities', () => {
+    const drivers = [
+        { id: 'a', currentPoints: 200, eliminated: false,
+          history: { gpHistory: [25, 18, 10, 18, 25], sprintHistory: [8, 6] },
+          races: [{ isSprint: true, gpLocked: false }, { isSprint: false }] },
+        { id: 'b', currentPoints: 190, eliminated: false,
+          history: { gpHistory: [18, 15, 12, 15, 18], sprintHistory: [6, 4] },
+          races: [{ isSprint: true, sprintLocked: true, sprintPosition: 1 }, { isSprint: false }] }
+    ];
+    const run1 = runMonteCarloStable(drivers, 400, 2026);
+    const run2 = runMonteCarloStable(drivers, 400, 2026);
+    assert.deepStrictEqual(run1, run2);
+    const total = Object.values(run1).reduce((x, y) => x + y, 0);
+    assert.ok(Math.abs(total - 1) < 0.01, `expected ~1.0, got ${total}`);
+});
+
+test('runMonteCarloStable: draws are independent across cells (weak-hash regression guard)', () => {
+    // Regression shape: with raw FNV-1a and no fmix32 finalizer, draws for different
+    // drivers came out correlated, and b's ONLY winning cell (a=130, b=136 - expected
+    // ~5 times in 300 trials) occurred exactly 0 times. b can only beat a's 130, so:
+    // a's race unlocked  -> that cell occurs and b wins some trials (deterministically,
+    //                       ~15/300 with this seed; P(zero) ~ e^-15 if hashes are sound)
+    // a's race locked P1 -> a's total is always >= 140 > b's 136 max, b wins structurally never
+    const mk = aLocksRound0 => [
+        { id: 'a', currentPoints: 100, eliminated: false,
+          history: { gpHistory: [25, 15], sprintHistory: [] },
+          races: [
+              { isSprint: false, gpLocked: aLocksRound0, gpPosition: aLocksRound0 ? 1 : undefined },
+              { isSprint: false }
+          ] },
+        { id: 'b', currentPoints: 100, eliminated: false,
+          history: { gpHistory: [18, 10], sprintHistory: [] },
+          races: [{ isSprint: false }, { isSprint: false }] }
+    ];
+    const pA = runMonteCarloStable(mk(false), 300, 7);
+    const pB = runMonteCarloStable(mk(true), 300, 7);
+    assert.ok(pA.b > 0, `b should win some trials while a's race is open, got ${pA.b}`);
+    assert.strictEqual(pB.b, 0);
+    assert.notStrictEqual(pA.a, pB.a); // locking a's race visibly moved a's own odds
+    // Per-scenario determinism (the shareable-numbers guarantee):
+    assert.deepStrictEqual(runMonteCarloStable(mk(false), 300, 7), pA);
+    assert.deepStrictEqual(runMonteCarloStable(mk(true), 300, 7), pB);
+});
+
+test('hashUnit: cells are pairwise independent, not just marginally uniform', () => {
+    // P(first cell < .5 AND second cell < .5) must track the product of the marginals -
+    // this is what the plain mean/range check misses and what the correlated-draws bug
+    // above actually violated, so it gets its own guard.
+    const n = 20000;
+    let a = 0, b = 0, both = 0;
+    for (let t = 0; t < n; t++) {
+        const uA = hashUnit(7, 0, 0, 0, t) < 0.5;
+        const uB = hashUnit(7, 1, 0, 0, t) < 0.5;
+        if (uA) a++; if (uB) b++; if (uA && uB) both++;
+    }
+    const pa = a / n, pb = b / n, pab = both / n;
+    assert.ok(Math.abs(pa - 0.5) < 0.02 && Math.abs(pb - 0.5) < 0.02, `marginals drifted: ${pa}, ${pb}`);
+    assert.ok(Math.abs(pab - pa * pb) < 0.02,
+        `pairwise independence violated: P(AB)=${pab.toFixed(4)} vs P(A)P(B)=${(pa * pb).toFixed(4)}`);
+});
+
+test('runMonteCarloStable: different seed -> different result; probabilities sum to ~1', () => {
+    const drivers = [
+        { id: 'a', currentPoints: 100, eliminated: false,
+          history: { gpHistory: [25, 15, 10, 18], sprintHistory: [] },
+          races: [{ isSprint: false }, { isSprint: false }] },
+        { id: 'b', currentPoints: 100, eliminated: false,
+          history: { gpHistory: [18, 12, 2, 10], sprintHistory: [] },
+          races: [{ isSprint: false }, { isSprint: false }] }
+    ];
+    const s1 = runMonteCarloStable(drivers, 400, 1);
+    const s2 = runMonteCarloStable(drivers, 400, 2);
+    assert.notDeepStrictEqual(s1, s2);
+    [s1, s2].forEach(p => {
+        const total = Object.values(p).reduce((x, y) => x + y, 0);
+        assert.ok(Math.abs(total - 1) < 0.01);
+    });
+});
+
+test('runMonteCarloStable: a much faster driver still dominates (agrees with runMonteCarlo statistically)', () => {
+    const drivers = [
+        { id: 'fast', currentPoints: 200, eliminated: false,
+          history: { gpHistory: [25, 25, 25], sprintHistory: [] },
+          races: [{ isSprint: false }, { isSprint: false }, { isSprint: false }] },
+        { id: 'slow', currentPoints: 200, eliminated: false,
+          history: { gpHistory: [2, 4, 2], sprintHistory: [] },
+          races: [{ isSprint: false }, { isSprint: false }, { isSprint: false }] }
+    ];
+    const probs = runMonteCarloStable(drivers, 500, 42);
+    assert.ok(probs.fast > 0.9, `expected fast driver to dominate, got ${probs.fast}`);
+    assert.strictEqual(probs.slow < 0.1, true);
+});
+
+test('runMonteCarloStable: eliminated drivers never win; missing history contributes 0', () => {
+    const drivers = [
+        { id: 'leader', currentPoints: 400, eliminated: false, races: [{ isSprint: false }] },
+        { id: 'out', currentPoints: 50, eliminated: true,
+          history: { gpHistory: [25], sprintHistory: [] }, races: [{ isSprint: false }] }
+    ];
+    const probs = runMonteCarloStable(drivers, 200, 9);
+    assert.strictEqual(probs.out, 0);
+    assert.strictEqual(probs.leader, 1);
+});
+
+test('hashUnit: deterministic, in-range, and roughly uniform across a grid of cells', () => {
+    assert.strictEqual(hashUnit(1, 2, 3, 0, 5), hashUnit(1, 2, 3, 0, 5));
+    let sum = 0, min = 1, max = 0;
+    const N = 6000;
+    for (let i = 0; i < N; i++) {
+        const u = hashUnit(2026, i % 13, i % 9, i % 2, Math.floor(i / 3));
+        assert.ok(u >= 0 && u < 1);
+        sum += u; if (u < min) min = u; if (u > max) max = u;
+    }
+    const mean = sum / N;
+    assert.ok(mean > 0.47 && mean < 0.53, `uniform-ish mean expected, got ${mean}`);
+    assert.ok(min < 0.01 && max > 0.99, 'range should span most of [0,1)');
+});
