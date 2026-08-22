@@ -114,6 +114,23 @@
         .standings-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
         .standings-table th, .standings-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
 
+        /* Documentation sections + points table: self-contained (site table rule) */
+        .calc-doc p { line-height: 1.75; color: var(--text-muted); margin: 0 0 14px; }
+        .calc-doc a { color: #fff; text-decoration: underline; text-decoration-color: var(--f1-red); }
+        .calc-steps { list-style: none; margin: 0; padding: 0; counter-reset: calcstep; }
+        .calc-steps li { position: relative; counter-increment: calcstep; padding: 0 0 18px 44px; line-height: 1.7; color: var(--text-muted); }
+        .calc-steps li:last-child { padding-bottom: 0; }
+        .calc-steps li::before { content: counter(calcstep); position: absolute; left: 0; top: 1px; width: 28px; height: 28px; border-radius: 50%; background: var(--f1-red); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; }
+        .calc-steps strong { color: #fff; }
+        .calc-points-table { width: 100%; max-width: 420px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+        .calc-points-table th, .calc-points-table td { padding: 7px 14px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .calc-points-table thead th { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(255,255,255,0.75); border-bottom: 2px solid rgba(225,6,0,0.35); }
+        .calc-points-table td:first-child { color: rgba(255,255,255,0.45); font-weight: 700; }
+        .calc-points-table .calc-pts-hero { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--f1-red); }
+        .calc-faq { list-style: none; margin: 0; padding: 0; }
+        .calc-faq h3 { font-family: 'Chakra Petch', sans-serif; font-size: 0.98rem; color: #fff; margin: 0 0 6px; }
+        .calc-faq p { margin: 0; }
+
         .calc-tail-toggle summary { cursor: pointer; padding: 10px 0; color: rgba(255,255,255,0.5); font-size: 0.85rem; list-style: none; }
         .calc-tail-toggle summary::-webkit-details-marker { display: none; }
         .calc-tail-toggle summary:hover { color: #fff; }
@@ -192,7 +209,8 @@
         <main class="main" id="main">
         <div class="proto-wrap" style="max-width:980px;margin:0 auto;padding:30px 20px 60px;">
             <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:2rem;margin-bottom:6px;">F1 2026 Championship Calculator</h1>
-            <p style="color:var(--text-muted);margin-bottom:30px;">Live standings, a 12-race scenario editor, and a Monte Carlo win-probability model for the rest of the 2026 season.</p>
+            <p style="color:var(--text-muted);margin-bottom:14px;">Live standings, a race-by-race scenario editor, and a Monte Carlo win-probability model for the rest of the 2026 season.</p>
+            <p style="color:var(--text-muted);line-height:1.75;margin-bottom:30px;max-width:780px;">Kimi Antonelli's six wins from the opening eleven rounds have Mercedes in control of the 2026 title fight &mdash; but the maths only closes when the flag falls on the final round. This tool lets you finish the season yourself: start from the live standings, lock in the results you actually believe, and let the model simulate everything you leave open. The Drivers' and Constructors' championships both run through the same editor, so you can stress-test the team battle too.</p>
 
             <div id="calcLoading" style="text-align:center;padding:40px;color:rgba(255,255,255,0.5);">Loading live standings and season data&hellip;</div>
 
@@ -205,6 +223,66 @@
                 <section class="proto-section" id="calcCarouselSection"></section>
                 <section class="proto-section proto-section-compact" id="calcStandingsSection"></section>
             </div>
+        </div>
+
+        <div class="calc-doc" style="max-width:980px;margin:0 auto;padding:0 20px 60px;">
+            <section class="proto-section">
+                <h2>How the Calculator Works</h2>
+                <p>When the page loads, the tool pulls the current 2026 championship standings, the full race-by-race results so far this season, and the sprint results &mdash; then hands you the keys. For each remaining round you can lock an exact result: drag a driver into a points-paying slot, park them in the DNF zone if you fancy a retirement, or leave them in the pool entirely.</p>
+                <p>Everything you leave open is simulated. The model runs 10,000 simulated seasons, resampling each unlocked driver's finishing positions from his own actual 2026 results &mdash; so a driver on a hot streak stays hot in the maths. The simulation is seeded, which means the same scenario always returns the same numbers: build a case, share it, and argue about it. Drivers who can no longer mathematically catch the leader are flagged as eliminated on the full 2026 points scale, sprint weekends included, where a dominant weekend is worth up to 33 points.</p>
+            </section>
+
+            <section class="proto-section">
+                <h2>Three Ways to Play</h2>
+                <ol class="calc-steps">
+                    <li><strong>Quick:</strong> tap a drama preset to fill an entire scenario in one go, then eyeball what the probabilities say before tweaking anything.</li>
+                    <li><strong>Hands-on:</strong> step through the remaining rounds with the race chips, drag or tap drivers into the top-ten slots, use the DNF zone for retirements, and reset a round without touching the rest of your picks.</li>
+                    <li><strong>Deep dive:</strong> open the Title Path Explorer, pick any of the top three, and see exactly what has to happen for the championship to change hands.</li>
+                </ol>
+            </section>
+
+            <section class="proto-section">
+                <h2>The 2026 Points Scale</h2>
+                <p>Both championships score on the standard scale &mdash; 25 for a win down to 1 for tenth &mdash; with sprints paying a separate 8-to-1 scale to the top eight. The fastest-lap bonus point is gone in 2026: only the finishing positions below score.</p>
+                <table class="calc-points-table" aria-label="2026 Formula 1 points scale for grand prix and sprint">
+                    <thead><tr><th scope="col">Position</th><th scope="col">Grand Prix</th><th scope="col">Sprint</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td class="calc-pts-hero">25</td><td>8</td></tr>
+                        <tr><td>2</td><td>18</td><td>7</td></tr>
+                        <tr><td>3</td><td>15</td><td>6</td></tr>
+                        <tr><td>4</td><td>12</td><td>5</td></tr>
+                        <tr><td>5</td><td>10</td><td>4</td></tr>
+                        <tr><td>6</td><td>8</td><td>3</td></tr>
+                        <tr><td>7</td><td>6</td><td>2</td></tr>
+                        <tr><td>8</td><td>4</td><td>1</td></tr>
+                        <tr><td>9</td><td>2</td><td>&mdash;</td></tr>
+                        <tr><td>10</td><td>1</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="proto-section">
+                <h2>Frequently Asked</h2>
+                <ul class="calc-faq">
+                    <li>
+                        <h3>Does the model include sprint weekends?</h3>
+                        <p>Yes. Sprints score 8-7-6-5-4-3-2-1 to the top eight, and a sprint plus its grand prix is worth up to 33 points to one driver &mdash; the model simulates both.</p>
+                    </li>
+                    <li>
+                        <h3>Can I run the constructors' battle too?</h3>
+                        <p>Yes &mdash; switch the Drivers / Constructors tabs at the top. The scenario editor, the presets and the Title Path Explorer all work the same way for both championships.</p>
+                    </li>
+                    <li>
+                        <h3>How seriously should I take the probabilities?</h3>
+                        <p>As a first-pass estimate, not gospel. The model resamples each driver's real 2026 form and knows nothing about upgrades, weather or reliability trouble that hasn't happened yet. It is a structured way to argue, not an oracle.</p>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="proto-section proto-section-compact">
+                <h2>Go Deeper</h2>
+                <p>The full scoring rules &mdash; including the red-flag scoring edge case most guides miss &mdash; are in our <a href="f1-2026-points-system-explained.html">2026 points system explainer</a>. For where the championship actually stands, see the <a href="championship.html">live standings</a>; for what is left to play for, the <a href="calendar.html">2026 race calendar</a>; and for the state of play at the break, our <a href="f1-2026-mid-season-review.html">mid-season review</a>.</p>
+            </section>
         </div>
     </main>
 
