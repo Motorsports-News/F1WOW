@@ -80,8 +80,7 @@ def render(slug, category, headline):
     print(out, os.path.getsize(out)//1024, 'KB', '|', len(lines), 'lines @', size, 'px')
 
 CARDS = [
-    ('hamilton-grid-penalty-hungarian-gp-2026', 'Breaking', 'Hamilton Hit With Three-Place Grid Penalty for Impeding Piastri'),
-    ('hungarian-gp-2026-qualifying', 'Qualifying', 'Norris Beats Hamilton to Hungary Pole by 0.012s'),
+    ('dutch-gp-2026-race', 'Race Analysis', 'Norris Wins From Antonelli as Verstappen Crashes Out'),
 ]
 for slug, cat, head in CARDS:
     render(slug, cat, head)

@@ -1,6 +1,18 @@
 {
   "articles": [
     {
+      "slug": "dutch-gp-2026-race.html",
+      "title": "Dutch GP 2026: Norris Wins From Antonelli as Verstappen Crashes Out",
+      "excerpt": "Two wins in a row for Norris, a lap-one crash for Verstappen and Alonso's one-stop rescue - full Zandvoort analysis.",
+      "date": "2026-08-24",
+      "category": "race",
+      "label": "Race Analysis",
+      "badge": "Two Wins in a Row",
+      "driver": "Lando Norris",
+      "event": "Dutch GP 2026",
+      "featuredTitle": "Two From Two: Norris Rules Zandvoort as Verstappen's Home Race Ends in the Wall"
+    },
+    {
       "slug": "belgian-gp-2026.html",
       "title": "Belgian GP 2026: Antonelli Wins at Spa as Russell Retirement Reshapes Title Fight",
       "excerpt": "Sixth win of the season for the championship leader - and Hamilton snatches P2 in the standings after Russell's retirement.",
