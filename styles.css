@@ -3950,20 +3950,49 @@ body::before {
 }
 
 .championship-graph-section {
-    padding: 40px 0;
+    position: relative;
+    padding: 64px 0;
+    isolation: isolate;
+}
+
+/* Signature-feature ambient glow — see DESIGN.md Phase 2: this graph is
+   PRODUCT.md's declared showcase element and should read as one. */
+.championship-graph-section::before {
+    content: '';
+    position: absolute;
+    inset: -10% -5%;
+    z-index: -1;
+    background: radial-gradient(60% 60% at 50% 30%, rgba(255, 106, 26, 0.12), transparent 70%);
+    pointer-events: none;
+}
+
+.championship-graph-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--f1-red);
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .championship-graph-card {
     background: var(--f1-black);
-    border-radius: 20px;
+    border-radius: 24px;
     border: 1px solid var(--f1-gray);
     overflow: hidden;
     margin-bottom: 30px;
+    box-shadow: var(--shadow-lg);
 }
 
 .championship-graph-header {
     background: linear-gradient(135deg, var(--f1-dark-red) 0%, var(--f1-red) 100%);
-    padding: 20px 30px;
+    padding: 24px 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -3973,10 +4002,10 @@ body::before {
 
 .championship-graph-header h3 {
     font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     margin: 0;
 }
 
@@ -4010,6 +4039,8 @@ body::before {
 
 .championship-graph-body {
     padding: 30px;
+    position: relative;
+    background: radial-gradient(70% 60% at 50% 40%, rgba(255, 106, 26, 0.05), transparent 75%);
 }
 
 .graph-controls {

@@ -135,6 +135,7 @@
 
             <!-- Championship Graph Section -->
             <section class="championship-graph-section" id="graphSection">
+                <p class="championship-graph-eyebrow"><span class="live-dot" aria-hidden="true"></span> Live &middot; updates after every session</p>
                 <div class="championship-graph-card">
                     <div class="championship-graph-header">
                         <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Championship Progression Graph</h3>
@@ -717,6 +718,12 @@
                         // Add events
                         circle.addEventListener('mouseenter', (e) => showTooltip(e, team, rounds[i], points, color));
                         circle.addEventListener('mouseleave', hideTooltip);
+                        circle.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const t = e.touches[0];
+                            showTooltip({ clientX: t.clientX, clientY: t.clientY }, team, rounds[i], points, color);
+                        }, { passive: false });
 
                         svg.appendChild(circle);
                     });
@@ -920,6 +927,16 @@
                 } else {
                     graphInView = true;
                 }
+
+                // Touch: tapping anywhere outside a data point dismisses the tooltip
+                // (hideTooltip() is scoped inside renderGraph(), so this reaches the
+                // same element directly rather than calling out of scope)
+                document.addEventListener('touchstart', (e) => {
+                    if (!e.target.closest('.data-point')) {
+                        const tt = document.getElementById('graphTooltipEnhanced');
+                        if (tt) tt.classList.remove('visible');
+                    }
+                });
 
                 renderGraph();
 
