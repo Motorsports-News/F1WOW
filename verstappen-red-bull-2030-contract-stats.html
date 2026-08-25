@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css?v=20260811f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <meta name="description" content="Max Verstappen will stay at Red Bull Racing until the end of 2030 - the full stat wall: 71 wins, 131 podiums, 64 poles, four titles, and every Red Bull high.">
 
     <!-- Canonical URL -->
@@ -73,8 +73,8 @@
         /* Stat wall: self-contained tile grid */
         .stat-wall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 30px 0 12px; }
         .stat-tile { background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 18px 12px 14px; text-align: center; position: relative; overflow: hidden; }
-        .stat-tile::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(225,6,0,0.55), transparent); }
-        .stat-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; line-height: 1; color: var(--f1-white); display: block; font-variant-numeric: tabular-nums; }
+        .stat-tile::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(255, 106, 26,0.55), transparent); }
+        .stat-num { font-family: var(--font-display); font-weight: 800; font-size: 2.2rem; line-height: 1; color: var(--f1-white); display: block; font-variant-numeric: tabular-nums; }
         .stat-tile.hot .stat-num { color: var(--f1-red); }
         .stat-lab { display: block; margin-top: 8px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(255,255,255,0.55); }
         .stat-sub { display: block; margin-top: 4px; font-size: 0.72rem; color: rgba(255,255,255,0.4); line-height: 1.35; }
@@ -83,34 +83,34 @@
         /* Season table: self-contained (global styles.css does not style article tables) */
         .club-table { width: 100%; border-collapse: collapse; }
         .club-table th, .club-table td { padding: 11px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); vertical-align: middle; }
-        .club-table thead th { color: var(--f1-white); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; border-bottom: 2px solid rgba(225,6,0,0.35); }
+        .club-table thead th { color: var(--f1-white); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; border-bottom: 2px solid rgba(255, 106, 26,0.35); }
         .club-table tbody tr:last-child td { border-bottom: none; }
         .club-table .season { color: var(--f1-white); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
         .club-table .team { color: rgba(255,255,255,0.6); font-size: 0.88rem; }
-        .club-table .wins { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .club-table .wins { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; white-space: nowrap; }
         .club-table .pod, .club-table .pole { color: rgba(255,255,255,0.85); font-weight: 500; font-variant-numeric: tabular-nums; }
         .club-table .mark-yes { color: var(--positive, #27F4D2); font-weight: 700; }
         .club-table .mark-dash { color: rgba(255,255,255,0.3); font-weight: 700; }
         .club-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
-        .club-table tr.champ td { background: rgba(225,6,0,0.08); border-top: 1px solid rgba(225,6,0,0.45); border-bottom: 1px solid rgba(225,6,0,0.45); }
+        .club-table tr.champ td { background: rgba(255, 106, 26,0.08); border-top: 1px solid rgba(255, 106, 26,0.45); border-bottom: 1px solid rgba(255, 106, 26,0.45); }
         .club-table tr.champ td:first-child { box-shadow: inset 3px 0 0 var(--f1-red); }
-        .club-table tr.champ:hover td { background: rgba(225,6,0,0.13); }
+        .club-table tr.champ:hover td { background: rgba(255, 106, 26,0.13); }
         .club-table tr.now td { background: rgba(255,255,255,0.03); border-top: 1px dashed rgba(255,255,255,0.18); }
         @media (max-width: 600px) { .club-table th, .club-table td { padding: 8px; font-size: 0.85rem; } .club-table .wins { font-size: 1.05rem; } .club-table .team { display: none; } }
         /* Red Bull highs timeline: self-contained */
         .rb-timeline { position: relative; margin: 28px 0 8px; padding-left: 86px; }
-        .rb-timeline::before { content: ''; position: absolute; left: 62px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, rgba(225,6,0,0.55), rgba(225,6,0,0.08)); }
+        .rb-timeline::before { content: ''; position: absolute; left: 62px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, rgba(255, 106, 26,0.55), rgba(255, 106, 26,0.08)); }
         .rb-item { position: relative; padding-bottom: 26px; }
         .rb-item:last-child { padding-bottom: 4px; }
-        .rb-item::before { content: ''; position: absolute; left: -30px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--f1-red); box-shadow: 0 0 0 4px rgba(225,6,0,0.18); }
-        .rb-year { position: absolute; left: -86px; top: 2px; width: 56px; text-align: right; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.45rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
+        .rb-item::before { content: ''; position: absolute; left: -30px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--f1-red); box-shadow: 0 0 0 4px rgba(255, 106, 26,0.18); }
+        .rb-year { position: absolute; left: -86px; top: 2px; width: 56px; text-align: right; font-family: var(--font-display); font-weight: 800; font-size: 1.45rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
         .rb-title { color: var(--f1-white); font-weight: 700; margin: 0 0 6px; font-size: 1.02rem; }
         .rb-text { margin: 0; color: rgba(255,255,255,0.75); font-size: 0.95rem; line-height: 1.65; }
         .rb-text strong { color: var(--f1-white); }
         @media (max-width: 600px) { .rb-timeline { padding-left: 60px; } .rb-timeline::before { left: 43px; } .rb-year { left: -60px; width: 38px; font-size: 1.1rem; } .rb-item::before { left: -23px; width: 8px; height: 8px; } }
         /* Paddock quotes: self-contained */
         .paddock-quotes { display: grid; gap: 14px; margin: 24px 0 8px; }
-        .paddock-quote { border-left: 3px solid rgba(225,6,0,0.55); background: rgba(255,255,255,0.03); padding: 16px 20px; border-radius: 0 8px 8px 0; }
+        .paddock-quote { border-left: 3px solid rgba(255, 106, 26,0.55); background: rgba(255,255,255,0.03); padding: 16px 20px; border-radius: 0 8px 8px 0; }
         .paddock-quote p { margin: 0 0 10px; color: rgba(255,255,255,0.88); font-size: 1rem; line-height: 1.65; font-style: italic; }
         .paddock-quote .who { font-style: normal; font-size: 0.85rem; font-weight: 700; color: var(--f1-white); letter-spacing: 0.02em; }
         .paddock-quote .role { font-style: normal; font-size: 0.78rem; font-weight: 500; color: rgba(255,255,255,0.5); }
@@ -407,7 +407,7 @@
         .article-meta-top { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .article-category { background: linear-gradient(135deg, var(--f1-red) 0%, var(--f1-dark-red) 100%); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
         .article-date { color: var(--text-muted); font-size: 0.85rem; }
-        .article-title-full { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--f1-white); margin-bottom: 20px; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.01em; }
+        .article-title-full { font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--f1-white); margin-bottom: 20px; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.01em; }
         .article-subtitle-full { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
         .article-meta-footer { display: flex; gap: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
         .article-author { color: var(--f1-red); font-weight: 500; }

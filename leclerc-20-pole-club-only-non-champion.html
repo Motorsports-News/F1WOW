@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css?v=20260811f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <meta name="description" content="Charles Leclerc is the only driver in F1 history with 20+ pole positions and no world title - the full club table, his 34 poles and 9 wins, and his 2026 reality.">
 
     <!-- Canonical URL -->
@@ -71,24 +71,24 @@
     <style>
         .quali-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 24px 0; clear: both; }
         .quali-fact { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; }
-        .quali-fact .qf-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
+        .quali-fact .qf-num { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
         .quali-fact .qf-label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-top: 6px; letter-spacing: 0.03em; }
         .ig-wrap { display:flex; justify-content:center; margin: 32px 0; }
         /* Pole club table: self-contained (global styles.css does not style article tables) */
         .club-table { width: 100%; border-collapse: collapse; }
         .club-table th, .club-table td { padding: 11px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); vertical-align: middle; }
-        .club-table thead th { color: var(--f1-white); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; border-bottom: 2px solid rgba(225,6,0,0.35); }
+        .club-table thead th { color: var(--f1-white); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; border-bottom: 2px solid rgba(255, 106, 26,0.35); }
         .club-table tbody tr:last-child td { border-bottom: none; }
         .club-table .rank { color: rgba(255,255,255,0.4); font-weight: 600; font-variant-numeric: tabular-nums; width: 34px; }
         .club-table .driver { color: var(--f1-white); font-weight: 500; }
-        .club-table .poles { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .club-table .poles { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; white-space: nowrap; }
         .club-table .titles { color: rgba(255,255,255,0.85); font-weight: 500; font-variant-numeric: tabular-nums; }
         .club-table .mark-yes { color: var(--positive, #27F4D2); font-weight: 700; }
         .club-table .mark-no { color: var(--f1-red); font-weight: 800; font-size: 1.05rem; }
         .club-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
-        .club-table tr.leclerc td { background: rgba(225,6,0,0.08); border-top: 1px solid rgba(225,6,0,0.45); border-bottom: 1px solid rgba(225,6,0,0.45); }
+        .club-table tr.leclerc td { background: rgba(255, 106, 26,0.08); border-top: 1px solid rgba(255, 106, 26,0.45); border-bottom: 1px solid rgba(255, 106, 26,0.45); }
         .club-table tr.leclerc td:first-child { box-shadow: inset 3px 0 0 var(--f1-red); }
-        .club-table tr.leclerc:hover td { background: rgba(225,6,0,0.13); }
+        .club-table tr.leclerc:hover td { background: rgba(255, 106, 26,0.13); }
         @media (max-width: 600px) { .club-table th, .club-table td { padding: 8px; font-size: 0.85rem; } .club-table .poles { font-size: 1.05rem; } .club-table .rank { width: 24px; } }
     </style>
 </head>
@@ -334,7 +334,7 @@
         .article-meta-top { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .article-category { background: linear-gradient(135deg, var(--f1-red) 0%, var(--f1-dark-red) 100%); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
         .article-date { color: var(--text-muted); font-size: 0.85rem; }
-        .article-title-full { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--f1-white); margin-bottom: 20px; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.01em; }
+        .article-title-full { font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--f1-white); margin-bottom: 20px; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.01em; }
         .article-subtitle-full { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
         .article-meta-footer { display: flex; gap: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
         .article-author { color: var(--f1-red); font-weight: 500; }

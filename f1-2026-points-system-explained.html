@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css?v=20260811f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <meta name="description" content="How F1 scoring works in 2026: GP and Sprint points, why the fastest-lap point is gone, and the red-flag rule most guides miss. Try the calculator.">
 
     <!-- Canonical URL -->
@@ -85,7 +85,7 @@
     <style>
         .quali-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 24px 0; clear: both; }
         .quali-fact { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; }
-        .quali-fact .qf-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
+        .quali-fact .qf-num { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
         .quali-fact .qf-label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-top: 6px; letter-spacing: 0.03em; }
     </style>
 
@@ -100,7 +100,7 @@
         }
         .pc-selector { margin-bottom: 20px; }
         .pc-selector h4 {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: var(--font-display);
             text-transform: uppercase;
             letter-spacing: 0.04em;
             font-size: 0.9rem;
@@ -114,7 +114,7 @@
             color: var(--f1-white);
             border-radius: 8px;
             padding: 9px 14px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: var(--font-display);
             font-weight: 700;
             font-size: 0.95rem;
             cursor: pointer;
@@ -136,7 +136,7 @@
         .pc-result-item { display: flex; flex-direction: column; align-items: center; min-width: 90px; }
         .pc-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.55); margin-bottom: 6px; }
         .pc-num {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: var(--font-display);
             font-weight: 800;
             font-size: 2.4rem;
             line-height: 1;
@@ -145,7 +145,7 @@
         }
         .pc-total .pc-num { color: var(--f1-red); font-size: 3rem; }
         .pc-plus, .pc-equals {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: var(--font-display);
             font-weight: 700;
             font-size: 1.8rem;
             color: rgba(255,255,255,0.35);
@@ -162,12 +162,12 @@
         .pb-bar {
             width: 100%;
             max-width: 42px;
-            background: linear-gradient(180deg, var(--f1-red), #b80500);
+            background: linear-gradient(180deg, var(--f1-red), #CC5514);
             border-radius: 4px 4px 0 0;
             height: 0%;
             transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .pb-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.95rem; margin-bottom: 6px; color: var(--f1-white); font-variant-numeric: tabular-nums; opacity: 0; transition: opacity 0.4s ease; }
+        .pb-val { font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; margin-bottom: 6px; color: var(--f1-white); font-variant-numeric: tabular-nums; opacity: 0; transition: opacity 0.4s ease; }
         .pb-col.in-view .pb-bar { height: var(--h); }
         .pb-col.in-view .pb-val { opacity: 1; }
         .pb-pos { margin-top: 8px; font-size: 0.72rem; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; }
@@ -470,7 +470,7 @@
         .hero-gradient {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(225, 6, 0, 0.15) 0%, rgba(21, 21, 30, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(255, 106, 26, 0.15) 0%, rgba(15, 12, 9, 0.9) 100%);
         }
 
         .article-meta-top {
@@ -496,7 +496,7 @@
         }
 
         .article-title-full {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: var(--font-display);
             font-size: 2rem;
             font-weight: 900;
             color: var(--f1-white);
@@ -559,7 +559,7 @@
         }
 
         .section-header-article h2 {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: var(--font-display);
             font-size: 1.5rem;
             color: var(--f1-white);
         }
@@ -652,7 +652,7 @@
             text-transform: uppercase;
             font-size: 0.78rem;
             letter-spacing: 0.06em;
-            border-bottom: 2px solid rgba(225, 6, 0, 0.35);
+            border-bottom: 2px solid rgba(255, 106, 26, 0.35);
         }
 
         .standings-table tbody td {
@@ -743,8 +743,8 @@
         .subscribe-section {
             padding: 40px;
             margin: 50px 0;
-            background: linear-gradient(135deg, rgba(225, 6, 0, 0.1) 0%, rgba(225, 6, 0, 0.05) 100%);
-            border: 1px solid rgba(225, 6, 0, 0.3);
+            background: linear-gradient(135deg, rgba(255, 106, 26, 0.1) 0%, rgba(255, 106, 26, 0.05) 100%);
+            border: 1px solid rgba(255, 106, 26, 0.3);
             border-radius: 16px;
             text-align: center;
             position: relative;

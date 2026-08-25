@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="styles.css?v=20260811f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <!-- Google Analytics -->
     <script>/* Defer GA4 library until idle; inline dataLayer config below queues events until it loads */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-HWLHEWCYP2';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
     <!-- Google AdSense -->
@@ -37,16 +37,16 @@
 <noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669" crossorigin="anonymous"></script></noscript>
     <style>
         .proto-section { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 22px; margin-bottom: 20px; }
-        .proto-section h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.3rem; margin-bottom: 14px; }
+        .proto-section h2 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 14px; }
         .proto-section-compact { padding: 16px 22px; }
 
         /* Results is the payoff of this whole tool - give it more visual weight than
            the supporting sections instead of three identical stacked cards. */
-        .calc-hero { background: linear-gradient(180deg, rgba(225,6,0,0.07), var(--f1-dark) 65%); border: 1px solid var(--border-color); border-top: 2px solid var(--f1-red); border-radius: 12px; padding: 26px; margin-bottom: 20px; }
-        .calc-hero h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; margin-bottom: 16px; }
+        .calc-hero { background: linear-gradient(180deg, rgba(255, 106, 26,0.07), var(--f1-dark) 65%); border: 1px solid var(--border-color); border-top: 2px solid var(--f1-red); border-radius: 12px; padding: 26px; margin-bottom: 20px; }
+        .calc-hero h2 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 16px; }
 
         .calc-mode-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-        .calc-tab { background: transparent; border: 1px solid var(--border-color); color: rgba(255,255,255,0.6); border-radius: 999px; padding: 8px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease; }
+        .calc-tab { background: transparent; border: 1px solid var(--border-color); color: rgba(255,255,255,0.6); border-radius: 999px; padding: 8px 20px; font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease; }
         .calc-tab:hover { border-color: var(--f1-red); color: #fff; }
         .calc-tab.active { background: var(--f1-red); border-color: var(--f1-red); color: #fff; }
 
@@ -54,7 +54,7 @@
         .calc-carousel-nav button { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 1.1rem; transition: background 0.15s ease; }
         .calc-carousel-nav button:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
         .calc-carousel-nav button:disabled { opacity: 0.3; cursor: default; }
-        .calc-race-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; }
+        .calc-race-label { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
 
         /* Round chips replace bare dots - shows the actual round number and lock state
            at a glance instead of an abstract row of identical circles. */
@@ -77,26 +77,26 @@
         }
         .calc-board { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; }
         .calc-board-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
-        .calc-board-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: 0.02em; }
+        .calc-board-title { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; letter-spacing: 0.02em; }
         .calc-board-hint { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
         .calc-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         @media (min-width: 640px) { .calc-slots { grid-template-columns: 1fr 1fr 1fr; } }
         .calc-slot { display: grid; grid-template-columns: 28px 26px 1fr; align-items: center; min-height: 40px; padding: 3px 6px 3px 8px; border: 1px dashed rgba(255,255,255,0.18); border-radius: 7px; background: rgba(255,255,255,0.02); }
-        .calc-slot.drop-hot { border-style: solid; border-color: var(--f1-red); background: rgba(225,6,0,0.1); }
-        .calc-slot-pos { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.88rem; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
+        .calc-slot.drop-hot { border-style: solid; border-color: var(--f1-red); background: rgba(255, 106, 26,0.1); }
+        .calc-slot-pos { font-family: var(--font-display); font-weight: 800; font-size: 0.88rem; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
         .calc-slot[data-pos="1"] .calc-slot-pos { color: var(--f1-red); }
         .calc-slot-pts { font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.38); font-variant-numeric: tabular-nums; }
         .calc-slot-empty { font-size: 0.66rem; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em; }
 
-        .calc-chip { display: flex; align-items: center; gap: 7px; width: 100%; min-height: 32px; padding: 3px 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.02em; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: border-color 0.15s ease, background 0.15s ease; }
-        .calc-chip:hover, .calc-chip:focus-visible { border-color: var(--f1-red); background: rgba(225,6,0,0.12); outline: none; }
+        .calc-chip { display: flex; align-items: center; gap: 7px; width: 100%; min-height: 32px; padding: 3px 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.02em; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: border-color 0.15s ease, background 0.15s ease; }
+        .calc-chip:hover, .calc-chip:focus-visible { border-color: var(--f1-red); background: rgba(255, 106, 26,0.12); outline: none; }
         .calc-chip-bar { flex: 0 0 4px; width: 4px; height: 18px; border-radius: 2px; }
         .calc-chip-ghost { position: fixed; z-index: 9999; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.55); cursor: grabbing; }
         .calc-chip-lifted { opacity: 0.3; }
         body.calc-dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
 
         .calc-dnf { margin-top: 8px; padding: 8px 10px; border: 1px dashed rgba(255,107,107,0.45); border-radius: 7px; }
-        .calc-dnf.drop-hot { border-style: solid; background: rgba(225,6,0,0.1); }
+        .calc-dnf.drop-hot { border-style: solid; background: rgba(255, 106, 26,0.1); }
         .calc-dnf-label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,107,107,0.8); margin-bottom: 6px; font-variant-numeric: tabular-nums; }
         .calc-dnf-chips { display: flex; flex-wrap: wrap; gap: 6px; }
         .calc-pool { margin-top: 8px; padding: 8px 10px; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; background: rgba(255,255,255,0.02); }
@@ -107,8 +107,8 @@
         .calc-drag-help { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: 12px; line-height: 1.5; }
         .calc-presets { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
         .calc-presets-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.4); margin-right: 2px; }
-        .calc-preset-chip { background: rgba(225,6,0,0.08); border: 1px solid rgba(225,6,0,0.35); color: rgba(255,255,255,0.85); border-radius: 999px; padding: 6px 14px; font-family: 'Chakra Petch', sans-serif; font-size: 0.82rem; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; white-space: nowrap; }
-        .calc-preset-chip:hover { background: rgba(225,6,0,0.22); border-color: var(--f1-red); color: #fff; }
+        .calc-preset-chip { background: rgba(255, 106, 26,0.08); border: 1px solid rgba(255, 106, 26,0.35); color: rgba(255,255,255,0.85); border-radius: 999px; padding: 6px 14px; font-family: 'Chakra Petch', sans-serif; font-size: 0.82rem; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; white-space: nowrap; }
+        .calc-preset-chip:hover { background: rgba(255, 106, 26,0.22); border-color: var(--f1-red); color: #fff; }
         .calc-preset-chip:active { transform: translateY(1px); }
 
         .standings-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
@@ -120,13 +120,13 @@
         .calc-steps { list-style: none; margin: 0; padding: 0; counter-reset: calcstep; }
         .calc-steps li { position: relative; counter-increment: calcstep; padding: 0 0 18px 44px; line-height: 1.7; color: var(--text-muted); }
         .calc-steps li:last-child { padding-bottom: 0; }
-        .calc-steps li::before { content: counter(calcstep); position: absolute; left: 0; top: 1px; width: 28px; height: 28px; border-radius: 50%; background: var(--f1-red); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; }
+        .calc-steps li::before { content: counter(calcstep); position: absolute; left: 0; top: 1px; width: 28px; height: 28px; border-radius: 50%; background: var(--f1-red); color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; }
         .calc-steps strong { color: #fff; }
         .calc-points-table { width: 100%; max-width: 420px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
         .calc-points-table th, .calc-points-table td { padding: 7px 14px; text-align: center; border-bottom: 1px solid var(--border-color); }
-        .calc-points-table thead th { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(255,255,255,0.75); border-bottom: 2px solid rgba(225,6,0,0.35); }
+        .calc-points-table thead th { font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(255,255,255,0.75); border-bottom: 2px solid rgba(255, 106, 26,0.35); }
         .calc-points-table td:first-child { color: rgba(255,255,255,0.45); font-weight: 700; }
-        .calc-points-table .calc-pts-hero { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--f1-red); }
+        .calc-points-table .calc-pts-hero { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--f1-red); }
         .calc-faq { list-style: none; margin: 0; padding: 0; }
         .calc-faq h3 { font-family: 'Chakra Petch', sans-serif; font-size: 0.98rem; color: #fff; margin: 0 0 6px; }
         .calc-faq p { margin: 0; }
@@ -140,10 +140,10 @@
         .result-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
         .result-row:last-child { border-bottom: none; }
         .result-driver { flex: 0 1 190px; font-weight: 700; word-break: break-word; }
-        .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
-        .run-btn:hover { background: #b80500; }
+        .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: var(--font-display); font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
+        .run-btn:hover { background: #CC5514; }
         .result-bar-wrap { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 22px; overflow: hidden; }
-        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #b80500); width: 0%; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #CC5514); width: 0%; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
         .result-pct { flex: 0 0 60px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
         .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
         .badge-alive { background: rgba(0,200,80,0.15); color: #3ddc84; }
@@ -152,21 +152,21 @@
         .required-line { font-size: 1rem; line-height: 1.7; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; margin-top: 14px; }
 
         .calc-explore { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border-color); }
-        .calc-explore h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; margin-bottom: 6px; }
+        .calc-explore h3 { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 6px; }
         .calc-explore-intro { font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 12px; }
         .calc-explore-chips { display: flex; gap: 8px; margin-bottom: 4px; }
-        .calc-explore-chip { background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: #fff; border-radius: 999px; padding: 7px 18px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+        .calc-explore-chip { background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: #fff; border-radius: 999px; padding: 7px 18px; font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
         .calc-explore-chip:hover { border-color: var(--f1-red); }
         .calc-explore-chip.active { background: var(--f1-red); border-color: var(--f1-red); }
         .calc-explore-panel { margin-top: 14px; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 8px; }
         .calc-explore-stat { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
-        .calc-explore-pct { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; }
+        .calc-explore-pct { font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--f1-red); font-variant-numeric: tabular-nums; }
         .calc-explore-label { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
         .calc-explore-boundary { font-size: 0.95rem; line-height: 1.6; margin: 0; }
         .calc-scenario-heading { font-size: 0.85rem; color: rgba(255,255,255,0.55); margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.03em; }
         .calc-scenario-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
         .calc-scenario-item { display: flex; gap: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px; }
-        .calc-scenario-num { flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--f1-red); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.85rem; }
+        .calc-scenario-num { flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--f1-red); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 0.85rem; }
         .calc-scenario-text p { font-size: 0.88rem; line-height: 1.55; margin: 0 0 4px; }
         .calc-scenario-text p:last-child { margin-bottom: 0; }
         .calc-scenario-empty { font-size: 0.88rem; color: rgba(255,255,255,0.55); margin: 14px 0 0; line-height: 1.6; }
@@ -208,7 +208,7 @@
 
         <main class="main" id="main">
         <div class="proto-wrap" style="max-width:980px;margin:0 auto;padding:30px 20px 60px;">
-            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:2rem;margin-bottom:6px;">F1 2026 Championship Calculator</h1>
+            <h1 style="font-family:var(--font-display);font-weight:800;font-size:2rem;margin-bottom:6px;">F1 2026 Championship Calculator</h1>
             <p style="color:var(--text-muted);margin-bottom:14px;">Live standings, a race-by-race scenario editor, and a Monte Carlo win-probability model for the rest of the 2026 season.</p>
             <p style="color:var(--text-muted);line-height:1.75;margin-bottom:30px;max-width:780px;">Kimi Antonelli's six wins from the opening eleven rounds have Mercedes in control of the 2026 title fight &mdash; but the maths only closes when the flag falls on the final round. This tool lets you finish the season yourself: start from the live standings, lock in the results you actually believe, and let the model simulate everything you leave open. The Drivers' and Constructors' championships both run through the same editor, so you can stress-test the team battle too.</p>
 

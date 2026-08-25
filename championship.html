@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="styles.css?v=20260811f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;600;700;800&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Unbounded:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 
     <!-- Google Analytics -->
     <script>/* Defer GA4 library until idle; inline dataLayer config below queues events until it loads */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-HWLHEWCYP2';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
@@ -237,13 +237,13 @@
         }
 
         .graph-grid-line {
-            stroke: var(--f1-dark, #38383F);
+            stroke: var(--f1-dark, #2A2318);
             stroke-width: 1;
             stroke-dasharray: 5,5;
         }
 
         .graph-axis-text {
-            fill: var(--f1-light-gray, #D1D5DB);
+            fill: var(--f1-light-gray, #B8AFA0);
             font-size: 12px;
             font-weight: 500;
         }
@@ -288,8 +288,8 @@
 
         .graph-tooltip-enhanced {
             position: absolute;
-            background: var(--f1-dark, #1F1F2B);
-            border: 1px solid var(--f1-red, #E10600);
+            background: var(--f1-dark, #17130E);
+            border: 1px solid var(--f1-red, #FF6A1A);
             border-radius: 12px;
             padding: 20px;
             pointer-events: none;
@@ -312,7 +312,7 @@
             gap: 10px;
             margin-bottom: 15px;
             padding-bottom: 15px;
-            border-bottom: 1px solid var(--f1-dark, #38383F);
+            border-bottom: 1px solid var(--f1-dark, #2A2318);
         }
 
         .team-logo {
@@ -335,7 +335,7 @@
 
         .tooltip-team {
             font-size: 0.85rem;
-            color: var(--f1-light-gray, #D1D5DB);
+            color: var(--f1-light-gray, #B8AFA0);
             margin-bottom: 5px;
         }
 
@@ -346,7 +346,7 @@
         }
 
         .tooltip-stat {
-            background: var(--f1-black, #15151E);
+            background: var(--f1-black, #0F0C09);
             padding: 12px;
             border-radius: 8px;
             text-align: center;
@@ -354,15 +354,15 @@
 
         .tooltip-stat-label {
             font-size: 0.75rem;
-            color: var(--f1-light-gray, #D1D5DB);
+            color: var(--f1-light-gray, #B8AFA0);
             margin-bottom: 5px;
         }
 
         .tooltip-stat-value {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: var(--font-display);
             font-size: 1.3rem;
             font-weight: 700;
-            color: var(--f1-red, #E10600);
+            color: var(--f1-red, #FF6A1A);
         }
 
         .graph-legend-enhanced {
@@ -378,14 +378,14 @@
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
-            background: var(--f1-gray, #38383F);
+            background: var(--f1-gray, #2A2318);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .legend-item-enhanced:hover {
-            background: var(--f1-dark, #1F1F2B);
+            background: var(--f1-dark, #17130E);
             transform: translateY(-2px);
         }
 
@@ -406,7 +406,7 @@
         }
 
         .championship-svg .axis-line {
-            stroke: var(--f1-dark, #38383F);
+            stroke: var(--f1-dark, #2A2318);
             stroke-width: 2;
         }
     </style>
@@ -700,7 +700,7 @@
                         circle.setAttribute('r', '5');
                         circle.setAttribute('class', 'data-point');
                         circle.setAttribute('fill', color);
-                        circle.setAttribute('stroke', '#15151E');
+                        circle.setAttribute('stroke', '#0F0C09');
                         circle.setAttribute('stroke-width', '2');
                         circle.setAttribute('data-team-index', teamIndex);
                         circle.setAttribute('data-round', rounds[i]);
