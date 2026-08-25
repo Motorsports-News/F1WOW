@@ -2584,9 +2584,40 @@ body::before {
     border-left: 3px solid var(--f1-red);
 }
 
+/* Next race gets a real hero treatment, not just a colored border —
+   see DESIGN.md Phase 3: "distinct next race hero card vs compact rows" */
 .race-card.next-race {
-    border: 2px solid var(--f1-red);
-    background: linear-gradient(135deg, rgba(255, 106, 26, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
+    grid-column: 1 / -1;
+    border: 2px solid rgba(255, 106, 26, 0.6);
+    background: linear-gradient(135deg, rgba(255, 106, 26, 0.18) 0%, rgba(15, 12, 9, 0.5) 100%);
+    box-shadow: var(--shadow-glow);
+    padding: 26px 30px;
+    gap: 24px;
+}
+
+.race-card.next-race .race-round {
+    font-size: 1.6rem;
+    min-width: 70px;
+}
+
+.race-card.next-race .race-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.race-card.next-race .race-date {
+    font-size: 0.85rem;
+}
+
+.race-card.next-race .race-countdown {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.04em;
+    text-transform: none;
 }
 
 .race-card.upcoming {

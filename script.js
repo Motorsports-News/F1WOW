@@ -354,13 +354,14 @@ async function loadRaceSchedule() {
             }
 
             const dateStr = raceDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const daysAway = isNext ? Math.max(0, Math.ceil((raceDate - now) / 86400000)) : null;
 
             return `
                 <a class="race-card ${statusClass}" style="${!completed ? 'cursor:default;' : ''}">
                     <div class="race-round">R${round}</div>
                     <div class="race-info">
                         <div class="race-name">${sanitizeHTML(race.raceName)}</div>
-                        <div class="race-date">${dateStr}</div>
+                        <div class="race-date">${dateStr}${daysAway !== null ? `<span class="race-countdown">${daysAway === 0 ? 'Today' : daysAway === 1 ? 'Tomorrow' : `In ${daysAway} days`}</span>` : ''}</div>
                     </div>
                     <span class="race-badge ${badgeClass}">${badgeText}</span>
                 </a>
