@@ -81,6 +81,7 @@ def render(slug, category, headline):
 
 CARDS = [
     ('dutch-gp-2026-race', 'Race Analysis', 'Norris Wins From Antonelli as Verstappen Crashes Out'),
+    ('verstappen-error-free-streak-2026', 'Stat Attack', 'The 219 Races Since Verstappen Last Crashed Alone'),
 ]
 for slug, cat, head in CARDS:
     render(slug, cat, head)
