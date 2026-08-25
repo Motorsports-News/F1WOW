@@ -53,12 +53,14 @@ Update this file at the end of every work session/task — it's the single place
 
 ## Verification (ongoing, every phase)
 
-- [ ] No functionality regressions — countdown, standings, championship graph, search, subscribe form, calculator all still work
-- [ ] `prefers-reduced-motion` respected everywhere new motion is added
-- [ ] WCAG AA contrast maintained with new palette (verify `--accent` on `--bg-0`/`--bg-1`, `--ink-dim` on backgrounds)
-- [ ] Focus-visible states intact after CSS changes
-- [ ] No new official-F1-color or -typeface usage introduced
-- [ ] Site tested via local server (`python -m http.server` per README) on representative pages after each phase
+- [x] No functionality regressions — countdown, standings, championship graph (incl. tooltips/line-draw), search, subscribe form all verified working in-browser across this session; championship calculator not separately re-verified this session (unchanged by any edit, low risk)
+- [x] `prefers-reduced-motion` respected everywhere new motion is added — GSAP reveal gates on it explicitly; podium/hero/feature-row CSS animations covered by the pre-existing sitewide blanket media query
+- [ ] WCAG AA contrast maintained with new palette — not formally re-audited with a contrast checker this session; new tokens were chosen with contrast in mind (warm off-white `--ink` on near-black `--bg-0`, amber accent) but should be spot-checked before merge
+- [x] Focus-visible states intact — untouched by any change this session (no `:focus-visible` rules were edited)
+- [x] No new official-F1-color or -typeface usage introduced — verified via repo-wide grep for the excluded hex values (`#E10600`/`#B80500`/`#FF1801`/`#E22420`), zero matches
+- [x] Site tested via local server on every phase — final sweep this session hit 16 representative pages across all templates (home, news, category pages, championship, calendar, race hub, driver/team index + profile, utility, legal, calculator), all HTTP 200, styles.css brace-balanced, script.js syntax-checked
+
+**Not verified / left for review before merge:** a real WCAG contrast-ratio check on the new palette (recommended before merge, see above); mobile-viewport visual QA (the `resize_window` tool used this session didn't reliably change the captured viewport, so responsive behavior is verified by CSS review — flexbox wrap, `clamp()`, existing media queries — rather than an actual narrow-viewport screenshot); cross-browser check (only tested in one Chromium-based browser this session).
 
 ---
 
