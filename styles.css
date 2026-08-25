@@ -183,11 +183,6 @@ body::before {
     /* animation retired (Stage 3): calm the page */
 }
 
-@keyframes progressGlow {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-}
-
 .header .container {
     display: flex;
     justify-content: space-between;
@@ -240,7 +235,6 @@ body::before {
     height: 30px;
     width: auto;
     object-fit: contain;
-}
 }
 
 .follower-counter {
@@ -543,17 +537,6 @@ body::before {
     pointer-events: none;
     box-shadow: 0 -2px 30px rgba(225, 6, 0, 0.4);
     /* animation retired (Stage 3): calm the page */
-}
-
-@keyframes glowPulse {
-    0%, 100% {
-        opacity: 0.6;
-        box-shadow: 0 -2px 20px rgba(225, 6, 0, 0.4);
-    }
-    50% {
-        opacity: 1;
-        box-shadow: 0 -2px 40px rgba(225, 6, 0, 0.8);
-    }
 }
 
 .hero-content {
@@ -886,99 +869,6 @@ body::before {
     justify-content: center;
 }
 
-/* Search Section (Legacy - kept for other pages) */
-.search-section {
-
-.search-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 15px;
-    position: relative;
-}
-
-.search-icon {
-    color: var(--f1-light-gray);
-    display: flex;
-    align-items: center;
-    width: 16px;
-    height: 16px;
-}
-
-.search-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 0.85rem;
-    color: var(--f1-white);
-    padding: 5px 0;
-}
-
-.search-input::placeholder {
-    color: var(--f1-light-gray);
-}
-
-.search-clear {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: var(--f1-light-gray);
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.search-clear:hover {
-    background: var(--f1-red);
-    color: var(--f1-white);
-}
-
-.search-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-    justify-content: center;
-}
-
-.search-tag {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--f1-light-gray);
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.search-tag:hover,
-.search-tag.active {
-    background: var(--f1-red);
-    color: var(--f1-white);
-    border-color: var(--f1-red);
-}
-
-.search-results {
-    margin-top: 20px;
-}
-
-.search-no-results {
-    text-align: center;
-    padding: 30px;
-    color: var(--f1-light-gray);
-    font-style: italic;
-}
-
 /* Search Section */
 .search-section {
     margin-bottom: 40px;
@@ -1075,7 +965,6 @@ body::before {
     color: var(--f1-light-gray);
     font-style: italic;
 }
-}
 
 .prediction-bar-track {
     flex: 1;
@@ -1147,8 +1036,11 @@ body::before {
     color: rgba(255, 255, 255, 0.6);
     font-family: 'Chakra Petch', sans-serif;
     font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
     transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
     position: relative;
     overflow: hidden;
 }
@@ -1170,12 +1062,6 @@ body::before {
 .category-tab:hover::before {
     width: 300px;
     height: 300px;
-}
-    font-weight: 500;
-    cursor: pointer;
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .category-tab:hover {
@@ -2646,7 +2532,6 @@ body::before {
     .nav-link span {
         display: none;
     }
-}
 
     .nav-link {
         padding: 12px 15px;
