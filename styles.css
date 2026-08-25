@@ -5587,3 +5587,34 @@ a.standing-item:hover .standing-name { color: var(--f1-red); }
     color: var(--f1-white);
     margin: 0;
 }
+
+/* ============================================
+   Article & Profile Components — consolidated from
+   per-page inline <style> blocks (see UI_AUDIT.md
+   Sitewide Finding #4). Previously reinvented with drift
+   in each driver-*.html page; now one shared definition.
+   ============================================ */
+
+/* .cst-* — driver profile "Career by the Numbers" stat tiles */
+.cst-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; margin: 16px 0 10px; }
+.cst-tile { background: #111318; border: 1px solid #23262e; border-radius: 8px; padding: 12px 8px; text-align: center; }
+.cst-tile b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; color: var(--f1-red); }
+.cst-tile span { display: block; margin-top: 5px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #9aa0ab; }
+.cst-note { font-size: 12px; color: #8b919c; margin: 6px 0 18px; }
+table.cst-seasons { width: 100%; border-collapse: collapse; font-size: 15px; margin: 12px 0 4px; }
+table.cst-seasons th { font-family: var(--font-display); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: #c8ccd4; text-align: left; padding: 7px 10px; border-bottom: 2px solid var(--f1-red); }
+table.cst-seasons td { padding: 8px 10px; border-bottom: 1px solid #23262e; color: #d7dae0; }
+table.cst-seasons td.g { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: #6d737e; }
+table.cst-seasons td.hs { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--f1-red); }
+table.cst-seasons tr.hl td { background: #1a1d24; }
+@media (max-width: 560px) {
+    table.cst-seasons th:nth-child(3), table.cst-seasons td:nth-child(3) { display: none; }
+}
+
+/* .quali-facts — small stat-tile grid used at the top of long-form
+   race-report articles (qualifying facts, key numbers). Verified
+   byte-identical across all pages that use it. */
+.quali-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 24px 0; clear: both; }
+.quali-fact { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; }
+.quali-fact .qf-num { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
+.quali-fact .qf-label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-top: 6px; letter-spacing: 0.03em; }
