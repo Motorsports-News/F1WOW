@@ -75,6 +75,28 @@ function featuredBlock(a) {
                 </a>`;
 }
 
+function ogImage(a) {
+    const candidate = `og-${a.slug.replace(/\.html$/, '')}.jpg`;
+    return fs.existsSync(path.join(root, candidate)) ? candidate : 'og-default.jpg';
+}
+
+// The homepage's "Interest" tier, between the single featured hero card and
+// the dense text-only list: 3 medium image-backed cards for the next-newest
+// stories. See DESIGN.md Phase 2 / TRACKER.md "Homepage article grid".
+function featureRow(items) {
+    const cards = items.map(a => `                    <a href="${a.slug}" class="feature-card">
+                        <img src="${ogImage(a)}" alt="${esc(a.title)}" loading="lazy" width="640" height="360">
+                        <div class="feature-card-body">
+                            <span class="feature-card-category">${esc(a.label)}</span>
+                            <h3 class="feature-card-title">${esc(a.title)}</h3>
+                            <span class="feature-card-date">${fmtDate(a.date)}</span>
+                        </div>
+                    </a>`);
+    return `<div class="feature-row">
+${cards.join('\n')}
+                </div>`;
+}
+
 function trendingItems() {
     const top3 = articles.slice(0, 3);
     const items = top3.map((a, i) =>
@@ -95,6 +117,7 @@ function splice(content, tag, replacement) {
 // ---- index.html ----
 let idx = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 idx = splice(idx, 'FEATURED', featuredBlock(newest));
+idx = splice(idx, 'FEATURE_ROW', '                ' + featureRow(articles.slice(1, 4)));
 idx = splice(idx, 'GRID', articles.map(a => gridCard(a, '                    ')).join('\n'));
 idx = splice(idx, 'TRENDING', '                    ' + trendingItems());
 fs.writeFileSync(path.join(root, 'index.html'), idx);
