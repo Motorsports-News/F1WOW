@@ -422,25 +422,58 @@ function initBackToTop() {
     });
 }
 
-// Scroll Animations (Fade In)
+// Scroll Animations — cinematic staggered fade-up via GSAP ScrollTrigger,
+// with a CSS-only fallback if motion is reduced or GSAP fails to load.
+// See DESIGN.md "Motion": reduced-motion is checked once, globally, gating
+// every GSAP call rather than per-animation.
 function initScrollAnimations() {
-    const fadeElements = document.querySelectorAll('.article-preview-card, .standings-card, .schedule-card, .section-header');
+    const revealElements = document.querySelectorAll('.article-preview-card, .standings-card, .schedule-card, .section-header');
+    if (!revealElements.length) return;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible', 'fade-in');
-            }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const gsapReady = !prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+
+    if (!gsapReady) {
+        // Original CSS-driven fade: also the reduced-motion-safe path, since the
+        // sitewide prefers-reduced-motion media query already neutralizes the
+        // underlying CSS transition.
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible', 'fade-in');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
 
-    fadeElements.forEach((el, index) => {
-        el.classList.add('fade-in');
-        el.classList.add(`stagger-${(index % 5) + 1}`);
-        observer.observe(el);
+        revealElements.forEach((el, index) => {
+            el.classList.add('fade-in', `stagger-${(index % 5) + 1}`);
+            observer.observe(el);
+        });
+        return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    revealElements.forEach((el, index) => {
+        gsap.fromTo(el,
+            { opacity: 0, y: 28, filter: 'blur(6px)' },
+            {
+                opacity: 1,
+                y: 0,
+                filter: 'blur(0px)',
+                duration: 0.7,
+                ease: 'power2.out',
+                delay: (index % 5) * 0.06,
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 88%',
+                    once: true
+                }
+            }
+        );
     });
 }
 
