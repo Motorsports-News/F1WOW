@@ -179,9 +179,10 @@
                         document.getElementById('hubResultsSection').hidden = false;
                         document.getElementById('hubPodium').innerHTML = podium.map(p =>
                             '<div class="hub-podium-item pos-' + p.position + '">' +
-                            '<span class="hub-podium-pos">P' + p.position + '</span>' +
                             '<span class="hub-podium-name">' + sanitizeHTML(p.Driver.givenName + ' ' + p.Driver.familyName) + '</span>' +
-                            '<span class="hub-podium-team">' + sanitizeHTML(p.Constructor.name) + '</span></div>').join('');
+                            '<span class="hub-podium-team">' + sanitizeHTML(p.Constructor.name) + '</span>' +
+                            '<span class="hub-podium-step"><span class="hub-podium-pos">P' + p.position + '</span></span>' +
+                            '</div>').join('');
                     }
                 } catch (e) { /* no results yet */ }
             } catch (e) {

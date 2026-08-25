@@ -5019,16 +5019,93 @@ body::before {
 .hub-session-name { font-weight: 600; min-width: 150px; }
 .hub-session-time { color: rgba(255, 255, 255, 0.75); }
 .hub-session-done { margin-left: auto; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.55); }
-.hub-podium { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; max-width: 800px; }
-.hub-podium-item {
-    background: var(--f1-dark); border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px;
+/* Race Hub podium — a real staggered-height visualization instead of
+   plain stacked rows. See DESIGN.md Phase 2. */
+.hub-podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 14px;
+    max-width: 640px;
+    margin: 0 auto;
 }
-.hub-podium-item.pos-1 { border-color: var(--f1-yellow); }
-.hub-podium-pos { font-family: var(--font-display); font-weight: 700; color: var(--f1-red); }
+
+.hub-podium-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(18px);
+    animation: podiumReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes podiumReveal {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hub-podium-item.pos-1 { order: 2; animation-delay: 0.32s; }
+.hub-podium-item.pos-2 { order: 1; animation-delay: 0.08s; }
+.hub-podium-item.pos-3 { order: 3; animation-delay: 0.2s; }
+
+.hub-podium-name {
+    font-weight: 600;
+    font-size: 0.92rem;
+    line-height: 1.25;
+}
+
+.hub-podium-team {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.hub-podium-step {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 14px;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+    background: var(--f1-dark);
+}
+
+.hub-podium-pos {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.35rem;
+}
+
+.hub-podium-item.pos-1 .hub-podium-step {
+    height: 118px;
+    border-color: rgba(255, 201, 64, 0.55);
+    background: linear-gradient(180deg, rgba(255, 201, 64, 0.16), var(--f1-dark) 70%);
+    box-shadow: var(--shadow-glow);
+}
 .hub-podium-item.pos-1 .hub-podium-pos { color: var(--f1-yellow); }
-.hub-podium-name { font-weight: 600; }
-.hub-podium-team { font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); }
+
+.hub-podium-item.pos-2 .hub-podium-step {
+    height: 88px;
+    border-color: rgba(203, 209, 217, 0.4);
+    background: linear-gradient(180deg, rgba(203, 209, 217, 0.12), var(--f1-dark) 70%);
+}
+.hub-podium-item.pos-2 .hub-podium-pos { color: #cbd1d9; }
+
+.hub-podium-item.pos-3 .hub-podium-step {
+    height: 64px;
+    border-color: rgba(205, 133, 63, 0.45);
+    background: linear-gradient(180deg, rgba(205, 133, 63, 0.14), var(--f1-dark) 70%);
+}
+.hub-podium-item.pos-3 .hub-podium-pos { color: #cd853f; }
+
+@media (max-width: 480px) {
+    .hub-podium { gap: 8px; }
+    .hub-podium-name, .hub-podium-team { font-size: 0.75rem; }
+}
 .hub-links { display: flex; gap: 12px; flex-wrap: wrap; }
 
 /* ============================================
