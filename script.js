@@ -805,7 +805,47 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSubscriberCount();
     initReadingProgress();
     initArticleJumpNav();
+    initDriverSparkline();
 });
+
+// Driver profile points-trend sparkline — reads the per-round points
+// already present in the season-log table (last column of each row), so
+// it works across every driver page with zero per-file markup edits.
+// Uses the page's own --team custom property, already set on .profile-hero.
+// See DESIGN.md Phase 3.
+function initDriverSparkline() {
+    const hero = document.querySelector('.profile-hero');
+    const table = document.querySelector('.season-log-scroll table.standings-table');
+    if (!hero || !table) return;
+
+    const rows = table.querySelectorAll('tbody tr');
+    if (rows.length < 3) return;
+
+    const points = Array.from(rows).map(row => {
+        const cells = row.querySelectorAll('td');
+        return parseFloat(cells[cells.length - 1]?.textContent) || 0;
+    });
+    const max = Math.max(...points, 1);
+    const w = 160, h = 36, pad = 3;
+    const stepX = points.length > 1 ? (w - pad * 2) / (points.length - 1) : 0;
+    const coords = points.map((p, i) => [
+        pad + i * stepX,
+        h - pad - (p / max) * (h - pad * 2)
+    ]);
+    const pointsAttr = coords.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+    const [lastX, lastY] = coords[coords.length - 1];
+
+    const wrap = document.createElement('div');
+    wrap.className = 'profile-sparkline';
+    wrap.innerHTML = `<span class="profile-sparkline-label">Points per round</span>
+        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+            <polyline points="${pointsAttr}" fill="none" stroke="var(--team, var(--f1-red))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="2.5" fill="var(--team, var(--f1-red))"></circle>
+        </svg>`;
+
+    const stats = hero.querySelector('.profile-stats');
+    (stats || hero).insertAdjacentElement('afterend', wrap);
+}
 
 // In-page "Jump to section" nav for long articles — built from whatever
 // <h2>s already exist in .article-content, so it works across every
