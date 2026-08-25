@@ -804,7 +804,38 @@ document.addEventListener('DOMContentLoaded', () => {
     initSubscribeForms();
     updateSubscriberCount();
     initReadingProgress();
+    initArticleJumpNav();
 });
+
+// In-page "Jump to section" nav for long articles — built from whatever
+// <h2>s already exist in .article-content, so it works across every
+// article without per-page markup edits. No-op on short articles or
+// pages with no article body. See DESIGN.md Phase 3.
+function initArticleJumpNav() {
+    const content = document.querySelector('.article-content');
+    if (!content) return;
+    const headings = content.querySelectorAll('h2');
+    if (headings.length < 4) return;
+
+    const usedIds = new Set();
+    const links = Array.from(headings).map(h => {
+        if (!h.id) {
+            let slug = h.textContent.trim().toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
+            let id = slug;
+            let n = 2;
+            while (usedIds.has(id) || document.getElementById(id)) { id = `${slug}-${n++}`; }
+            usedIds.add(id);
+            h.id = id;
+        }
+        return `<a href="#${h.id}">${h.textContent}</a>`;
+    }).join('');
+
+    const nav = document.createElement('details');
+    nav.className = 'article-jump-nav';
+    nav.innerHTML = `<summary>Jump to section</summary><nav aria-label="Article sections">${links}</nav>`;
+    content.parentNode.insertBefore(nav, content);
+}
 
 // Reading Progress Bar - F1 Telemetry Style
 function initReadingProgress() {

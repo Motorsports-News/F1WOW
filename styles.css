@@ -5190,6 +5190,60 @@ body::before {
 @media (max-width: 600px) {
     .article-header-image { aspect-ratio: 16 / 9; border-radius: 12px; }
 }
+
+/* In-page article jump nav — see DESIGN.md Phase 3, script.js
+   initArticleJumpNav(). Built client-side from existing headings. */
+.article-jump-nav {
+    margin: 4px 0 28px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: var(--f1-dark);
+}
+
+.article-jump-nav summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 14px 18px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--f1-red);
+}
+
+.article-jump-nav summary::-webkit-details-marker { display: none; }
+
+.article-jump-nav summary::after {
+    content: '\2304';
+    float: right;
+    transition: transform 0.2s ease;
+}
+
+.article-jump-nav[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.article-jump-nav nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 10px 12px;
+}
+
+.article-jump-nav nav a {
+    padding: 8px 8px;
+    border-radius: 8px;
+    color: var(--f1-light-gray);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.article-jump-nav nav a:hover {
+    color: var(--f1-white);
+    background: rgba(255, 255, 255, 0.05);
+}
 .brand .brand-title {
     font-family: var(--font-display);
     text-transform: uppercase;
