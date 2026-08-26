@@ -166,3 +166,60 @@ structural changes this round, per explicit instruction).
   latest-news/more-articles list, newsletter/subscribe card, and footer all render with the new serif
   type and restrained amber accents; also checked `news.html`'s article list. Zero console errors on
   either page. CSS brace-balance checked clean before testing.
+
+### Hero section motion revamp — Hallmark guidance (2026-08-26)
+
+User request: "completely revamping the home page's hero section... make it cinematic, add motion and
+good scroll and latest animation techniques," invoking Hallmark by name. Read `references/motion.md`
+and `references/hero-enrichment.md` and applied their hero-specific rules directly (project-local skill
+at `.claude/skills/hallmark` isn't registered with the `Skill` tool by name, so its reference docs were
+read and followed manually rather than invoked as a slash-skill).
+
+- **Removed the mouse-tracked 3D tilt** (`hero.addEventListener('mousemove', ...)` in `index.html`,
+  rotating the whole hero + translating car/speed-lines/content layers on `perspective`/`translateZ`).
+  This is explicitly named in both `motion.md`'s ban list ("Parallax-on-mouse") and
+  `hero-enrichment.md`'s "Banned for hero entrances" list. Removed the now-unused
+  `perspective`/`translateZ`/`transition`/`will-change` CSS that only existed to support it.
+- **Car animation changed from an infinite 3.4s loop to a single fire-once pass** (`raceBy`, now
+  `1 forwards` instead of `infinite`, `cubic-bezier(0.4,0,0.6,1)` instead of raw `linear`) — motion.md
+  bans undifferentiated infinite decorative loops ("they pull the eye and never let go"); the car now
+  races across once as the page settles, then stays gone. Reduced-motion fallback changed from an
+  invisible frozen car to a static, fully-visible one (centered, no motion) — matches motion.md's
+  "reduced motion collapses to opacity crossfade," not "reduced motion hides content."
+- **One orchestrated load-in reveal** replacing six independently-tuned bounce animations
+  (`speedBurst`/`raceInLeft`/`raceInRight`/`driftIn`, several using `cubic-bezier(0.34, 1.56, ...)`
+  overshoot easing — motion.md's hero-entrance ban list names this exact curve as "reads as 2016 Framer
+  demo"). New `heroReveal`/`heroTitleReveal` keyframes: opacity+transform only (no `filter: blur()`
+  animation, which was also on the removed keyframes and is a compositing-performance anti-pattern),
+  `var(--ease-out)`, staggered via inline `style="--i:N"` per element (badge 0 → title 1 → headline 2 →
+  subtitle 3 → CTA 4 → quicklinks 5) per motion.md's "stagger by DOM index using a CSS custom property"
+  pattern. Added new sitewide `--ease-out`/`--ease-in`/`--ease-in-out`/`--dur-micro`/`--dur-short`/
+  `--dur-long` tokens to `:root` (motion.md: "name them as tokens") — available for future motion work
+  beyond the hero. `.hero-title` additionally gets a `clip-path` type-unmask wipe (motion.md's allowed
+  list: "Type-unmask on the headline").
+- **Hero footprint increased** from a flat `min-height: 450px` to `clamp(480px, 78dvh, 760px)` — closer
+  to hero-enrichment.md's "70–90% of the first viewport" guidance instead of reading like a tall header.
+  Checked the fold still fits all hero content without scrolling at a 13"-laptop-height viewport.
+  Removed dead `.hero-car-bg`/`.hero-car-gif` CSS (confirmed zero HTML references) — leftover selectors
+  from a pre-existing older hero variant, unrelated to any current markup.
+  Fixed the same dead selector in the reduced-motion media query list at the same time.
+- **Extended the existing scroll-pin** (`initHeroPin()` in `script.js` — GSAP ScrollTrigger pin + scrub,
+  predates this session) with a closing beat: after the third telemetry line fades, the car
+  layer/track/speed-lines fade + settle (`opacity`/`scale` only) just before the pin releases into the
+  race-strip below. One continuous scroll-scrubbed sequence, not a second competing scroll effect —
+  motion.md's scroll-linked guidance ("no scroll-scrubbed animations unless there's a specific reason");
+  the existing telemetry pin already had a reason (readout storytelling), so the close beat extends it
+  rather than adding a new mechanism. Untouched: the reduced-motion / no-GSAP fallback path, which still
+  short-circuits to a static first line with no pin at all.
+- Deliberately left unchanged (out of scope — hero only, not header/cards): `.header`/`.brand` entrance
+  animations and `.article-preview-card`'s staggered race-in, which still use the older
+  `raceInLeft`/`raceInRight`/`speedBurst`/`turboRev`/`driftIn` keyframes and bounce easing. Also left the
+  `.track`'s `kerbScroll`/`dashScroll` infinite stripe-scroll as-is — a low-contrast ambient background
+  texture, not a foreground eye-pulling loop, judged not to violate the same rule the car animation did.
+- Verified in-browser: CSS brace-balance clean; page loads and settles with zero console errors;
+  scrolled through the full pin sequence (telemetry cycles through all three lines, car/track/speed-lines
+  fade at the close, pin releases cleanly into the race-strip with no stuck/frozen state) and scrolled
+  back up to confirm the scrub reverses correctly with all hero content returning to full opacity.
+  Did not verify with OS-level `prefers-reduced-motion` toggled on in-browser — reviewed the gating code
+  logically instead (each new animation is behind the existing reduced-motion checks already used
+  elsewhere on the page).

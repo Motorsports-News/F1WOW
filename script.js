@@ -810,8 +810,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Homepage hero: pins the hero in view for an extra scroll beat while a
-// telemetry-style readout cycles through three lines, then releases into
-// normal scroll. Purely presentational — no data, no new state. Falls back
+// telemetry-style readout cycles through three lines, then closes the scene
+// (car/track/speed-lines settle back and fade) before releasing into normal
+// scroll — one continuous scroll-scrubbed sequence rather than a competing
+// second effect. Purely presentational — no data, no new state. Falls back
 // to showing the first line statically if motion is reduced or GSAP/
 // ScrollTrigger aren't available.
 function initHeroPin() {
@@ -842,6 +844,12 @@ function initHeroPin() {
         tl.to(line, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, at)
           .to(line, { opacity: 0, y: -12, duration: 0.25, ease: 'power2.in' }, at + 0.4);
     });
+
+    const closeAt = (lines.length - 1) * 0.6 + 0.65;
+    const scene = hero.querySelectorAll('.car-layer, .hero-speed-lines, .track');
+    if (scene.length) {
+        tl.to(scene, { opacity: 0, scale: 0.97, duration: 0.4, ease: 'power2.in' }, closeAt);
+    }
 }
 
 // Driver profile points-trend sparkline — reads the per-round points
