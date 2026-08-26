@@ -203,6 +203,15 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <!-- Reading Progress Bar -->
     <div class="reading-progress-bar" id="readingProgress"></div>
+    <!-- HUD frame: decorative structural overlay, telemetry-console framing -->
+    <div class="hud-frame" aria-hidden="true">
+        <span class="hud-corner tl"></span>
+        <span class="hud-corner tr"></span>
+        <span class="hud-corner bl"></span>
+        <span class="hud-corner br"></span>
+        <span class="hud-vline" style="left:16.6%"></span>
+        <span class="hud-vline" style="left:83.4%"></span>
+    </div>
 
     <header class="header">
         <div class="container">
@@ -279,6 +288,11 @@
                         <a href="how-to-watch-f1.html">Watch F1</a>
                         <a href="championship-calculator.html">Calculator</a>
                     </nav>
+                    <div class="hero-telemetry" aria-hidden="true">
+                        <span class="hero-telemetry-line">// live championship data below</span>
+                        <span class="hero-telemetry-line">// this week&rsquo;s headlines, ranked</span>
+                        <span class="hero-telemetry-line">// scroll to explore the season</span>
+                    </div>
         </section>
         <!-- Broadcast strip: next race + countdown -->
         <div class="race-strip">
@@ -333,8 +347,10 @@
                         <!-- Trending Now -->
             <section class="trending-strip" aria-label="Trending stories">
                 <div class="trending-strip-head">
-                    <svg class="trending-flame" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-0.36 3.6-1.21 4.62-2.58 0.39 1.29 0.59 2.65 0.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
-                    <h2>Trending Now</h2>
+                    <div>
+                        <p class="hud-kicker">live signal</p>
+                        <h2><svg class="trending-flame" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-0.36 3.6-1.21 4.62-2.58 0.39 1.29 0.59 2.65 0.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>Trending Now</h2>
+                    </div>
                 </div>
                 <div class="trending-items">
                     <!-- BUILD:TRENDING:START -->
@@ -348,7 +364,10 @@
             <!-- Championship Battle (live) -->
             <section class="battle-band" aria-label="Championship battle">
                 <div class="battle-band-head">
-                    <h2>Championship Battle</h2>
+                    <div>
+                        <p class="hud-kicker">title fight</p>
+                        <h2>Championship Battle</h2>
+                    </div>
                     <a href="championship.html" class="battle-band-link">Full standings &amp; graph &rarr;</a>
                 </div>
                 <div class="battle-band-columns">
@@ -362,7 +381,10 @@
 
             <section class="articles-section" id="articles">
                 <div class="section-header">
-                    <h2>Latest News</h2>
+                    <div>
+                        <p class="hud-kicker">wire feed</p>
+                        <h2>Latest News</h2>
+                    </div>
                     <span class="live-badge">LIVE</span>
                 </div>
 

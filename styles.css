@@ -586,14 +586,125 @@ body::before {
 
 .hero-title {
     font-family: var(--font-display);
-    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-size: clamp(4rem, 11vw, 8.5rem);
     font-weight: 800;
-    line-height: 0.95;
-    margin-bottom: 10px;
+    line-height: 1.22;
+    margin-bottom: 24px;
     color: var(--f1-white);
     text-transform: uppercase;
     letter-spacing: 0.01em;
     text-wrap: balance;
+}
+
+/* ============================================
+   HUD prototype layer — homepage cinematic pass.
+   Telemetry-console framing, mega section titles,
+   pinned hero sequence, word-mask reveal.
+   ============================================ */
+
+.hud-frame {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.hud-corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1px solid rgba(255, 106, 26, 0.35);
+}
+
+.hud-corner.tl { top: 18px; left: 18px; border-right: none; border-bottom: none; }
+.hud-corner.tr { top: 18px; right: 18px; border-left: none; border-bottom: none; }
+.hud-corner.bl { bottom: 18px; left: 18px; border-right: none; border-top: none; }
+.hud-corner.br { bottom: 18px; right: 18px; border-left: none; border-top: none; }
+
+.hud-vline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 900px) {
+    .hud-frame { display: none; }
+}
+
+.hud-kicker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--f1-red);
+    margin: 0 0 8px;
+}
+
+.hud-kicker::before {
+    content: '//';
+    opacity: 0.55;
+}
+
+/* Mega section titles — a real scale jump vs. the previous modest heading size */
+.trending-strip-head h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: clamp(1.8rem, 4vw, 2.8rem) !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+.battle-band-head h2,
+.section-header h2 {
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    line-height: 1.18;
+    margin-top: 4px;
+}
+
+/* Hero telemetry sequence — revealed during the pinned scroll beat.
+   Stacked absolutely so each line occupies the same "readout" slot. */
+.hero-telemetry {
+    position: absolute;
+    left: 28px;
+    bottom: 96px;
+    z-index: 6;
+    height: 20px;
+    pointer-events: none;
+}
+
+.hero-telemetry-line {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.68);
+    opacity: 0;
+    transform: translateY(14px);
+}
+
+@media (max-width: 760px) {
+    .hero-telemetry { display: none; }
+}
+
+/* Word-mask reveal utility */
+.word-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.word-inner {
+    display: inline-block;
+    will-change: transform;
 }
 
 @keyframes shimmer {

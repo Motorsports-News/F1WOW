@@ -806,7 +806,82 @@ document.addEventListener('DOMContentLoaded', () => {
     initReadingProgress();
     initArticleJumpNav();
     initDriverSparkline();
+    initHeroPin();
+    initWordReveal();
 });
+
+// Homepage hero: pins the hero in view for an extra scroll beat while a
+// telemetry-style readout cycles through three lines, then releases into
+// normal scroll. Purely presentational — no data, no new state. Falls back
+// to showing the first line statically if motion is reduced or GSAP/
+// ScrollTrigger aren't available.
+function initHeroPin() {
+    const hero = document.querySelector('.hero-section');
+    const lines = document.querySelectorAll('.hero-telemetry-line');
+    if (!hero || !lines.length) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        lines[0].style.opacity = '1';
+        lines[0].style.transform = 'none';
+        return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    const tl = gsap.timeline({
+        scrollTrigger: {
+            trigger: hero,
+            start: 'top top',
+            end: '+=700',
+            pin: true,
+            scrub: 1
+        }
+    });
+
+    lines.forEach((line, i) => {
+        const at = i * 0.6;
+        tl.to(line, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, at)
+          .to(line, { opacity: 0, y: -12, duration: 0.25, ease: 'power2.in' }, at + 0.4);
+    });
+}
+
+// Word-mask reveal for key headlines — splits text into word spans and
+// animates them up into view on scroll, instead of a flat fade. Only
+// targets headings whose full content is plain text (no icons/child
+// elements), so nothing gets silently destroyed by the textContent split.
+// Falls back to leaving the heading exactly as-is if motion is reduced or
+// GSAP/ScrollTrigger aren't available.
+function initWordReveal() {
+    const targets = document.querySelectorAll('.hero-title, .battle-band-head h2, .articles-section .section-header h2');
+    if (!targets.length) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    targets.forEach(el => {
+        const words = el.textContent.trim().split(/\s+/);
+        if (words.length < 1) return;
+        el.setAttribute('aria-label', el.textContent.trim());
+        el.innerHTML = words
+            .map(w => `<span class="word-mask"><span class="word-inner">${w}</span></span>`)
+            .join(' ');
+        const inners = el.querySelectorAll('.word-inner');
+        gsap.set(inners, { yPercent: 110 });
+        gsap.to(inners, {
+            yPercent: 0,
+            duration: 0.7,
+            ease: 'power3.out',
+            stagger: 0.05,
+            scrollTrigger: {
+                trigger: el,
+                start: 'top 85%',
+                once: true
+            }
+        });
+    });
+}
 
 // Driver profile points-trend sparkline — reads the per-round points
 // already present in the season-log table (last column of each row), so
