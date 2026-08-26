@@ -136,3 +136,33 @@ build) and `hallmark` (used for this audit) encode different, sometimes-conflict
 "premium" looks like — double-bezel cards and section eyebrows are two concrete examples. Going forward,
 prefer `hallmark`'s judgment when the two disagree, since it's the skill explicitly built to catch
 AI-generated-design tells and was brought in specifically in response to "this looks like AI slop."
+
+### Hallmark color/type discipline pass — sitewide (2026-08-26)
+
+User feedback after the audit above: "Too much of orange and too big basic old school fonts." Re-read
+Hallmark's `references/color.md` and `references/typography.md` and applied their measurable rules
+mechanically rather than by subjective judgment, scoped strictly to color and typography (no other
+structural changes this round, per explicit instruction).
+
+- **Display typeface swapped Unbounded → Fraunces** (a variable serif, Hallmark-recommended editorial
+  face) across all 87 HTML pages via a scripted Google-Fonts `<link>` replacement (249 total
+  replacements, confirmed 87 files touched) plus the `--font-display` CSS token.
+- **Display type scale cut to Hallmark's ≤5.5rem ceiling:** `.hero-title` (was `clamp(4rem, 11vw,
+  8.5rem)` → `clamp(2.75rem, 5vw + 1rem, 5.25rem)`), `.section-header h2` and `.battle-band-head h2`
+  (both was `clamp(2.2rem, 4.5vw, 3.2rem)` → `clamp(2rem, 3.5vw, 2.75rem)`). All three also dropped
+  `text-transform: uppercase` for mixed case, font-weight reduced 800→600/700 (avoids browser
+  bold-synthesis — only Fraunces 500/600/700 are loaded), and line-height loosened to Hallmark's
+  recommended 1.05–1.1 floor. Homepage H1 copy changed from "F1WOW NEWS" to "F1wow News" to match the
+  new mixed-case treatment.
+- **~8 solid-orange-fill components converted to Hallmark's "highlighter, not colour block" pattern**
+  (dark/neutral surface + thin amber border + amber text/icon, instead of a full amber background):
+  `.hero-badge`, `.cta-primary` + its icon circle, `.category-tab.active`, `.tab-btn.active`,
+  `.nav-link:hover`, `.follower-counter:hover`, `.subscribe-btn` + hover, `.quick-nav-btn.primary` +
+  hover. Removed the bounce/overshoot animation that had been on `.category-tab.active`. Deliberately
+  left untouched after confirming they don't violate the ≤3%-viewport / no-giant-fill rule: `.live-badge`
+  (small semantic status chip), `.race-badge.completed`/`.next` (small semantic chips), and
+  `.header .nav-link:hover` (already restrained — underline-only, no fill).
+- Verified in-browser (hard-reload-checked): homepage hero, trending strip, championship battle band,
+  latest-news/more-articles list, newsletter/subscribe card, and footer all render with the new serif
+  type and restrained amber accents; also checked `news.html`'s article list. Zero console errors on
+  either page. CSS brace-balance checked clean before testing.
