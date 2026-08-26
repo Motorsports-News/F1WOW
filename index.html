@@ -94,14 +94,19 @@
             flex-direction: column;
         }
         .hero-section > .container {
+            align-self: stretch;  /* the container's own margin:0 auto would
+                                      otherwise act as a flex cross-axis auto
+                                      margin here, shrinking + re-centering it */
             margin-top: 0;        /* title block at the very top */
             margin-bottom: auto;  /* all remaining space stays open for the car */
+            margin-left: 0;
+            margin-right: 0;
         }
         .hero-section > .container .hero-content { padding-top: 10px; }
         .hero-section .hero-cta {
             position: relative;
             z-index: 6;
-            justify-content: center;
+            justify-content: flex-start;
             flex-wrap: wrap;
             margin: 0;
             padding: 0 20px 0;    /* buttons flush on the bottom edge */
@@ -357,10 +362,7 @@
                         <!-- Trending Now -->
             <section class="trending-strip" aria-label="Trending stories">
                 <div class="trending-strip-head">
-                    <div>
-                        <p class="hud-kicker">live signal</p>
-                        <h2><svg class="trending-flame" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-0.36 3.6-1.21 4.62-2.58 0.39 1.29 0.59 2.65 0.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>Trending Now</h2>
-                    </div>
+                    <h2><svg class="trending-flame" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-0.36 3.6-1.21 4.62-2.58 0.39 1.29 0.59 2.65 0.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>Trending Now</h2>
                 </div>
                 <div class="trending-items">
                     <!-- BUILD:TRENDING:START -->
@@ -374,10 +376,7 @@
             <!-- Championship Battle (live) -->
             <section class="battle-band" aria-label="Championship battle">
                 <div class="battle-band-head">
-                    <div>
-                        <p class="hud-kicker">title fight</p>
-                        <h2>Championship Battle</h2>
-                    </div>
+                    <h2>Championship Battle</h2>
                     <a href="championship.html" class="battle-band-link">Full standings &amp; graph &rarr;</a>
                 </div>
                 <div class="battle-band-columns">
@@ -391,10 +390,7 @@
 
             <section class="articles-section" id="articles">
                 <div class="section-header">
-                    <div>
-                        <p class="hud-kicker">wire feed</p>
-                        <h2>Latest News</h2>
-                    </div>
+                    <h2>Latest News</h2>
                     <span class="live-badge">LIVE</span>
                 </div>
 
@@ -430,33 +426,27 @@
                 <!-- BUILD:FEATURE_ROW:START -->
                 <div class="feature-row">
                     <a href="dutch-gp-2026-race.html" class="feature-card feature-card-large">
-                        <div class="feature-card-inner">
-                            <img src="og-dutch-gp-2026-race.jpg" alt="Dutch GP 2026: Norris Wins From Antonelli as Verstappen Crashes Out" loading="lazy" width="640" height="360">
-                            <div class="feature-card-body">
-                                <span class="feature-card-category">Race Analysis</span>
-                                <h3 class="feature-card-title">Dutch GP 2026: Norris Wins From Antonelli as Verstappen Crashes Out</h3>
-                                <span class="feature-card-date">August 24, 2026</span>
-                            </div>
+                        <img src="og-dutch-gp-2026-race.jpg" alt="Dutch GP 2026: Norris Wins From Antonelli as Verstappen Crashes Out" loading="lazy" width="640" height="360">
+                        <div class="feature-card-body">
+                            <span class="feature-card-category">Race Analysis</span>
+                            <h3 class="feature-card-title">Dutch GP 2026: Norris Wins From Antonelli as Verstappen Crashes Out</h3>
+                            <span class="feature-card-date">August 24, 2026</span>
                         </div>
                     </a>
                     <a href="verstappen-red-bull-2030-contract-stats.html" class="feature-card">
-                        <div class="feature-card-inner">
-                            <img src="og-verstappen-red-bull-2030-contract-stats.jpg" alt="Verstappen Stays to 2030: His Red Bull Legacy in Numbers" loading="lazy" width="640" height="360">
-                            <div class="feature-card-body">
-                                <span class="feature-card-category">Breaking News</span>
-                                <h3 class="feature-card-title">Verstappen Stays to 2030: His Red Bull Legacy in Numbers</h3>
-                                <span class="feature-card-date">August 20, 2026</span>
-                            </div>
+                        <img src="og-verstappen-red-bull-2030-contract-stats.jpg" alt="Verstappen Stays to 2030: His Red Bull Legacy in Numbers" loading="lazy" width="640" height="360">
+                        <div class="feature-card-body">
+                            <span class="feature-card-category">Breaking News</span>
+                            <h3 class="feature-card-title">Verstappen Stays to 2030: His Red Bull Legacy in Numbers</h3>
+                            <span class="feature-card-date">August 20, 2026</span>
                         </div>
                     </a>
                     <a href="leclerc-20-pole-club-only-non-champion.html" class="feature-card">
-                        <div class="feature-card-inner">
-                            <img src="og-leclerc-20-pole-club-only-non-champion.jpg" alt="Leclerc: The Only 20-Pole Driver Never to Be Champion" loading="lazy" width="640" height="360">
-                            <div class="feature-card-body">
-                                <span class="feature-card-category">Stat Attack</span>
-                                <h3 class="feature-card-title">Leclerc: The Only 20-Pole Driver Never to Be Champion</h3>
-                                <span class="feature-card-date">August 18, 2026</span>
-                            </div>
+                        <img src="og-leclerc-20-pole-club-only-non-champion.jpg" alt="Leclerc: The Only 20-Pole Driver Never to Be Champion" loading="lazy" width="640" height="360">
+                        <div class="feature-card-body">
+                            <span class="feature-card-category">Stat Attack</span>
+                            <h3 class="feature-card-title">Leclerc: The Only 20-Pole Driver Never to Be Champion</h3>
+                            <span class="feature-card-date">August 18, 2026</span>
                         </div>
                     </a>
                 </div>

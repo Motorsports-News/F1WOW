@@ -85,13 +85,11 @@ function ogImage(a) {
 // stories. See DESIGN.md Phase 2 / TRACKER.md "Homepage article grid".
 function featureRow(items) {
     const cards = items.map((a, i) => `                    <a href="${a.slug}" class="feature-card${i === 0 ? ' feature-card-large' : ''}">
-                        <div class="feature-card-inner">
-                            <img src="${ogImage(a)}" alt="${esc(a.title)}" loading="lazy" width="640" height="360">
-                            <div class="feature-card-body">
-                                <span class="feature-card-category">${esc(a.label)}</span>
-                                <h3 class="feature-card-title">${esc(a.title)}</h3>
-                                <span class="feature-card-date">${fmtDate(a.date)}</span>
-                            </div>
+                        <img src="${ogImage(a)}" alt="${esc(a.title)}" loading="lazy" width="640" height="360">
+                        <div class="feature-card-body">
+                            <span class="feature-card-category">${esc(a.label)}</span>
+                            <h3 class="feature-card-title">${esc(a.title)}</h3>
+                            <span class="feature-card-date">${fmtDate(a.date)}</span>
                         </div>
                     </a>`);
     return `<div class="feature-row">

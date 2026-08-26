@@ -85,3 +85,54 @@ Update this file at the end of every work session/task — it's the single place
 - **2026-08-25** — Article jump nav and driver points-trend sparkline both done via shared, generator-independent JS (read existing DOM/table data at runtime, work across every relevant page automatically, zero per-file edits). Discovered `scripts/build-profiles.py` is not currently re-runnable (missing input files) — driver/team pages are effectively hand-maintained now, noted in TRACKER for future reference. Utility/legal pages verified — clean inheritance, no bespoke work needed.
 - **End of session summary:** 16 commits on `design/cinematic-overhaul`. All of Phase 1 and Phase 2 done and verified. Phase 3: done — calendar hero card, race report header images, article jump nav, driver sparkline, utility-page check. Not done, each for a specific reason (not oversights): driver/team portrait & livery imagery (no assets exist, needs a sourcing decision), `--team` accent extension beyond the hero band (needs a structural decision about where the CSS variable lives), team profile parity pass (blocked on the same imagery decision), `.dz-*` gap-chart consolidation/reveal (the two pages' charts have genuinely diverged, flagged earlier for a deliberate call), and a formal WCAG contrast audit (recommended before merge). Everything landed is verified in-browser with zero console errors across every page type on the site.
 - **2026-08-25** — Component consolidation pass done (24 files changed, 170 lines of duplicated inline CSS removed, 31 lines added to `styles.css`). `.cst-*` (8 driver pages) and `.quali-facts`/`.qf-*` (15 article pages — much wider reuse than the original 2-page estimate) consolidated and visually verified via local server + screenshots. `.dz-*` table/chart CSS deliberately left inline in its 2 pages — real structural divergence between them (different chart types), not safe to force-merge without a redesign decision; flagged above, not marked done. Bonus fix found along the way: `malaysia-f1-calendar-replacement.html`'s key-facts stat tiles had zero CSS backing them at all and are now correctly styled — but this also surfaced a pre-existing, unrelated content-fit issue (one tile's text, "Baku→Singapore" shortened to "Baku→Si", overflows its box at this width) that predates this session and isn't a consolidation bug; needs a font-size/wrap decision on `.qf-num`, left for a deliberate follow-up since it'd affect all 15 pages sharing that class.
+
+### Hallmark skill audit — homepage prototype (2026-08-26)
+
+Installed `nutlope/hallmark` (anti-AI-slop design skill) at the user's request after strong negative
+feedback on the bold homepage prototype. Ran `hallmark audit` against `index.html`/`styles.css` using
+its actual anti-pattern catalog and reported real findings with file:line citations — 2 critical, 4
+major, 1 minor. All were fixed:
+
+- **[critical] Card-in-card** — the "double-bezel" nested card treatment added earlier (an outer shell
+  wrapping an inner core) is a named Hallmark anti-pattern. Flattened `.feature-card` back to one
+  containment layer, in both the generator (`scripts/build-home.js`) and CSS. **Note:** this directly
+  contradicts the *other* taste skill (`high-end-visual-design`)'s "double-bezel" recommendation from
+  two rounds ago — the two skills disagree on this point. Hallmark's guidance won this round since it's
+  the tool actively being used to fix AI-slop complaints; if a future pass wants double-bezel back,
+  that's a deliberate re-decision, not a default.
+- **[critical] Eyebrow on every section** — removed all three `hud-kicker` mono-cap labels ("live
+  signal" / "title fight" / "wire feed") from Trending Now, Championship Battle, and Latest News.
+  Removed the now-dead `.hud-kicker` CSS too.
+- **[major] Centred everything** — hero content (badge, title, headline pill, subtitle, CTAs,
+  quicklinks) rebiased to the left. Surfaced and fixed a real bug while verifying this: `.hero-section`'s
+  `display:flex;flex-direction:column` was making `.container`'s own `margin:0 auto` act as a flex
+  cross-axis auto-margin, shrinking and re-centering the whole container instead of letting it stretch
+  full width — fixed with an explicit `align-self:stretch; margin-left:0; margin-right:0` override.
+  Also caught `.hero-quicklinks` sitting flush against the viewport edge (it's a sibling of `.container`,
+  not a child, so it never got container padding) — added matching `padding: 0 20px`.
+- **[major] Shadow-glow on dark** — redefined the single `--shadow-glow` token (12 call sites) from a
+  diffuse amber halo to a tight dark shadow + thin amber ring, per Hallmark's own fallback ("if you must
+  shadow, keep it tight and dark").
+- **[major] Bouncy overshoot easing on UI** — the two `cubic-bezier(0.34, 1.56, 0.64, 1)` overshoot
+  easings added last round for the CTA button-in-button hover physics are replaced with a standard
+  ease-out. Left the pre-existing hero entrance-animation overshoots (`speedBurst`/`turboRev`/
+  `tabActivate`) alone — different context (one-time reveal, not a repeated UI hover), out of this
+  audit's cited scope.
+- **[major] Animate-on-scroll on everything** — three stacked scroll-motion systems on one homepage
+  (card fade-up, headline word-mask reveal, hero pin) is exactly Hallmark's "pick one orchestrated
+  entrance" violation. Removed `initWordReveal()` entirely (and its now-dead `.word-mask`/`.word-inner`
+  CSS) — the hero pin stays as the one signature moment; the sitewide card fade-up stays as the
+  pre-existing baseline utility (predates this prototype, used everywhere, not part of "stacked on one
+  homepage").
+- **[minor] Generic emoji as icon** (🏆, flag emojis) — pre-existing, not introduced this session, not
+  fixed this round; noted for a future pass.
+
+Verified in-browser after every fix (hard-reload-checked for stale cache): hero left-bias renders
+correctly with proper edge inset, bento cards are single-layer with no nested frame, no eyebrows above
+any section, zero console errors, category-page regeneration diffed clean.
+
+**Open tension for future rounds:** `gpt-taste`/`high-end-visual-design` (used in the original prototype
+build) and `hallmark` (used for this audit) encode different, sometimes-conflicting opinions about what
+"premium" looks like — double-bezel cards and section eyebrows are two concrete examples. Going forward,
+prefer `hallmark`'s judgment when the two disagree, since it's the skill explicitly built to catch
+AI-generated-design tells and was brought in specifically in response to "this looks like AI slop."
