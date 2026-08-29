@@ -29,7 +29,8 @@
     <link rel="stylesheet" href="styles.css?v=20260811f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+    <link rel="preconnect" href="https://api.fontshare.com"><link rel="preload" as="style" href="https://api.fontshare.com/v2/css?f[]=sentient@400,500,600&display=swap"><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=sentient@400,500,600&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=sentient@400,500,600&display=swap"></noscript>
     <!-- Google Analytics -->
     <script>/* Defer GA4 library until idle; inline dataLayer config below queues events until it loads */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-HWLHEWCYP2';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
     <!-- Google AdSense -->
@@ -42,7 +43,7 @@
 
         /* Results is the payoff of this whole tool - give it more visual weight than
            the supporting sections instead of three identical stacked cards. */
-        .calc-hero { background: linear-gradient(180deg, rgba(255, 106, 26,0.07), var(--f1-dark) 65%); border: 1px solid var(--border-color); border-top: 2px solid var(--f1-red); border-radius: 12px; padding: 26px; margin-bottom: 20px; }
+        .calc-hero { background: linear-gradient(180deg, rgba(41, 182, 216,0.07), var(--f1-dark) 65%); border: 1px solid var(--border-color); border-top: 2px solid var(--f1-red); border-radius: 12px; padding: 26px; margin-bottom: 20px; }
         .calc-hero h2 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 16px; }
 
         .calc-mode-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
@@ -60,7 +61,7 @@
            at a glance instead of an abstract row of identical circles. */
         .calc-race-chips-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
         .calc-race-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-        .calc-reset-btn { background: transparent; border: 1px solid var(--border-color); color: rgba(255,255,255,0.6); border-radius: 6px; padding: 6px 12px; font-family: 'Chakra Petch', sans-serif; font-size: 0.82rem; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; white-space: nowrap; }
+        .calc-reset-btn { background: transparent; border: 1px solid var(--border-color); color: rgba(255,255,255,0.6); border-radius: 6px; padding: 6px 12px; font-family: var(--font-body); font-size: 0.82rem; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; white-space: nowrap; }
         .calc-reset-btn:hover:not(:disabled) { border-color: var(--f1-red); color: #fff; }
         .calc-reset-btn:disabled { opacity: 0.35; cursor: default; }
         .calc-race-chip { min-width: 32px; height: 26px; padding: 0 6px; border-radius: 6px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: rgba(255,255,255,0.65); font-size: 0.72rem; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
@@ -82,21 +83,21 @@
         .calc-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         @media (min-width: 640px) { .calc-slots { grid-template-columns: 1fr 1fr 1fr; } }
         .calc-slot { display: grid; grid-template-columns: 28px 26px 1fr; align-items: center; min-height: 40px; padding: 3px 6px 3px 8px; border: 1px dashed rgba(255,255,255,0.18); border-radius: 7px; background: rgba(255,255,255,0.02); }
-        .calc-slot.drop-hot { border-style: solid; border-color: var(--f1-red); background: rgba(255, 106, 26,0.1); }
+        .calc-slot.drop-hot { border-style: solid; border-color: var(--f1-red); background: rgba(41, 182, 216,0.1); }
         .calc-slot-pos { font-family: var(--font-display); font-weight: 800; font-size: 0.88rem; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
         .calc-slot[data-pos="1"] .calc-slot-pos { color: var(--f1-red); }
         .calc-slot-pts { font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.38); font-variant-numeric: tabular-nums; }
         .calc-slot-empty { font-size: 0.66rem; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em; }
 
         .calc-chip { display: flex; align-items: center; gap: 7px; width: 100%; min-height: 32px; padding: 3px 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.02em; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: border-color 0.15s ease, background 0.15s ease; }
-        .calc-chip:hover, .calc-chip:focus-visible { border-color: var(--f1-red); background: rgba(255, 106, 26,0.12); outline: none; }
+        .calc-chip:hover, .calc-chip:focus-visible { border-color: var(--f1-red); background: rgba(41, 182, 216,0.12); outline: none; }
         .calc-chip-bar { flex: 0 0 4px; width: 4px; height: 18px; border-radius: 2px; }
         .calc-chip-ghost { position: fixed; z-index: 9999; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.55); cursor: grabbing; }
         .calc-chip-lifted { opacity: 0.3; }
         body.calc-dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
 
         .calc-dnf { margin-top: 8px; padding: 8px 10px; border: 1px dashed rgba(255,107,107,0.45); border-radius: 7px; }
-        .calc-dnf.drop-hot { border-style: solid; background: rgba(255, 106, 26,0.1); }
+        .calc-dnf.drop-hot { border-style: solid; background: rgba(41, 182, 216,0.1); }
         .calc-dnf-label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,107,107,0.8); margin-bottom: 6px; font-variant-numeric: tabular-nums; }
         .calc-dnf-chips { display: flex; flex-wrap: wrap; gap: 6px; }
         .calc-pool { margin-top: 8px; padding: 8px 10px; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; background: rgba(255,255,255,0.02); }
@@ -107,8 +108,8 @@
         .calc-drag-help { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: 12px; line-height: 1.5; }
         .calc-presets { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
         .calc-presets-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.4); margin-right: 2px; }
-        .calc-preset-chip { background: rgba(255, 106, 26,0.08); border: 1px solid rgba(255, 106, 26,0.35); color: rgba(255,255,255,0.85); border-radius: 999px; padding: 6px 14px; font-family: 'Chakra Petch', sans-serif; font-size: 0.82rem; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; white-space: nowrap; }
-        .calc-preset-chip:hover { background: rgba(255, 106, 26,0.22); border-color: var(--f1-red); color: #fff; }
+        .calc-preset-chip { background: rgba(41, 182, 216,0.08); border: 1px solid rgba(41, 182, 216,0.35); color: rgba(255,255,255,0.85); border-radius: 999px; padding: 6px 14px; font-family: var(--font-body); font-size: 0.82rem; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; white-space: nowrap; }
+        .calc-preset-chip:hover { background: rgba(41, 182, 216,0.22); border-color: var(--f1-red); color: #fff; }
         .calc-preset-chip:active { transform: translateY(1px); }
 
         .standings-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
@@ -124,26 +125,26 @@
         .calc-steps strong { color: #fff; }
         .calc-points-table { width: 100%; max-width: 420px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
         .calc-points-table th, .calc-points-table td { padding: 7px 14px; text-align: center; border-bottom: 1px solid var(--border-color); }
-        .calc-points-table thead th { font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(255,255,255,0.75); border-bottom: 2px solid rgba(255, 106, 26,0.35); }
+        .calc-points-table thead th { font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(255,255,255,0.75); border-bottom: 2px solid rgba(41, 182, 216,0.35); }
         .calc-points-table td:first-child { color: rgba(255,255,255,0.45); font-weight: 700; }
         .calc-points-table .calc-pts-hero { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--f1-red); }
         .calc-faq { list-style: none; margin: 0; padding: 0; }
-        .calc-faq h3 { font-family: 'Chakra Petch', sans-serif; font-size: 0.98rem; color: #fff; margin: 0 0 6px; }
+        .calc-faq h3 { font-family: var(--font-body); font-size: 0.98rem; color: #fff; margin: 0 0 6px; }
         .calc-faq p { margin: 0; }
 
         .calc-tail-toggle summary { cursor: pointer; padding: 10px 0; color: rgba(255,255,255,0.5); font-size: 0.85rem; list-style: none; }
         .calc-tail-toggle summary::-webkit-details-marker { display: none; }
         .calc-tail-toggle summary:hover { color: #fff; }
-        .calc-standings-more-btn { display: block; margin-top: 8px; padding: 8px 0; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 0.85rem; font-family: 'Chakra Petch', sans-serif; cursor: pointer; text-align: left; }
+        .calc-standings-more-btn { display: block; margin-top: 8px; padding: 8px 0; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 0.85rem; font-family: var(--font-body); cursor: pointer; text-align: left; }
         .calc-standings-more-btn:hover { color: #fff; }
 
         .result-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
         .result-row:last-child { border-bottom: none; }
         .result-driver { flex: 0 1 190px; font-weight: 700; word-break: break-word; }
         .run-btn { background: var(--f1-red); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: var(--font-display); font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
-        .run-btn:hover { background: #CC5514; }
+        .run-btn:hover { background: #1A8CAD; }
         .result-bar-wrap { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 22px; overflow: hidden; }
-        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #CC5514); width: 0%; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        .result-bar { height: 100%; background: linear-gradient(90deg, var(--f1-red), #1A8CAD); width: 0%; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
         .result-pct { flex: 0 0 60px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
         .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
         .badge-alive { background: rgba(0,200,80,0.15); color: #3ddc84; }

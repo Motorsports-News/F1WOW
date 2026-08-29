@@ -223,3 +223,61 @@ read and followed manually rather than invoked as a slash-skill).
   Did not verify with OS-level `prefers-reduced-motion` toggled on in-browser — reviewed the gating code
   logically instead (each new animation is behind the existing reduced-motion checks already used
   elsewhere on the page).
+
+### Sitewide Aurora theme — Hallmark catalog theme (2026-08-29)
+
+User request: "use Hallmark's Aurora theme everywhere on this website on all pages. Make it happen,"
+invoked via `/hallmark`. Aurora is one of Hallmark's 21 catalog themes; the installed skill package
+ships no dedicated `references/themes/aurora.md` spec file (only Carnival/Cobalt/Grid/Hum/Lumen have
+one), so Aurora's identity was reconstructed from the facts Hallmark's other theme files state about it
+by direct comparison (cobalt.md and lumen.md both independently describe Aurora as "dark cyan blooms +
+Sentient serif body"; lumen.md gives Aurora's accent hue explicitly as 200°; structure.md's macrostructure
+table gives Aurora's fingerprint as Hanging headers / single column / negative-space dividers /
+typographic-only buttons / no imagery / fade-up reveal / N5 floating-pill nav / Ft5 statement footer).
+
+**Applied this pass — palette + typography, sitewide:**
+- New `:root` tokens in `styles.css` (variable **names** kept for backward compatibility across all 87
+  pages, per the file's existing single-point-of-change architecture — only values changed): `--f1-red`/
+  `--f1-dark-red` → `oklch(70% 0.15 200)` / `oklch(55% 0.13 200)` (Aurora cyan accent + pressed state,
+  replacing "Ignition Amber"); `--f1-black`/`--f1-dark`/`--f1-gray` → cool near-black `oklch(...250)`
+  triad (was warm carbon-black); `--f1-white`/`--f1-silver`/`--f1-light-gray` → cool off-white `oklch(...240)`
+  triad (was warm off-white). `--accent-bright` → `oklch(85% 0.09 200)`.
+- `--font-display: 'Fraunces' → 'Tomorrow'` (geometric Google-Fonts sans, Atmospheric-genre display
+  candidate); `--font-body: 'Chakra Petch' → 'Sentient'` (Fontshare variable serif — Aurora's confirmed
+  body face). `--font-mono` (JetBrains Mono) kept — already on the Atmospheric mono candidate list.
+- Added a Fontshare `<link>` block (preconnect + async preload/stylesheet/noscript, same pattern as the
+  existing Google Fonts block) to all 87 pages, since Sentient isn't on Google Fonts. Two insertion
+  patterns needed scripting: 81 pages use the async preload/media-swap/noscript pattern, 6 older pages
+  (`antonelli-maiden-win.html`, `australia-gp.html`, `cancellation-article.html`, `china-gp.html`,
+  `f1-33-day-break-japan-miami.html`, `verstappen-article.html`) use a plain `<link rel="stylesheet">` —
+  handled with a second, separate insertion pass.
+- **342 hardcoded amber colour literals swept to Aurora cyan** across `styles.css` and 29 HTML files
+  that had inline `<style>` blocks bypassing the `--f1-red` token (hex `FF6A1A`/`CC5514`/`FFB347` and the
+  `rgba(255, 106, 26, …)` triple, both cases) — the token-value edit alone would have missed these.
+  Caught and hand-fixed three literals the scripted sweep couldn't reach: `championship.html`'s JS-set
+  SVG `circle.setAttribute('stroke', '#0F0C09')` (chart data-point cutout ring, now `#0A0D14`);
+  `championship-calculator.html`'s 4× hardcoded `font-family: 'Chakra Petch', sans-serif` (now
+  `var(--font-body)`); and `styles.css`'s own `body { font-family: 'Chakra Petch', -apple-system, … }`
+  base rule, which had a hardcoded literal instead of `var(--font-display)`/`var(--font-body)` and would
+  have silently kept the old font sitewide even after the token changed — this was the highest-impact
+  single fix in the pass. Also fixed one stray warm literal the amber-specific regex didn't match:
+  `index.html`'s hero `.speed-trail` gradient had a `rgba(255,120,110,…)` hot-ember tip color, changed to
+  a cool cyan-white `rgba(180, 245, 255,…)`.
+- Left untouched, deliberately: semantic/factual colours — team liveries (`--team-*`), live-status green,
+  win/positive green, warning yellow, and the existing `--f1-blue` info/link colour (CLAUDE.md's own
+  carve-out: "team/constructor colours... are fine"). Note for a future pass: `--f1-blue` (#55C2FF) now
+  sits close in hue to the new Aurora accent and may want revisiting for distinctness.
+- Verified in-browser (hard-reload-checked): homepage hero, a page-header hero (`championship.html`),
+  and a driver profile page (`driver-antonelli.html`) — cyan accent, cool dark ground, Tomorrow display
+  type, and Sentient serif body copy all render correctly; confirmed via `document.fonts` that both
+  Tomorrow and Sentient actually loaded (not just linked). Zero console errors on any of the three pages
+  checked. CSS brace-balance clean. `grep` confirmed zero remaining amber literals and all 87 pages
+  carry the Fontshare link.
+
+**Explicitly NOT applied this pass — flagged, not silently skipped:** Aurora's structural fingerprint
+(hanging headers, single-column negative-space dividers, **typographic-only buttons with no visible
+chrome**, N5 floating-pill nav, Ft5 statement footer) is a much larger rebuild than a palette/type swap —
+it would mean restructuring nearly every button and the header/footer shape on all 87 pages. Per
+Hallmark's own "implementation safety rail" (stop and confirm before a redesign that removes/restructures
+multiple components) this was intentionally left for a separate, explicitly-confirmed follow-up rather
+than attempted silently in the same pass as the color/type reskin.
