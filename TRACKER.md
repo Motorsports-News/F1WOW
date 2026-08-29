@@ -281,3 +281,50 @@ it would mean restructuring nearly every button and the header/footer shape on a
 Hallmark's own "implementation safety rail" (stop and confirm before a redesign that removes/restructures
 multiple components) this was intentionally left for a separate, explicitly-confirmed follow-up rather
 than attempted silently in the same pass as the color/type reskin.
+
+### Aurora structural fingerprint — sitewide (2026-08-29)
+
+User confirmed doing the structural follow-up flagged above, plus asked to fix `--f1-blue` for
+distinctness from the new cyan accent. All changes are shared-CSS-only (`styles.css`), no per-page
+markup edits, so they cascade to all 87 pages automatically.
+
+- **`--f1-blue` (info/links) changed** from `#55C2FF` (a light cyan, too close to the new accent hue) to
+  `oklch(72% 0.16 275)` — an indigo-violet, clearly distinct from Aurora's 200° accent.
+- **Nav → N5 Floating pill.** `.header` no longer a full-bleed sticky bar: now a rounded (`20px`),
+  inset (`14px` top/side margin), translucent (`color-mix` over `--f1-dark`) panel with
+  `backdrop-filter: blur(14px)` and a thin cyan-tinted border, still `position: sticky`. Removed a stale
+  `.header { padding: 12px 0 }` override (from a 2026-07-18 refinement pass) that would have collapsed
+  the new horizontal padding back to zero. `.header .container` no longer double-pads inside the pill's
+  own padding. The nav *links* themselves needed no change — a prior round (2026-07-18, per an existing
+  code comment "Quiet text link instead of chunky button") had already made them typographic with an
+  underline-sweep hover, which is exactly Aurora's button voice.
+- **Footer → Ft5 Statement**, restyled (not restructured) in place: kept all existing link columns —
+  they're the site's real secondary navigation given the header nav is intentionally minimal (Home/
+  About/Instagram), so collapsing them to a bare "statement" would have cost real navigability, not just
+  decoration. Instead: removed the `.footer::before` checkered-stripe divider and the `.footer-bottom`
+  hairline border (negative space replaces both), enlarged `.footer-brand` into an actual statement-size
+  line (`clamp(1.6rem, 3vw, 2.2rem)`, was `1.1rem`), added more top padding/margin so the footer opens
+  with breathing room instead of a rule, and quieted the column labels (lighter weight, dimmer color).
+- **Typographic-only buttons — scoped, not universal.** Converted `.cta-btn` (hero's Latest News/Race Hub)
+  and `.quick-nav-btn`/`.quick-nav-btn.primary` (championship page's View Standings/View Graph jump-links)
+  from bordered pill buttons to plain text + trailing arrow with an underline-sweep hover, matching the
+  header nav voice — both are real anchor-link CTAs, not stateful controls, so they qualify cleanly.
+  **Deliberately left as bordered/filled, not converted:** `.subscribe-btn` (a real form-submit control
+  next to a text input — needs a clear click target, already correctly recolored cyan from the prior
+  pass) and `.category-tab.active`/`.tab-btn.active` (stateful selection UI — active/inactive needs to
+  stay visually distinguishable, stripping chrome would remove the only signal of which tab is selected).
+- **Negative-space dividers** checked sitewide: homepage's major sections (`.trending-strip`,
+  `.battle-band`) already use pure margin spacing with no border rules — no change needed there. Left
+  `.race-strip`'s top/bottom hairline alone — it's a functional live-countdown band with its own
+  background colour, not a decorative divider between prose sections, so Aurora's negative-space rule
+  doesn't apply to it.
+- **Not attempted, flagged rather than skipped silently:** Aurora's "Hanging" heading placement and
+  "single column" body composition. Hanging headers are a fairly subtle typographic-indent detail with
+  low payoff relative to the risk of touching every section header across 87 pages; single-column body
+  composition would mean breaking up the standings tables, the side-by-side championship graph, and the
+  driver stat-tile grid — real functional layouts, not decoration, and forcing them into one column would
+  actively hurt readability of comparison data. Both left as-is; happy to revisit if wanted specifically.
+- Verified in-browser (hard-reload-checked): homepage (floating pill header, typographic hero CTAs with
+  working underline-sweep hover, restyled footer with visible negative-space) and `championship.html`
+  (typographic View Standings/View Graph links). Zero console errors on both pages. CSS brace-balance
+  clean.

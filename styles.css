@@ -15,7 +15,7 @@
     /* Signal colors */
     --f1-yellow: #FFC940;  /* "Marshal Yellow" — warnings/secondary emphasis */
     --f1-green: #4ADE80;   /* semantic positive (P1, gains) */
-    --f1-blue: #55C2FF;    /* semantic info/links */
+    --f1-blue: oklch(72% 0.16 275);    /* semantic info/links — indigo-violet, distinct from the cyan accent */
 
     /* Checkered Flag Pattern */
     --f1-checkered: repeating-conic-gradient(
@@ -171,12 +171,18 @@ body::before {
 }
 
 /* Header */
+/* N5 Floating pill nav — Aurora's nav archetype. Detached from the
+   viewport edges with a blurred translucent surface, not a full-bleed bar. */
 .header {
-    background: linear-gradient(135deg, var(--f1-black) 0%, var(--f1-dark) 100%);
-    border-bottom: 3px solid var(--f1-red);
-    padding: 15px 0;
+    background: color-mix(in oklch, var(--f1-dark) 82%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(41, 182, 216, 0.16);
+    border-radius: 20px;
+    margin: 14px 16px 0;
+    padding: 12px 22px;
     position: sticky;
-    top: 0;
+    top: 14px;
     z-index: 100;
     box-shadow: var(--shadow-sm);
 }
@@ -214,6 +220,8 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0;
+    max-width: 100%;
 }
 
 .brand h1, .brand .brand-title {
@@ -844,25 +852,44 @@ body::before {
     flex-wrap: wrap;
 }
 
+/* Typographic-only CTA voice — Aurora's button archetype. Text + a
+   trailing arrow, no filled pill, no boxed chrome; affordance comes from
+   an underline that sweeps in on hover, matching the header nav-link. */
 .cta-btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 14px;
-    padding: 10px 10px 10px 22px;
+    gap: 10px;
+    padding: 10px 2px;
     min-height: 44px;
-    border-radius: 25px;
     font-family: var(--font-body);
     font-size: 1.1rem;
     font-weight: 600;
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 2px;
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, opacity 0.3s ease;
-    border: 2px solid transparent;
+    background: none;
+    border: none;
+    transition: color 0.3s ease, transform 0.3s var(--ease-out), opacity 0.3s ease;
+}
+
+.cta-btn::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    right: 100%;
+    bottom: 4px;
+    height: 2px;
+    background: currentColor;
+    transition: right 0.25s var(--ease-out);
+}
+
+.cta-btn:hover::after {
+    right: 2px;
 }
 
 .cta-btn:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
 }
 
 .cta-btn-label {
@@ -871,30 +898,16 @@ body::before {
     gap: 8px;
 }
 
-/* Button-in-button trailing icon — nested circular wrapper, per
-   DESIGN.md / taste-skill audit "hover physics" gap. */
 .cta-btn-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
     flex-shrink: 0;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.18);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-}
-
-.cta-secondary .cta-btn-icon {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.cta-primary .cta-btn-icon {
-    background: rgba(41, 182, 216, 0.14);
+    transition: transform 0.3s var(--ease-out);
 }
 
 .cta-btn:hover .cta-btn-icon {
-    transform: translate(3px, -2px) scale(1.08);
+    transform: translate(3px, -2px);
 }
 
 .cta-btn span {
@@ -902,28 +915,15 @@ body::before {
 }
 
 .cta-primary {
-    background: var(--f1-dark);
     color: var(--f1-red);
-    border-color: rgba(41, 182, 216, 0.55);
-    box-shadow: var(--shadow-glow);
-}
-
-.cta-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
 }
 
 .cta-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
     color: var(--f1-white);
-    border-color: rgba(255, 255, 255, 0.55);
 }
 
 .cta-secondary:hover {
-    background: rgba(41, 182, 216, 0.3);
-    border-color: var(--f1-red);
-    transform: translateY(-2px);
+    color: var(--f1-red);
 }
 
 /* Countdown Timer */
@@ -2674,11 +2674,13 @@ body::before {
 }
 
 /* Footer */
+/* Ft5 Statement footer — Aurora's footer archetype. Negative space
+   instead of hairline dividers; the brand line reads as a statement. */
 .footer {
     background: var(--f1-black);
-    border-top: 2px solid var(--f1-gray);
-    padding: 30px 0;
-    margin-top: 50px;
+    border-top: none;
+    padding: 70px 0 30px;
+    margin-top: 90px;
     text-align: center;
 }
 
@@ -4112,44 +4114,49 @@ body::before {
     padding: 20px 0;
 }
 
+/* Typographic-only — these are navigational jump-links (#standings,
+   #graphSection), not stateful toggles, so they take the same CTA voice. */
 .quick-nav-btn {
+    position: relative;
     display: inline-flex !important;
     align-items: center;
     gap: 10px;
-    padding: 16px 32px;
-    background: linear-gradient(135deg, #1a1a2e, #16162a);
-    color: #ffffff !important;
+    padding: 10px 2px;
+    background: none;
+    color: var(--f1-white) !important;
     text-decoration: none !important;
-    border-radius: 50px;
+    border: none;
     font-weight: 600;
     font-size: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s var(--ease-out), opacity 0.3s ease;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.quick-nav-btn::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    right: 100%;
+    bottom: 6px;
+    height: 2px;
+    background: currentColor;
+    transition: right 0.25s var(--ease-out);
+}
+
+.quick-nav-btn:hover::after {
+    right: 2px;
 }
 
 .quick-nav-btn:hover {
-    background: linear-gradient(135deg, #2a2a4e, #26264a);
-    border-color: #29B6D8;
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-}
-
-.quick-nav-btn:active {
     transform: translateY(-1px);
 }
 
-.quick-nav-btn.primary {
-    background: var(--f1-dark);
-    border-color: rgba(41, 182, 216, 0.55);
-    color: var(--f1-red);
+.quick-nav-btn:active {
+    transform: translateY(0);
 }
 
-.quick-nav-btn.primary:hover {
-    background: rgba(41, 182, 216, 0.1);
-    border-color: var(--f1-red);
-    box-shadow: var(--shadow-glow);
+.quick-nav-btn.primary {
+    color: var(--f1-red) !important;
 }
 
 .quick-nav-btn svg {
@@ -4843,25 +4850,26 @@ body::before {
 .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 30px;
-    padding: 40px 0 30px;
+    gap: 40px;
+    padding: 0 0 50px;
     text-align: left;
 }
-.footer-col { display: flex; flex-direction: column; gap: 10px; }
+.footer-col { display: flex; flex-direction: column; gap: 12px; }
 .footer-brand {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
     color: var(--f1-white);
+    letter-spacing: -0.01em;
 }
-.footer-tagline { color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; line-height: 1.5; }
+.footer-tagline { color: rgba(255, 255, 255, 0.6); font-size: 0.95rem; line-height: 1.6; max-width: 32ch; }
 .footer-heading {
-    font-weight: 600;
-    color: var(--f1-white);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-size: 0.8rem;
-    margin-bottom: 4px;
+    font-size: 0.75rem;
+    margin-bottom: 6px;
 }
 .footer-col a {
     color: rgba(255, 255, 255, 0.65);
@@ -4871,8 +4879,8 @@ body::before {
 }
 .footer-col a:hover { color: var(--f1-red); }
 .footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 20px 0;
+    border-top: none;
+    padding: 20px 0 0;
 }
 .footer-bottom p { color: rgba(255, 255, 255, 0.62); font-size: 0.8rem; line-height: 1.6; margin: 0; }
 @media (max-width: 768px) {
@@ -4953,9 +4961,6 @@ body::before {
    Masthead lockup + quiet nav. Overrides the
    legacy button-style nav above.
    ============================================ */
-.header {
-    padding: 12px 0;
-}
 .brand {
     display: flex;
     flex-direction: column;
@@ -5765,18 +5770,9 @@ body { font-size: 1rem; }
 .article-section a:hover, .legal-content a:hover {
     text-decoration-color: var(--f1-red);
 }
-/* Footer top edge carries the kerb, closing the brand loop */
+/* Statement footer: negative space closes the page, not a rule or stripe. */
 .footer {
     border-top: none;
-    position: relative;
-}
-.footer::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: repeating-linear-gradient(90deg, var(--f1-red) 0 12px, #f4f4f4 12px 24px);
-    opacity: 0.55;
 }
 
 /* ============================================================
