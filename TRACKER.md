@@ -328,3 +328,21 @@ markup edits, so they cascade to all 87 pages automatically.
   working underline-sweep hover, restyled footer with visible negative-space) and `championship.html`
   (typographic View Standings/View Graph links). Zero console errors on both pages. CSS brace-balance
   clean.
+
+### Aurora font correction (2026-08-29)
+
+User reported "still old fonts" after a hard-refresh + cache-buster bump; investigation confirmed the
+first-pass fonts (Tomorrow display, later swapped to Newsreader body) were correctly wired sitewide and
+did load — the actual problem was that the display-face pick itself was wrong. Re-read
+`genres/atmospheric.md` § Voice properly this time: the atmospheric genre's *default* voice is Geist Sans
+for **both** display and body ("Geist Sans 600... Body — same family, 400"); Aurora is independently
+called out twice (`cobalt.md`, `lumen.md`) as the one atmospheric theme that overrides *body only* to a
+serif ("dark cyan blooms + Sentient serif body") — display stays the genre default. The original
+"Tomorrow" pick was never actually grounded in an Aurora-specific fact, just a plausible guess from the
+genre's display-candidate list.
+
+Corrected: `--font-display` → `'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif` (matches the user's
+own stated expectation exactly), `--font-body` → back to `'Sentient'` (re-confirmed correct, via
+Fontshare). Swept the Google Fonts URL and Fontshare link block across all 87 pages again, bumped the
+cache-busting version string a second time. Verified via `document.fonts` that both Geist and Sentient
+actually load (not just linked) — zero console errors.
