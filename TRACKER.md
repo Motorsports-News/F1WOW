@@ -346,3 +346,52 @@ own stated expectation exactly), `--font-body` → back to `'Sentient'` (re-conf
 Fontshare). Swept the Google Fonts URL and Fontshare link block across all 87 pages again, bumped the
 cache-busting version string a second time. Verified via `document.fonts` that both Geist and Sentient
 actually load (not just linked) — zero console errors.
+
+### Homepage redesign — motion, depth, premium CTAs (2026-08-29)
+
+User ran the `redesign-existing-projects` taste skill's audit against the live homepage ("looks complete
+slop" despite the correct Aurora palette/fonts) and asked for a full visual/motion redesign — more
+motion, premium CTAs, parallax, top-notch visuals — theme (colors/fonts) unchanged. Went through
+`EnterPlanMode`/`ExitPlanMode` first since this was a broad, multi-file redesign; plan approved (saved at
+`~/.claude/plans/flickering-meandering-moon.md`). Confirmed via question: primary CTAs go back to a
+**filled premium button** (reversing just that one part of the earlier Aurora structural-fingerprint
+pass), not the typographic-only treatment.
+
+- **Ambient blooms (page-level).** Added `body::before` with two fixed, low-opacity radial-gradient cyan
+  blooms — this is literally Aurora's own documented canvas treatment (`genres/atmospheric.md`: "up to
+  two radial-gradient blooms, ~20-30% footprint, fixed-attached, no animation") that had never actually
+  been applied below the hero. Fixes the "flat, textureless sections" finding sitewide-on-homepage with
+  one CSS rule.
+- **Premium CTAs.** `.cta-btn`/`.cta-primary`/`.cta-secondary` (hero) and `.subscribe-btn` (footer) are
+  filled again: glassy `color-mix()` cyan-tinted background, tinted glow shadow (`--shadow-glow`/
+  `--shadow-lg`), hover lift, button-in-button icon circle. `.quick-nav-btn` (championship page) was left
+  typographic — out of scope for this homepage-only pass.
+- **Hero parallax.** Folded into the existing `initHeroPin()` GSAP timeline rather than a separate
+  scroll listener — the track/car/speed-line layer now drifts (`y: -34`) at a different rate than the
+  pinned foreground during the scroll beat. Deliberately not a second independent mechanism: an earlier
+  draft used a standalone rAF-driven parallax on the same elements the pin's closing-fade already
+  animates, which would have fought over the same transforms every frame.
+- **Championship Battle bar reveal.** `initChampionshipBand()`'s existing 0→full points-bar fill (which
+  fired on data-load, before the user ever scrolled this far, so it was never actually seen) now fires via
+  `IntersectionObserver` the first time the section scrolls into view, staggered per row. Added a subtle
+  `background-attachment: fixed` glow behind the section for a light parallax-drift feel.
+  **Correctness note:** initially wrote a second, separate `initChampionshipBarReveal()` function against
+  guessed class names (`.standings-bar-fill`/`.points-bar-fill`) before checking the real render code —
+  caught this by grepping for the actual class (`.battle-bar`) and folded the reveal into the existing
+  function instead of shipping a dead/wrong second function.
+- **Spotlight-border hover.** Added a cursor-tracked radial-gradient glow (CSS `--mx`/`--my` custom
+  properties, set via a single delegated `pointermove` listener in `initSpotlightCards()`) to `.feature-card`
+  and `.trending-item:not(:first-child)`. **Bug caught during verification:** the trending-item version's
+  glow had `z-index: -1`, placing it *behind* the card's own opaque background where it was completely
+  invisible — confirmed via `getComputedStyle` (all values correct, just unreachable visually) before
+  finding the actual cause. Fixed to `z-index: 1`, then bumped both glows' opacity (18%→30%, 22%→34%)
+  since the original values were too subtle to read as an intentional effect once actually visible.
+- **More Articles list** already had a left-accent bar (fills on hover, team-colour-coded) and a sweep-
+  light effect from earlier work — checked against the plan's item F and found it already satisfied;
+  no change needed.
+- Verified in-browser: CTAs render filled/glassy, championship bars fill with stagger on scroll-into-view
+  (confirmed via `getComputedStyle` widths, not just visually), spotlight glow confirmed visible via zoomed
+  screenshot after the z-index fix, zero console errors throughout. Bumped the cache-busting version
+  string again.
+- **Not done, per the approved plan's scope:** rollout to the other ~86 pages — homepage only this round,
+  pending the user liking the direction.

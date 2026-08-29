@@ -807,15 +807,38 @@ document.addEventListener('DOMContentLoaded', () => {
     initArticleJumpNav();
     initDriverSparkline();
     initHeroPin();
+    initSpotlightCards();
 });
+
+// Spotlight-border hover: tracks the cursor position over feature cards and
+// trending items via CSS custom properties (--mx/--my), which the matching
+// CSS radial-gradient glow reads. Delegated to the document so it works for
+// cards rendered after this runs (e.g. the trending strip's BUILD block is
+// static HTML, but this keeps it robust either way). No-op when reduced
+// motion is requested — the glow simply never appears (no fallback needed,
+// hover/border-color feedback still exists via the base CSS).
+function initSpotlightCards() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const selector = '.feature-card, .trending-item:not(:first-child)';
+    document.addEventListener('pointermove', (e) => {
+        const card = e.target.closest(selector);
+        if (!card) return;
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        card.style.setProperty('--my', `${e.clientY - r.top}px`);
+    }, { passive: true });
+}
 
 // Homepage hero: pins the hero in view for an extra scroll beat while a
 // telemetry-style readout cycles through three lines, then closes the scene
 // (car/track/speed-lines settle back and fade) before releasing into normal
 // scroll — one continuous scroll-scrubbed sequence rather than a competing
-// second effect. Purely presentational — no data, no new state. Falls back
-// to showing the first line statically if motion is reduced or GSAP/
-// ScrollTrigger aren't available.
+// second effect. Also carries the hero's parallax: the track/car/speed-line
+// background layer drifts slower than the pinned foreground, all inside the
+// same timeline so nothing fights over the same elements' transforms.
+// Purely presentational — no data, no new state. Falls back to showing the
+// first line statically if motion is reduced or GSAP/ScrollTrigger aren't
+// available.
 function initHeroPin() {
     const hero = document.querySelector('.hero-section');
     const lines = document.querySelectorAll('.hero-telemetry-line');
@@ -839,18 +862,25 @@ function initHeroPin() {
         }
     });
 
+    const closeAt = (lines.length - 1) * 0.6 + 0.65;
+    const scene = hero.querySelectorAll('.car-layer, .hero-speed-lines, .track');
+    if (scene.length) {
+        // Parallax: the background scene drifts up slower than the scroll
+        // itself, reading as depth-of-field while the beat plays out.
+        tl.to(scene, { y: -34, ease: 'none', duration: closeAt }, 0);
+    }
+
     lines.forEach((line, i) => {
         const at = i * 0.6;
         tl.to(line, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, at)
           .to(line, { opacity: 0, y: -12, duration: 0.25, ease: 'power2.in' }, at + 0.4);
     });
 
-    const closeAt = (lines.length - 1) * 0.6 + 0.65;
-    const scene = hero.querySelectorAll('.car-layer, .hero-speed-lines, .track');
     if (scene.length) {
         tl.to(scene, { opacity: 0, scale: 0.97, duration: 0.4, ease: 'power2.in' }, closeAt);
     }
 }
+
 
 // Driver profile points-trend sparkline — reads the per-round points
 // already present in the season-log table (last column of each row), so
@@ -1805,12 +1835,30 @@ async function initChampionshipBand() {
                 <div class="battle-pts">${sanitizeHTML(d.points)}<span>PTS</span></div>
             </div>`;
         }).join('');
-        // animate bars in
-        requestAnimationFrame(() => {
+        // Animate bars in the first time the section scrolls into view,
+        // rather than as soon as data loads (which usually finishes before
+        // the user ever scrolls this far, so the fill was never seen).
+        const targetWidths = top.map((d, i) => ((parseFloat(d.points) / lead) * 100).toFixed(1) + '%');
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fill = () => {
             band.querySelectorAll('.battle-bar').forEach((bar, i) => {
-                bar.style.width = ((parseFloat(top[i].points) / lead) * 100).toFixed(1) + '%';
+                bar.style.transition = prefersReducedMotion ? 'none' : `width 0.9s ${i * 0.08}s cubic-bezier(0.16, 1, 0.3, 1)`;
+                bar.style.width = targetWidths[i];
             });
-        });
+        };
+        if (prefersReducedMotion || typeof IntersectionObserver === 'undefined') {
+            requestAnimationFrame(fill);
+        } else {
+            const wrap = band.closest('.battle-band') || band;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    fill();
+                    observer.disconnect();
+                });
+            }, { threshold: 0.3 });
+            observer.observe(wrap);
+        }
     } catch (e) {
         const wrap = band.closest('.battle-band');
         if (wrap) wrap.setAttribute('hidden', '');

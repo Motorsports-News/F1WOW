@@ -96,6 +96,21 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+/* Aurora ambient blooms — the theme's own signature canvas treatment
+   (genres/atmospheric.md: "up to two radial-gradient blooms, ~20-30%
+   footprint, fixed-attached, no animation"). Page-level, sits behind all
+   content so every section carries depth, not just the hero. */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 55% 42% at 12% 8%, color-mix(in oklch, var(--f1-red) 16%, transparent), transparent 70%),
+        radial-gradient(ellipse 50% 45% at 92% 62%, color-mix(in oklch, var(--f1-red) 12%, transparent), transparent 70%);
+}
+
 /* Prevent images from causing horizontal overflow */
 img, picture, video, canvas, svg {
     max-width: 100%;
@@ -856,43 +871,28 @@ body::before {
 }
 
 /* Typographic-only CTA voice — Aurora's button archetype. Text + a
-   trailing arrow, no filled pill, no boxed chrome; affordance comes from
-   an underline that sweeps in on hover, matching the header nav-link. */
+   glassy filled pill with a tinted glow and a button-in-button trailing
+   icon — "premium CTA" per the 2026-08-29 homepage redesign round. */
 .cta-btn {
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 2px;
+    gap: 14px;
+    padding: 10px 10px 10px 22px;
     min-height: 44px;
+    border-radius: 25px;
     font-family: var(--font-body);
     font-size: 1.1rem;
     font-weight: 600;
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 2px;
-    background: none;
-    border: none;
-    transition: color 0.3s ease, transform 0.3s var(--ease-out), opacity 0.3s ease;
-}
-
-.cta-btn::after {
-    content: '';
-    position: absolute;
-    left: 2px;
-    right: 100%;
-    bottom: 4px;
-    height: 2px;
-    background: currentColor;
-    transition: right 0.25s var(--ease-out);
-}
-
-.cta-btn:hover::after {
-    right: 2px;
+    border: 1px solid transparent;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s var(--ease-out), box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
 .cta-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 .cta-btn-label {
@@ -905,12 +905,15 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
-    transition: transform 0.3s var(--ease-out);
+    border-radius: 50%;
+    transition: transform 0.4s var(--ease-out), background-color 0.3s ease;
 }
 
 .cta-btn:hover .cta-btn-icon {
-    transform: translate(3px, -2px);
+    transform: translate(3px, -2px) scale(1.08);
 }
 
 .cta-btn span {
@@ -918,15 +921,39 @@ body::before {
 }
 
 .cta-primary {
-    color: var(--f1-red);
+    background: color-mix(in oklch, var(--f1-red) 14%, var(--f1-dark));
+    color: var(--f1-white);
+    border-color: color-mix(in oklch, var(--f1-red) 55%, transparent);
+    box-shadow: var(--shadow-glow);
+}
+
+.cta-primary .cta-btn-icon {
+    background: color-mix(in oklch, var(--f1-red) 30%, transparent);
+}
+
+.cta-primary:hover {
+    background: color-mix(in oklch, var(--f1-red) 22%, var(--f1-dark));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .cta-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: var(--f1-white);
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.cta-secondary .cta-btn-icon {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .cta-secondary:hover {
+    background: color-mix(in oklch, var(--f1-red) 16%, transparent);
+    border-color: var(--f1-red);
     color: var(--f1-red);
+    transform: translateY(-2px);
 }
 
 /* Countdown Timer */
@@ -1000,6 +1027,8 @@ body::before {
 /* One containment layer — see hallmark audit "card-in-card" finding.
    A prior pass nested an outer shell + inner core here; flattened. */
 .feature-card {
+    position: relative;
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     border-radius: 14px;
@@ -1015,6 +1044,28 @@ body::before {
     transform: translateY(-4px);
     border-color: rgba(41, 182, 216, 0.5);
     box-shadow: var(--shadow-md);
+}
+
+/* Spotlight-border — a soft glow that follows the cursor, tracked via
+   --mx/--my set by initSpotlightCards() in script.js. Scoped to the card,
+   never the whole page. */
+.feature-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, var(--f1-red) 34%, transparent), transparent 70%);
+    transition: opacity 0.3s ease;
+}
+
+.feature-card:hover::after {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .feature-card::after { transition: none; }
 }
 
 .feature-card:not(.feature-card-large) {
@@ -2354,23 +2405,24 @@ body::before {
     justify-content: center;
     gap: 10px;
     padding: 16px 32px;
-    background: var(--f1-dark);
-    border: 1px solid rgba(41, 182, 216, 0.55);
+    background: color-mix(in oklch, var(--f1-red) 14%, var(--f1-dark));
+    border: 1px solid color-mix(in oklch, var(--f1-red) 55%, transparent);
     border-radius: 12px;
-    color: var(--f1-red);
+    color: var(--f1-white);
     font-weight: 600;
     font-size: 1.05rem;
     cursor: pointer;
     transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     white-space: nowrap;
     font-family: var(--font-body);
+    box-shadow: var(--shadow-glow);
 }
 
 .subscribe-btn:hover {
-    background: rgba(41, 182, 216, 0.1);
+    background: color-mix(in oklch, var(--f1-red) 22%, var(--f1-dark));
     border-color: var(--f1-red);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--shadow-lg);
 }
 
 .subscribe-btn:active {
@@ -5185,6 +5237,8 @@ body::before {
     font-size: 1.2rem;
 }
 .trending-item {
+    position: relative;
+    isolation: isolate;
     display: flex;
     gap: 14px;
     align-items: flex-start;
@@ -5196,6 +5250,21 @@ body::before {
     transition: transform 0.25s ease, border-color 0.25s ease;
 }
 .trending-item:hover { transform: translateY(-2px); border-color: var(--f1-red); }
+.trending-item:not(:first-child)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(180px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, var(--f1-red) 30%, transparent), transparent 70%);
+    transition: opacity 0.3s ease;
+}
+.trending-item:not(:first-child):hover::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .trending-item:not(:first-child)::after { transition: none; }
+}
 .trending-rank {
     font-family: var(--font-display);
     font-size: 1.6rem;
@@ -5611,7 +5680,24 @@ body { font-size: 1rem; }
 /* ============================================
    STAGE 2B — CHAMPIONSHIP BATTLE BAND (live)
    ============================================ */
-.battle-band { margin: 72px 0; }
+.battle-band {
+    margin: 72px 0;
+    position: relative;
+}
+/* Subtle fixed-attachment glow — reads as a faint parallax drift behind
+   the section as the page scrolls past it. */
+.battle-band::before {
+    content: '';
+    position: absolute;
+    inset: -40px -20px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 80% at 50% 40%, color-mix(in oklch, var(--f1-red) 8%, transparent), transparent 75%);
+    background-attachment: fixed;
+}
+@media (prefers-reduced-motion: reduce) {
+    .battle-band::before { background-attachment: scroll; }
+}
 .battle-band-head {
     display: flex;
     align-items: baseline;
