@@ -36,9 +36,12 @@
     --team-alfaromeo: #C92D4B;
     --team-haas: #B6BABD;
 
-    /* Typography — Hallmark "Aurora": Tomorrow (display) + Sentient (body),
-       see DESIGN.md */
-    --font-display: 'Tomorrow', ui-sans-serif, system-ui, sans-serif;
+    /* Typography — Hallmark "Aurora" (atmospheric genre): the genre's default
+       voice is Geist Sans for both display and body ("Voice" in
+       genres/atmospheric.md); Aurora is called out twice (cobalt.md,
+       lumen.md — "dark cyan blooms + Sentient serif body") as the one
+       theme that overrides body to a serif. See DESIGN.md. */
+    --font-display: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Sentient', ui-serif, Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
