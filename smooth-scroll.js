@@ -4,33 +4,30 @@
  * the rest of this repo. Skipped entirely when the visitor asks for reduced
  * motion, and fails silently to native scrolling if the module can't load.
  *
- * Lenis is kept in sync with GSAP ScrollTrigger where ScrollTrigger is present,
- * otherwise scroll-triggered reveals would fire against stale positions.
+ * Lenis is kept in sync with GSAP ScrollTrigger only when triggers actually
+ * exist; the card reveals run on IntersectionObserver, so usually none do.
  */
 (function () {
-    /* Scroll-change notifier.
+    /* There is deliberately NO synthetic scroll-event shim here.
      *
-     * Everything on this site that reacts to scrolling (reading-progress bar,
-     * back-to-top, hero camera, progress HUD) listens for the native window
-     * 'scroll' event. Several scroll sources do not reliably emit one --
-     * Lenis drives its own loop, and scrollIntoView / programmatic jumps can
-     * move the page without notifying those listeners. Polling the real
-     * position and emitting only on change keeps them all working no matter
-     * how the scroll was produced. Dispatching does not move the page, so
-     * this cannot feed back on itself.
+     * A previous version polled window.scrollY and re-dispatched a native
+     * 'scroll' Event, and Lenis re-dispatched one too, on the theory that
+     * Lenis drives its own loop and listeners would otherwise freeze. Both
+     * halves of that were wrong and the combination was actively harmful:
      *
-     * Runs regardless of reduced-motion, since it is synchronisation rather
-     * than animation.
+     *  - Lenis moves the REAL scroll position (it calls window.scrollTo), so
+     *    the browser already fires a genuine native 'scroll' event. Every
+     *    listener on this site works untouched without any help.
+     *  - Lenis itself LISTENS for native scroll (onNativeScroll). Dispatching
+     *    a synthetic one made it emit 'scroll', which dispatched another
+     *    synthetic one, which... The console showed
+     *    "RangeError: Maximum call stack size exceeded" on every single
+     *    scroll. That recursion was the scroll stutter users reported.
+     *
+     * The symptom that originally prompted the shim -- a frozen progress bar
+     * -- was an artefact of testing in a backgrounded tab, where the browser
+     * suspends requestAnimationFrame. It was never a Lenis problem.
      */
-    var lastY = -1;
-    (function watch() {
-        var y = window.scrollY;
-        if (y !== lastY) {
-            lastY = y;
-            window.dispatchEvent(new Event('scroll'));
-        }
-        requestAnimationFrame(watch);
-    })();
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -60,18 +57,14 @@
                 lenis.scrollTo(target, { offset: -80 });
             });
 
-            // Lenis drives scrolling itself and does NOT emit the native
-            // window 'scroll' event. Everything on this site that reacts to
-            // scrolling listens for that event -- the reading-progress bar,
-            // the back-to-top button, the hero camera and the progress HUD --
-            // so without this shim they all silently freeze. Re-dispatching
-            // keeps every existing listener working untouched.
-            lenis.on('scroll', function () {
-                window.dispatchEvent(new Event('scroll'));
-            });
-
             if (window.ScrollTrigger) {
-                lenis.on('scroll', window.ScrollTrigger.update);
+                // Only wire ScrollTrigger up if something actually registered
+                // a trigger. The card reveals now run on IntersectionObserver,
+                // so on most pages this set is empty and calling .update() every
+                // frame would be pure overhead.
+                if (window.ScrollTrigger.getAll().length) {
+                    lenis.on('scroll', window.ScrollTrigger.update);
+                }
                 if (window.gsap) {
                     window.gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
                     window.gsap.ticker.lagSmoothing(0);

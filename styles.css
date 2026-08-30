@@ -6579,13 +6579,12 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
     }
 }
 
-/* Skip rendering work for article cards that are off-screen. With 30+ cards
-   on the index pages this measurably cuts scroll cost. The intrinsic size
-   keeps the scrollbar stable so the page doesn't jump as cards enter. */
-.article-preview-card {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 220px;
-}
+/* content-visibility:auto was tried here and REMOVED deliberately.
+   The cards measure 253px but the intrinsic-size placeholder was 220px, so
+   every card entering the viewport resized the document by 33px. Across an
+   index page that is hundreds of pixels of cumulative scroll drift, which
+   reads as the page catching and jumping. The blur removals above were the
+   real win; this was speculative and cost more than it saved. */
 
 /* Base link colour.
  *

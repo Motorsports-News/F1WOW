@@ -423,60 +423,42 @@ function initBackToTop() {
     });
 }
 
-// Scroll Animations — cinematic staggered fade-up via GSAP ScrollTrigger,
-// with a CSS-only fallback if motion is reduced or GSAP fails to load.
-// See DESIGN.md "Motion": reduced-motion is checked once, globally, gating
-// every GSAP call rather than per-animation.
+// Scroll Animations - staggered fade-up, triggered by IntersectionObserver
+// and animated by a plain CSS transition.
+//
+// This deliberately uses NEITHER ScrollTrigger nor GSAP:
+//
+//  - ScrollTrigger creates one trigger instance per element (38 of them on the
+//    homepage) and re-measures the whole set on every .update(). With Lenis
+//    driving the scroll that ran at least once per frame, so a simple fade-in
+//    cost 38 trigger recalculations per frame down the length of the page.
+//  - Driving the tween through GSAP made the reveal depend on the GSAP ticker.
+//    Anything that stalls the ticker leaves cards stranded at opacity 0 -- an
+//    invisible-content failure for what is only a fade.
+//
+// IntersectionObserver costs nothing per scroll frame, and the CSS transition
+// runs on the compositor. Adding the class is synchronous, so content cannot
+// end up permanently hidden. `.fade-in` animates opacity + transform only; an
+// earlier version also animated filter: blur(), which forced a per-frame GPU
+// blur across every card and was a real jank source.
+//
+// See DESIGN.md "Motion": the sitewide prefers-reduced-motion media query
+// already neutralizes this transition, so no JS motion check is needed here.
 function initScrollAnimations() {
     const revealElements = document.querySelectorAll('.article-preview-card, .standings-card, .schedule-card, .section-header');
     if (!revealElements.length) return;
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const gsapReady = !prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
-
-    if (!gsapReady) {
-        // Original CSS-driven fade: also the reduced-motion-safe path, since the
-        // sitewide prefers-reduced-motion media query already neutralizes the
-        // underlying CSS transition.
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible', 'fade-in');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);   // reveal once, then stop watching
         });
-
-        revealElements.forEach((el, index) => {
-            el.classList.add('fade-in', `stagger-${(index % 5) + 1}`);
-            observer.observe(el);
-        });
-        return;
-    }
-
-    gsap.registerPlugin(ScrollTrigger);
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
     revealElements.forEach((el, index) => {
-        gsap.fromTo(el,
-            // opacity + transform only. The previous version also animated
-            // filter: blur(), which forces an expensive per-frame GPU blur
-            // on every one of ~36 cards and was a real scroll-jank source.
-            { opacity: 0, y: 28 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.7,
-                ease: 'power2.out',
-                delay: (index % 5) * 0.06,
-                scrollTrigger: {
-                    trigger: el,
-                    start: 'top 88%',
-                    once: true
-                }
-            }
-        );
+        el.classList.add('fade-in', `stagger-${(index % 5) + 1}`);
+        observer.observe(el);
     });
 }
 
