@@ -510,3 +510,49 @@ human with a real trackpad.
 
 **Not done this round:** OG card images are still pre-rendered JPGs with the old red F1WOW branding
 baked in, which now clashes with the steel-blue palette — they need regenerating.
+
+---
+
+## Session log — 2026-08-30 (later) · Scroll recursion, OG cards
+
+**The scroll lag had a root cause, not just inefficiency.** `smooth-scroll.js`
+re-dispatched a native `scroll` Event whenever Lenis emitted one. Lenis *listens* for
+native scroll (`onNativeScroll`), so each synthetic event made it emit again, dispatching
+again — the console showed `RangeError: Maximum call stack size exceeded` on every scroll.
+The file's own comment claimed *"Dispatching does not move the page, so this cannot feed
+back on itself"*: true about the page position, wrong about Lenis.
+
+That shim should never have existed. It was added to fix a frozen progress bar that turned
+out to be rAF suspension in a backgrounded test tab. **Lenis moves the real scroll position
+via `window.scrollTo`, so genuine native scroll events already fire** and every listener
+works untouched. Removed entirely.
+
+Two more per-frame costs went with it:
+- Reveals ran on ScrollTrigger — one trigger per element (38 on the homepage), with the
+  whole set re-measured on every `.update()`, i.e. once per frame under Lenis. Now
+  IntersectionObserver + the `.fade-in`/`.visible` CSS transition that already existed.
+  ScrollTrigger count is 0, so the Lenis↔ScrollTrigger wiring is skipped too.
+- Driving that fade through GSAP made it depend on the GSAP ticker; a stalled ticker
+  stranded cards at `opacity: 0`. The CSS class is added synchronously, so content can no
+  longer end up permanently invisible. Section headers now reach opacity 1 instead of
+  sticking mid-tween at 0.395.
+
+Also reverted last round's `content-visibility: auto` — cards measure 253px against a
+220px intrinsic-size placeholder, so each one entering the viewport resized the document
+by 33px. Speculative, and it cost more than it saved.
+
+**OG cards — all 38 regenerated.** All three generators painted `RED = (225, 6, 0)`, which
+is `#E10600`, **Formula 1's own brand red** — a breach of hard rule 1, not merely an
+off-palette colour. They also hardcoded `C:/Windows/Fonts/bahnschrift.ttf` inside a bare
+try/except, so on macOS every card silently rendered in Pillow's bitmap default. The
+drawing code was copy-pasted three ways, which is why the red survived in three places.
+
+Now one shared renderer, `scripts/og_card.py`, called by all three scripts. Carbon/bone/
+steel with Cabinet Grotesk + Satoshi; the kerb stripes are replaced by a faint receding
+track ribbon echoing the hero. Fonts vendored as TTFs under `scripts/fonts/` (Pillow can't
+read Fontshare's woff2) under the ITF Free Font License, which permits commercial use.
+Verified: meta tags byte-identical before/after, every referenced card present, zero
+red-ish pixels in the output.
+
+**Still open:** the "buttery smooth" claim needs a human check — a backgrounded automation
+tab suspends rAF and Lenis, so scroll feel cannot be measured programmatically here.
