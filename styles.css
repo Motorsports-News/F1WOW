@@ -6423,3 +6423,160 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
 .quali-fact { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; }
 .quali-fact .qf-num { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
 .quali-fact .qf-label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-top: 6px; letter-spacing: 0.03em; }
+
+/* ============================================================
+   HOMEPAGE EDITORIAL LAYER (2026-08-30)
+   Scoped to .home so the other ~86 pages keep their current
+   layout until the system is rolled out to them. Structure and
+   scale only — colour and type come from the tokens above.
+   ============================================================ */
+
+/* Section rhythm: generous, asymmetric, with a hairline that runs
+   past the heading rather than boxing it in. */
+.home .content-section > section,
+.home .trending-strip,
+.home .battle-band,
+.home .articles-section {
+    margin-block: clamp(72px, 11vw, 168px);
+}
+
+.home .trending-strip-head,
+.home .battle-band-head,
+.home .section-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    align-items: end;
+    padding-bottom: clamp(18px, 2.4vw, 28px);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: clamp(26px, 4vw, 48px);
+}
+@media (min-width: 860px) {
+    .home .trending-strip-head,
+    .home .battle-band-head,
+    .home .section-header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 28px;
+    }
+}
+.home .trending-strip-head h2,
+.home .battle-band-head h2,
+.home .section-header h2 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    /* caps out well below the hero so the hero stays the loudest thing */
+    font-size: clamp(1.9rem, 5.2vw, 3.6rem) !important;
+    line-height: .96;
+    letter-spacing: -.035em;
+    margin: 0;
+    text-wrap: balance;
+}
+.home .battle-band-link,
+.home .section-header .live-badge {
+    align-self: end;
+    justify-self: start;
+}
+@media (min-width: 860px) {
+    .home .battle-band-link { justify-self: end; }
+}
+
+/* Trending: the lead story dominates, the rest step down hard */
+.home .trending-items { gap: 14px; }
+.home .trending-item:first-child { padding: clamp(22px, 3vw, 34px); }
+.home .trending-item:first-child h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.9vw, 2rem);
+    line-height: 1.08;
+    letter-spacing: -.02em;
+}
+.home .trending-item:first-child .trending-rank {
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: .8;
+}
+
+/* Article index: collapsed to a preview until expanded.
+   Search/filter set inline display on cards, and inline styles beat a
+   class, so hidden cards reappear correctly when a search matches. */
+.home #articlesGrid > .article-preview-card.is-folded { display: none; }
+.home .index-more {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    margin-top: 26px;
+    padding: 18px 22px;
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--f1-white);
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color .25s var(--ease-out), color .25s var(--ease-out);
+}
+.home .index-more:hover { border-color: var(--f1-red); color: var(--f1-red); }
+.home .index-more:focus-visible { outline: 2px solid var(--f1-red); outline-offset: 3px; }
+.home .index-more .count { margin-left: auto; color: var(--f1-light-gray); }
+
+/* Progress HUD — persistent, reacts to scroll depth. Sits clear of the
+   back-to-top control and hides on small screens where it would crowd. */
+.progress-hud {
+    position: fixed;
+    left: 22px;
+    bottom: 22px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: color-mix(in srgb, var(--f1-dark) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: .66rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--f1-light-gray);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .4s var(--ease-out), transform .4s var(--ease-out);
+    pointer-events: none;
+}
+.progress-hud.is-on { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.progress-hud-ring { display: block; width: 26px; height: 26px; flex: 0 0 auto; transform: rotate(-90deg); }
+.progress-hud-ring circle { fill: none; stroke-width: 3; }
+.progress-hud-ring .bg { stroke: rgba(237, 237, 232, .16); }
+.progress-hud-ring .fg { stroke: var(--f1-red); stroke-linecap: round; transition: stroke-dashoffset .2s linear; }
+.progress-hud-lvl { color: var(--f1-white); }
+.progress-hud-badges { display: flex; gap: 5px; }
+.progress-hud-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(237, 237, 232, .18);
+    transition: background-color .35s var(--ease-out);
+}
+.progress-hud-dot.on { background: var(--f1-red); }
+@media (max-width: 760px) { .progress-hud { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+    .progress-hud { transition: none; }
+    .progress-hud-ring .fg { transition: none; }
+}
+
+/* Touch tap targets — audited at 320/390/414px and several inline links
+   came in at 23-27px tall, under the 44px minimum. Scoped to coarse
+   pointers so desktop vertical rhythm is unaffected. Not scoped to .home:
+   the footer and race strip appear across the site. */
+@media (pointer: coarse) {
+    .footer-col a,
+    .race-strip-link,
+    .battle-band-link,
+    .title-tracker-link,
+    .hero-quicklinks a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+}

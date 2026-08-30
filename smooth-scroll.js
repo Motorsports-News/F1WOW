@@ -8,6 +8,30 @@
  * otherwise scroll-triggered reveals would fire against stale positions.
  */
 (function () {
+    /* Scroll-change notifier.
+     *
+     * Everything on this site that reacts to scrolling (reading-progress bar,
+     * back-to-top, hero camera, progress HUD) listens for the native window
+     * 'scroll' event. Several scroll sources do not reliably emit one --
+     * Lenis drives its own loop, and scrollIntoView / programmatic jumps can
+     * move the page without notifying those listeners. Polling the real
+     * position and emitting only on change keeps them all working no matter
+     * how the scroll was produced. Dispatching does not move the page, so
+     * this cannot feed back on itself.
+     *
+     * Runs regardless of reduced-motion, since it is synchronisation rather
+     * than animation.
+     */
+    var lastY = -1;
+    (function watch() {
+        var y = window.scrollY;
+        if (y !== lastY) {
+            lastY = y;
+            window.dispatchEvent(new Event('scroll'));
+        }
+        requestAnimationFrame(watch);
+    })();
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     import('https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.mjs')
@@ -34,6 +58,16 @@
                 if (!target) return;
                 e.preventDefault();
                 lenis.scrollTo(target, { offset: -80 });
+            });
+
+            // Lenis drives scrolling itself and does NOT emit the native
+            // window 'scroll' event. Everything on this site that reacts to
+            // scrolling listens for that event -- the reading-progress bar,
+            // the back-to-top button, the hero camera and the progress HUD --
+            // so without this shim they all silently freeze. Re-dispatching
+            // keeps every existing listener working untouched.
+            lenis.on('scroll', function () {
+                window.dispatchEvent(new Event('scroll'));
             });
 
             if (window.ScrollTrigger) {

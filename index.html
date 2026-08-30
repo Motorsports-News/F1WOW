@@ -57,7 +57,7 @@
     </script>
 
     <link rel="icon" type="image/svg+xml" href="favicon1.svg">
-    <link rel="stylesheet" href="styles.css?v=20260830c">
+    <link rel="stylesheet" href="styles.css?v=20260830d">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
@@ -185,7 +185,7 @@
     <script>/* Defer AdSense until idle for faster first paint; literal tag retained in noscript for verification */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669';s.crossOrigin='anonymous';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
 <noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669" crossorigin="anonymous"></script></noscript>
 </head>
-<body>
+<body class="home">
     <a class="skip-link" href="#main">Skip to content</a>
     <!-- Reading Progress Bar -->
     <div class="reading-progress-bar" id="readingProgress"></div>
@@ -258,10 +258,8 @@
             </div>
             <span class="hero-scroll-cue" aria-hidden="true">Scroll</span>
         </section>
-        <!-- Homepage achievement/progress layer (localStorage, no backend) -->
-        <div class="container">
-            <div class="achievement-widget" id="achievementWidget" aria-label="Reading progress and achievements"></div>
-        </div>
+        <!-- Progress/achievement HUD is injected by gamification.js as a
+             fixed element; it no longer occupies a slot in the page flow. -->
         <!-- Broadcast strip: next race + countdown -->
         <div class="race-strip">
             <div class="container race-strip-inner">
@@ -893,8 +891,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="hero-scene.js?v=1" type="module"></script>
-    <script src="smooth-scroll.js?v=1" type="module"></script>
-    <script src="gamification.js?v=2"></script>
+    <script src="smooth-scroll.js?v=4" type="module"></script>
+    <script src="gamification.js?v=3"></script>
     <script src="script.js?v=20260830b"></script>
     <script src="js/homepage-tracker.js"></script>
 </body>
