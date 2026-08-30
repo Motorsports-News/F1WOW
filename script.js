@@ -460,11 +460,13 @@ function initScrollAnimations() {
 
     revealElements.forEach((el, index) => {
         gsap.fromTo(el,
-            { opacity: 0, y: 28, filter: 'blur(6px)' },
+            // opacity + transform only. The previous version also animated
+            // filter: blur(), which forces an expensive per-frame GPU blur
+            // on every one of ~36 cards and was a real scroll-jank source.
+            { opacity: 0, y: 28 },
             {
                 opacity: 1,
                 y: 0,
-                filter: 'blur(0px)',
                 duration: 0.7,
                 ease: 'power2.out',
                 delay: (index % 5) * 0.06,

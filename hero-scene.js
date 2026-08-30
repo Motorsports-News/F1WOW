@@ -133,6 +133,64 @@
         const ribbon = new Mesh(gl, { geometry, program });
         ribbon.setParent(scene);
 
+        // --- particle field ---------------------------------------------------
+        // The track alone reads as a flat diagram. Depth only becomes legible
+        // when there are things at MANY different distances: near particles
+        // sweep past quickly, far ones barely move, and that differential
+        // parallax is what actually sells three dimensions.
+        const PCOUNT = isPhone ? 260 : 900;
+        const ppos = new Float32Array(PCOUNT * 3);
+        const psize = new Float32Array(PCOUNT);
+        for (let i = 0; i < PCOUNT; i++) {
+            ppos[i * 3]     = (Math.random() - 0.5) * 46;              // spread wide
+            ppos[i * 3 + 1] = Math.pow(Math.random(), 1.6) * 16 - 1.6; // denser low
+            ppos[i * 3 + 2] = -Math.random() * 95;                     // through depth
+            psize[i] = Math.random() * 2.4 + 0.7;
+        }
+        const pGeo = new Geometry(gl, {
+            position: { size: 3, data: ppos },
+            aSize: { size: 1, data: psize }
+        });
+        const pProg = new Program(gl, {
+            vertex: `
+                attribute vec3 position;
+                attribute float aSize;
+                uniform mat4 modelViewMatrix;
+                uniform mat4 projectionMatrix;
+                uniform float uTime;
+                varying float vA;
+                void main(){
+                    vec3 p = position;
+                    p.y += sin(uTime * 0.35 + p.x * 0.6) * 0.16;   // slow drift
+                    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+                    gl_Position = projectionMatrix * mv;
+                    float dist = -mv.z;
+                    // perspective scaling is the depth cue: near = big, far = small
+                    gl_PointSize = aSize * (150.0 / max(dist, 1.0));
+                    vA = smoothstep(95.0, 12.0, dist) * smoothstep(0.6, 5.0, dist);
+                }
+            `,
+            fragment: `
+                precision mediump float;
+                varying float vA;
+                uniform vec3 uAccent;
+                void main(){
+                    vec2 uv = gl_PointCoord - 0.5;
+                    float d = length(uv);
+                    if (d > 0.5) discard;
+                    gl_FragColor = vec4(uAccent, smoothstep(0.5, 0.0, d) * vA * 0.85);
+                }
+            `,
+            uniforms: {
+                uTime: { value: 0 },
+                uAccent: { value: [0.62, 0.72, 0.85] }
+            },
+            transparent: true,
+            depthTest: false
+        });
+        const dust = new Mesh(gl, { mode: gl.POINTS, geometry: pGeo, program: pProg });
+        dust.setParent(scene);
+
         function resize() {
             const r = hero.getBoundingClientRect();
             renderer.setSize(r.width, r.height);
@@ -158,10 +216,22 @@
             raf = requestAnimationFrame(frame);
             if (!visible) return;
             scrollNow += (scrollTarget - scrollNow) * 0.06;      // lerp, never snaps
-            const drift = (t * 0.001 * 1.6) % SPACING;           // constant forward motion
-            camera.position.set(0, 2.4, 4.2 - drift - scrollNow * 14);
-            camera.rotation.x = -0.30 - scrollNow * 0.10;
-            program.uniforms.uTime.value = t * 0.001;
+            const secs = t * 0.001;
+            // Constant forward travel. The track loops on SPACING so it reads
+            // as endless; the particles do NOT loop, so they stream past at
+            // their own rate and the two together give the depth away.
+            const drift = (secs * 1.6) % SPACING;
+            const push = secs * 1.6;
+
+            camera.position.set(0, 2.4, 4.2 - drift - scrollNow * 26);
+            camera.rotation.x = -0.30 - scrollNow * 0.14;
+            program.uniforms.uTime.value = secs;
+
+            // Recycle particles that fall behind the camera back to the far
+            // plane, so the field is infinite without ever reallocating.
+            dust.position.z = push % 95;
+            pProg.uniforms.uTime.value = secs;
+
             renderer.render({ scene, camera });
         }
         raf = requestAnimationFrame(frame);

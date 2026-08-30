@@ -558,12 +558,10 @@ body::before {
     pointer-events: none;
 }
 
-/* Asphalt Texture Overlay */
-.hero-section {
-    background-image:
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-    background-attachment: fixed;
-}
+/* Asphalt texture removed: it was an inline SVG feTurbulence filter painted
+   with background-attachment:fixed, which forces a full repaint of the hero
+   on every single scroll frame -- one of the worst offenders for scroll
+   jank. The WebGL scene now provides the hero's texture instead. */
 
 /* Red Racing Glow at Hero Bottom - Combined with Dark Overlay */
 .hero-section::after {
@@ -1837,8 +1835,11 @@ body::before {
 }
 
 .article-preview-card {
-    background: rgba(15, 12, 9, 0.8);
-    backdrop-filter: blur(10px);
+    /* No backdrop-filter here: this repeats across ~36 cards and each one
+       is a separate GPU blur pass during scroll, which was a major source
+       of scroll jank. The cards sit on an opaque background anyway, so the
+       blur was buying nothing visible. */
+    background: var(--f1-dark);
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
@@ -5828,19 +5829,16 @@ body { font-size: 1rem; }
     margin: 72px 0;
     position: relative;
 }
-/* Subtle fixed-attachment glow — reads as a faint parallax drift behind
-   the section as the page scrolls past it. */
+/* Static glow behind the standings band. The previous version used
+   background-attachment:fixed to fake a parallax drift, which repaints on
+   every scroll frame — measurable jank for a barely-visible effect. */
 .battle-band::before {
     content: '';
     position: absolute;
     inset: -40px -20px;
     z-index: -1;
     pointer-events: none;
-    background: radial-gradient(ellipse 70% 80% at 50% 40%, color-mix(in oklch, var(--f1-red) 8%, transparent), transparent 75%);
-    background-attachment: fixed;
-}
-@media (prefers-reduced-motion: reduce) {
-    .battle-band::before { background-attachment: scroll; }
+    background: radial-gradient(ellipse 70% 80% at 50% 40%, rgba(91, 143, 199, .07), transparent 75%);
 }
 .battle-band-head {
     display: flex;
@@ -6579,4 +6577,12 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
         display: inline-flex;
         align-items: center;
     }
+}
+
+/* Skip rendering work for article cards that are off-screen. With 30+ cards
+   on the index pages this measurably cuts scroll cost. The intrinsic size
+   keeps the scrollbar stable so the page doesn't jump as cards enter. */
+.article-preview-card {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 220px;
 }
