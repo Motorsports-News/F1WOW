@@ -463,3 +463,50 @@ noted transparently rather than silently treating the local copy as verified-cur
 **Not done this round:** the plan's phase-4 "physics/overshoot easing for other celebratory moments"
 beyond the achievement toast, and a formal mobile/responsive pass on the new particle canvas and tilt
 cards — flagging for a follow-up rather than claiming full coverage.
+
+---
+
+## Session log — 2026-08-30 · Locked design decisions, scroll perf, sitewide rollout
+
+Design direction was settled jointly with Dheeraj via a shareable artifact rather than in-session.
+Locked choices: **A16 Steel Blue** accent, **T2 Cabinet Grotesk / Satoshi** type pairing, **M1**
+(simplified 3D on phones), **H1** (remove the old CSS hero decorations). All fonts are free for
+commercial use — the licensed-foundry tier was dropped entirely on cost grounds.
+
+**Design system**
+- Accent is now Steel Blue `#5B8FC7` on carbon `#0B0B0C` / bone `#EDEDE8`. The `--f1-*` token *names*
+  were kept and only their values changed, so all 87 pages picked up the new palette without markup edits.
+- Type is Cabinet Grotesk (display) + Satoshi (body) from Fontshare, JetBrains Mono for data.
+  **Gotcha worth remembering:** Fontshare's combined `?f[]=a&f[]=b` URL silently returns only the
+  *first* family. Satoshi was never loading. Fixed by splitting into two per-family `<link>` blocks.
+
+**Scroll performance** (the page was badly janky; these were measured, not guessed)
+- `backdrop-filter` on `.article-preview-card` ran a separate GPU blur pass per card, ~36 per frame.
+- `.hero-section` painted an SVG `feTurbulence` noise texture with `background-attachment: fixed`,
+  forcing a full hero repaint every frame. Same pattern on `.battle-band::before`.
+- `initScrollAnimations()` animated `filter: blur()` across every revealed card.
+- Added `content-visibility: auto` + `contain-intrinsic-size` to article cards.
+
+**Hero 3D** — the ribbon alone read as a flat diagram, which was fair. Added a particle field spread
+through 95 units of depth with perspective-scaled point size, so near particles sweep past while far
+ones barely move. That differential parallax is what actually communicates dimension. 900 points on
+desktop, 260 on phones per M1. Note the rails are built as **triangle quads, not `gl.LINES`** — 1px
+GL lines render as invisible sub-pixel hairlines on a hi-DPI canvas.
+
+**Sitewide rollout**
+- The editorial layer (section rhythm, hairline section heads, trending step-down) was rescoped from
+  `.home` to a new `.ed` class now on all 87 page bodies. Homepage-only behaviour (the article fold,
+  the progress HUD) stays gated on `.home`.
+- **Fixed a real sitewide bug:** no base `a` colour rule existed anywhere in `styles.css`. Every link
+  that carries a class sets its own colour, so plain inline links in prose fell through to the browser
+  default `#0000EE` — and `#551A8B` once visited. Added a bare `a` rule (lowest specificity, so every
+  classed link still wins).
+
+**Verification limitation to be honest about:** the automated browser tab runs backgrounded
+(`visibilityState: "hidden"`), which suspends `requestAnimationFrame`. Scroll-driven animation,
+particle motion and the GSAP reveal tweens therefore cannot be confirmed programmatically — they
+appear frozen mid-tween in any scripted check. Motion and the "buttery smooth" scroll feel need a
+human with a real trackpad.
+
+**Not done this round:** OG card images are still pre-rendered JPGs with the old red F1WOW branding
+baked in, which now clashes with the steel-blue palette — they need regenerating.

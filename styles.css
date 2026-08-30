@@ -6431,16 +6431,16 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
 
 /* Section rhythm: generous, asymmetric, with a hairline that runs
    past the heading rather than boxing it in. */
-.home .content-section > section,
-.home .trending-strip,
-.home .battle-band,
-.home .articles-section {
+.ed .content-section > section,
+.ed .trending-strip,
+.ed .battle-band,
+.ed .articles-section {
     margin-block: clamp(72px, 11vw, 168px);
 }
 
-.home .trending-strip-head,
-.home .battle-band-head,
-.home .section-header {
+.ed .trending-strip-head,
+.ed .battle-band-head,
+.ed .section-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 10px;
@@ -6457,9 +6457,9 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
         gap: 28px;
     }
 }
-.home .trending-strip-head h2,
-.home .battle-band-head h2,
-.home .section-header h2 {
+.ed .trending-strip-head h2,
+.ed .battle-band-head h2,
+.ed .section-header h2 {
     font-family: var(--font-display);
     font-weight: 800;
     /* caps out well below the hero so the hero stays the loudest thing */
@@ -6469,8 +6469,8 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
     margin: 0;
     text-wrap: balance;
 }
-.home .battle-band-link,
-.home .section-header .live-badge {
+.ed .battle-band-link,
+.ed .section-header .live-badge {
     align-self: end;
     justify-self: start;
 }
@@ -6479,15 +6479,15 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
 }
 
 /* Trending: the lead story dominates, the rest step down hard */
-.home .trending-items { gap: 14px; }
-.home .trending-item:first-child { padding: clamp(22px, 3vw, 34px); }
-.home .trending-item:first-child h3 {
+.ed .trending-items { gap: 14px; }
+.ed .trending-item:first-child { padding: clamp(22px, 3vw, 34px); }
+.ed .trending-item:first-child h3 {
     font-family: var(--font-display);
     font-size: clamp(1.25rem, 2.9vw, 2rem);
     line-height: 1.08;
     letter-spacing: -.02em;
 }
-.home .trending-item:first-child .trending-rank {
+.ed .trending-item:first-child .trending-rank {
     font-size: clamp(2.2rem, 5vw, 3.4rem);
     line-height: .8;
 }
@@ -6585,4 +6585,23 @@ table.cst-seasons tr.hl td { background: #1a1d24; }
 .article-preview-card {
     content-visibility: auto;
     contain-intrinsic-size: auto 220px;
+}
+
+/* Base link colour.
+ *
+ * Every link that carries a class (nav, cards, footer, buttons) sets its own
+ * colour, so nothing in the site ever needed a base rule -- which meant plain
+ * inline links inside prose fell all the way through to the browser default:
+ * #0000EE, and #551A8B once visited. Against carbon that reads as a broken
+ * page. A bare `a` selector is the lowest specificity there is, so every
+ * existing classed link still wins; this only catches the unstyled ones.
+ */
+a {
+    color: var(--f1-blue);
+    text-decoration-color: color-mix(in srgb, var(--f1-blue) 45%, transparent);
+    text-underline-offset: 0.18em;
+}
+a:hover {
+    color: var(--accent-bright);
+    text-decoration-color: currentColor;
 }
