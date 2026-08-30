@@ -556,3 +556,48 @@ red-ish pixels in the output.
 
 **Still open:** the "buttery smooth" claim needs a human check — a backgrounded automation
 tab suspends rAF and Lenis, so scroll feel cannot be measured programmatically here.
+
+---
+
+## Session log — 2026-08-30 (later still) · Spa-Francorchamps hero
+
+The hero is now the **real Circuit de Spa-Francorchamps**, not an invented loop.
+
+**Provenance — this is survey data, not a hand trace.** The centreline is OpenStreetMap:
+every way tagged `highway=raceway`, `sport=motor` within 2.5 km of the circuit, chained
+end-to-end into one closed lap via endpoint matching. The chain emerges in correct racing
+order — La Source, Eau Rouge, Raidillon, Kemmel, Les Combes, Malmedy, Bruxelles, Speaker's
+Corner, Double Gauche (Pouhon), Fagnes, Campus, Courbe Paul Frère, Blanchimont, Bus Stop —
+and measures **7.003 km against the official 7.004 km**. That agreement is the verification
+that the stitch is correct.
+
+Elevation is **SRTM 30 m** sampled along the centreline: 364 m → 469 m, a **106 m** range
+against Spa's real ~100 m. Smoothed twice (SRTM post-spacing jitter), resampled to 420 even
+points at 16.7 m spacing. Rebuild steps live in the session scratchpad; the resulting
+420-point array is inlined in `hero-scene.js` so there is no runtime fetch.
+
+**One honest exaggeration:** elevation ×5. Spa's climb/drop is the entire reason to build it
+in 3D rather than print its map, but 106 m over a 7 km lap is invisible at hero size. Road
+width is the true ~14 m; plan shape, corner order and relative gradients are all true.
+
+**Three defects fixed along the way** (each real, not taste):
+1. Road drawn 36 m wide against 29 m sample spacing → consecutive swept sections overlapped
+   and the walls combed. Fixed by denser resampling + true width.
+2. Banking taken per-sample from raw curvature and clamped at a value it *saturated* through
+   every tight corner → the ribbon twisted violently between neighbours. Now smoothed over
+   ±4 samples before any geometry is built.
+3. Slab drawn at 0.58 alpha → what registered was lit wall edges, a hatched line drawing
+   rather than a surface. Near-opaque now, distance handled by fog.
+
+Camera framing is **derived, not guessed**: the lap is 34 world units across; at a 40° vertical
+fov anything nearer than ~30 lets perspective magnification push the near side off-frame
+mid-orbit. 33 holds the whole circuit in frame at every angle.
+
+**Earlier in the same session — scroll finally fixed at the root.** `smooth-scroll.js` drove
+Lenis from `gsap.ticker`, and once the card reveals moved off ScrollTrigger, GSAP had nothing
+left to animate (`initHeroPin` early-returns; its `.hero-telemetry-line` elements exist in no
+page). Lenis was riding an idle ticker → input accumulated → caught up in one burst, which is
+exactly the "it stays there, then happens all at once" symptom reported. **Removed Lenis, GSAP
+and ScrollTrigger entirely** (86 pages carried the latter two for nothing). Native scrolling
+cannot accumulate, recurse or starve. `smooth-scroll.js` remains on disk; restoring one script
+tag re-enables inertia.
