@@ -395,3 +395,71 @@ pass), not the typographic-only treatment.
   string again.
 - **Not done, per the approved plan's scope:** rollout to the other ~86 pages — homepage only this round,
   pending the user liking the direction.
+
+### Total site redesign — Hello Monday system, 3D particle hero, gamification (2026-08-30)
+
+User rejected the Aurora-based direction entirely ("too much AI slop," "not awwwards worthy") and asked
+for a ground-up sitewide visual/motion overhaul: 3D/immersive, all-new colors/fonts/animation, gamified
+homepage, sections/data-integrations unchanged. Went through `EnterPlanMode` (this was a different,
+much larger task than the prior homepage-motion plan, so the plan file was overwritten rather than
+extended). Iterated on the design-direction proposal twice at the user's request — first pass (generic
+SaaS-dashboard references) was rejected outright; second pass was grounded directly in the locally
+installed `top-design` skill's own case-study library (real named studios: Locomotive, AREA 17, Active
+Theory, Hello Monday) with real reference URLs per option, plus a concrete 3D-implementation plan per
+direction. User picked **Hello Monday** (Copenhagen/NYC — Three.js/particles, custom physics,
+gamification named as one of their own signature techniques). Plan approved and saved at
+`~/.claude/plans/flickering-meandering-moon.md`.
+
+**Note on skill freshness:** attempted to re-fetch the `top-design` skill from its recorded source repo
+per the user's request; the repo (`jeremylongshore/...`) had been renamed/restructured that same day and
+no longer contains the skill in its original form at any locatable path — worked from the existing local
+copy instead (already comprehensive: case-studies.md, animation-patterns.md, technical-stack.md, etc.),
+noted transparently rather than silently treating the local copy as verified-current.
+
+**Applied — sitewide:**
+- **Palette**: violet-black ground (`oklch(9% .02 290)` base) with a magenta/electric-blue duotone accent
+  pair (`--f1-red` → magenta `oklch(65% .22 340)`, `--f1-blue` → electric blue `oklch(65% .20 250)`) —
+  Hello Monday's own reference CSS literally layers a warm + cool radial bloom over a dark base; adapted
+  here to avoid reusing any prior round's hue. Swept 335 hardcoded color literals (hex + rgb, same
+  technique as the Aurora sweep) across `styles.css` and all 87 pages.
+- **Type**: single variable font (`Archivo`, true `wght` 100–900 axis, loaded once via Google Fonts)
+  carrying both display and body — `font-variation-settings: 'wght' 800, 'wdth' 120` on headings,
+  `'wdth' 100` on body — "one face, two feelings" is itself the flourish, per Hello Monday's own
+  reference code (`font-variation-settings: 'wght' 800, 'wdth' 125`). Removed the Fontshare dependency
+  entirely (Sentient is no longer used) — back to a single Google-Fonts host, simpler and more reliable.
+  `JetBrains Mono` kept unchanged for data/telemetry.
+- **CSS-3D tilt**: `.feature-card`/`.trending-item` now tilt toward the cursor via `perspective()` +
+  `rotateX/rotateY` driven by `--tiltX`/`--tiltY` custom properties (extended the existing
+  `initSpotlightCards()` pointermove listener rather than adding a duplicate one). **Bug caught and
+  fixed during implementation:** the existing `:hover` rules on both selectors set a bare
+  `transform: translateY(...)`, which would have silently overridden (not combined with) the new tilt
+  transform on hover — the two `:hover` rules were rewritten to compose `perspective()/rotate()` and
+  `translateY()` into one transform value.
+- Verified in-browser: no stray CSS reached `--ease-bounce-placeholder` (a leftover draft line
+  mistakenly written outside any selector — invalid CSS — caught via grep before it could break parsing)
+  — cleaned up before testing.
+
+**Applied — homepage only (per the plan's "gamification is homepage-scoped" constraint):**
+- **3D particle hero** (`hero-particles.js`, new file): a WebGL points field via **OGL** (~30KB), loaded
+  as a plain ES module from a CDN (`<script type="module">`, no npm/build step — stays inside the repo's
+  vanilla-only rule). 900 points, lerp-smoothed mouse-reactive rotation, magenta/blue duotone fragment
+  shader, `IntersectionObserver`-gated (pauses when scrolled out of view) and fully skipped under
+  `prefers-reduced-motion` or if the OGL module/WebGL context fails to load (canvas just removes itself,
+  falling back to the existing dark gradient). The old CSS-only car/track layer is dimmed (`opacity: 0.4`
+  / `0.55`) rather than deleted, so the particle field reads as the dominant hero visual with lower
+  regression risk than removing working code outright.
+- **Achievement/XP layer** (`gamification.js`, new file, `localStorage` key `f1wow_achievements_v1`): 5
+  badges tied to real homepage interactions (visiting Race Hub/Standings/Calculator, subscribing, opening
+  3 articles), a level indicator, and a bouncy unlock toast — deliberately the *one* surface on the site
+  using overshoot easing on purpose, everywhere else keeps the standard ease-out discipline. No backend,
+  no new page, additive markup only (`#achievementWidget` container between the hero and the race-strip).
+- Verified end-to-end: clicked "Race Hub" on the homepage, confirmed the click fired before navigation,
+  confirmed `localStorage` persisted `{"unlocked":["explorer"], ...}`, navigated back and confirmed the
+  Explorer badge renders unlocked (highlighted icon, partial XP bar) while the other four stay locked.
+- Verified via `document.fonts`: Archivo + JetBrains Mono both actually load (not just linked). Zero
+  console errors on homepage or `championship.html`. CSS brace-balance clean. Bumped the cache-busting
+  version string.
+
+**Not done this round:** the plan's phase-4 "physics/overshoot easing for other celebratory moments"
+beyond the achievement toast, and a formal mobile/responsive pass on the new particle canvas and tilt
+cards — flagging for a follow-up rather than claiming full coverage.

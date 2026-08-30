@@ -810,22 +810,37 @@ document.addEventListener('DOMContentLoaded', () => {
     initSpotlightCards();
 });
 
-// Spotlight-border hover: tracks the cursor position over feature cards and
-// trending items via CSS custom properties (--mx/--my), which the matching
-// CSS radial-gradient glow reads. Delegated to the document so it works for
-// cards rendered after this runs (e.g. the trending strip's BUILD block is
-// static HTML, but this keeps it robust either way). No-op when reduced
-// motion is requested — the glow simply never appears (no fallback needed,
-// hover/border-color feedback still exists via the base CSS).
+// Spotlight-border hover + CSS-3D tilt: tracks the cursor position over
+// feature cards and trending items via CSS custom properties (--mx/--my for
+// the radial-gradient glow, --tiltX/--tiltY for the perspective tilt), both
+// read by the matching CSS. Delegated to the document so it works for cards
+// rendered after this runs (e.g. the trending strip's BUILD block is static
+// HTML, but this keeps it robust either way). No-op when reduced motion is
+// requested — cards fall back to flat/no-tilt via CSS.
 function initSpotlightCards() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const selector = '.feature-card, .trending-item:not(:first-child)';
+    let activeCard = null;
     document.addEventListener('pointermove', (e) => {
         const card = e.target.closest(selector);
-        if (!card) return;
+        if (!card) {
+            if (activeCard) {
+                activeCard.style.setProperty('--tiltX', '0deg');
+                activeCard.style.setProperty('--tiltY', '0deg');
+                activeCard = null;
+            }
+            return;
+        }
+        activeCard = card;
         const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-        card.style.setProperty('--my', `${e.clientY - r.top}px`);
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        card.style.setProperty('--mx', `${x}px`);
+        card.style.setProperty('--my', `${y}px`);
+        const tiltX = ((x / r.width) - 0.5) * 10;
+        const tiltY = ((y / r.height) - 0.5) * -10;
+        card.style.setProperty('--tiltX', `${tiltX}deg`);
+        card.style.setProperty('--tiltY', `${tiltY}deg`);
     }, { passive: true });
 }
 
