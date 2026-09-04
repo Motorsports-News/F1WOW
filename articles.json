@@ -1,6 +1,18 @@
 {
   "articles": [
     {
+      "slug": "ferrari-monza-upgrade-2026-italian-gp.html",
+      "title": "Ferrari Monza Upgrade 2026: The Floor, Not the Wing",
+      "excerpt": "A Monza-specific single-element floor, a stripped-back rear wing and the second ADUO engine - why Ferrari's home-race package hides under the car.",
+      "date": "2026-09-04",
+      "category": "technical",
+      "label": "Technical Analysis",
+      "badge": "Home Race Push",
+      "driver": "Charles Leclerc",
+      "event": "Italian GP 2026",
+      "featuredTitle": "Ferrari Goes All Out at Monza - And the Biggest Change Is Under the Car"
+    },
+    {
       "slug": "verstappen-error-free-streak-2026.html",
       "title": "The 219 Races Since Verstappen Last Crashed Alone",
       "excerpt": "Zandvoort ended a 219-race run without a single unforced crash - every retirement in the streak checked, with charts and the full verdict ledger.",

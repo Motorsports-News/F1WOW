@@ -6,7 +6,8 @@
       "Bash(npm install:*)",
       "WebSearch",
       "Bash(curl -s -L \"https://www.instagram.com/p/DW53R8Blxfq/media/?size=l\" --output /tmp/insta_image.jpg)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(node --test scripts/tests/championship-calc-engine.test.js)"
     ]
   }
 }
