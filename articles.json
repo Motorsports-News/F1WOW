@@ -1,6 +1,18 @@
 {
   "articles": [
     {
+      "slug": "gasly-maiden-pole-italian-gp-2026.html",
+      "title": "Italian GP 2026 Qualifying: Gasly Takes Shock Maiden Pole",
+      "excerpt": "Pierre Gasly beat George Russell by 0.060s at Monza for the first pole of his career - in his 191st race, Alpine's first ever, and France's first since 1997.",
+      "date": "2026-09-05",
+      "category": "race",
+      "label": "Qualifying",
+      "badge": "Maiden Pole",
+      "driver": "Pierre Gasly",
+      "event": "Italian GP 2026",
+      "featuredTitle": "190 Races: Pierre Gasly Takes His First F1 Pole at Monza"
+    },
+    {
       "slug": "ferrari-monza-upgrade-2026-italian-gp.html",
       "title": "Ferrari Monza Upgrade 2026: The Floor, Not the Wing",
       "excerpt": "A Monza-specific single-element floor, a stripped-back rear wing and the second ADUO engine - why Ferrari's home-race package hides under the car.",
