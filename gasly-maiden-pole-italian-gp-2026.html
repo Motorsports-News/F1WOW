@@ -68,37 +68,240 @@
     <script>/* Defer AdSense until idle for faster first paint; literal tag retained in noscript for verification */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669';s.crossOrigin='anonymous';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
 <noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228873195232669" crossorigin="anonymous"></script></noscript>
 
-    <style>
-        .quali-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 24px 0; clear: both; }
-        .quali-fact { background: var(--f1-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; }
-        .quali-fact .qf-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.9rem; color: var(--f1-red); line-height: 1; font-variant-numeric: tabular-nums; }
-        .quali-fact .qf-label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-top: 6px; letter-spacing: 0.03em; }
-        .ig-wrap { display:flex; justify-content:center; margin: 32px 0; }
-        /* Qualifying + wait tables: self-contained (global styles.css does not style article tables) */
-        .q3-table, .wait-table { width: 100%; border-collapse: collapse; }
-        .q3-table th, .q3-table td, .wait-table th, .wait-table td { padding: 11px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); vertical-align: middle; }
-        .q3-table thead th, .wait-table thead th { color: var(--f1-white); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; border-bottom: 2px solid rgba(225,6,0,0.35); }
-        .q3-table tbody tr:last-child td, .wait-table tbody tr:last-child td { border-bottom: none; }
-        .q3-table .rank, .wait-table .rank { color: rgba(255,255,255,0.4); font-weight: 600; font-variant-numeric: tabular-nums; width: 34px; }
-        .q3-table .driver, .wait-table .driver { color: var(--f1-white); font-weight: 500; }
-        .q3-table .team { color: rgba(255,255,255,0.7); }
-        .q3-table .time { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--f1-red); font-variant-numeric: tabular-nums; white-space: nowrap; }
-        .q3-table .gap { color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; white-space: nowrap; }
-        .q3-table .note { color: rgba(255,255,255,0.45); font-size: 0.8rem; font-style: italic; }
-        .wait-table .races { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--f1-red); font-variant-numeric: tabular-nums; }
-        .wait-table .where { color: rgba(255,255,255,0.75); }
-        .q3-table tbody tr:hover td, .wait-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
-        .q3-table tr.gasly td, .wait-table tr.gasly td { background: rgba(225,6,0,0.08); border-top: 1px solid rgba(225,6,0,0.45); border-bottom: 1px solid rgba(225,6,0,0.45); }
-        .q3-table tr.gasly td:first-child, .wait-table tr.gasly td:first-child { box-shadow: inset 3px 0 0 var(--f1-red); }
-        .q3-table tr.gasly:hover td, .wait-table tr.gasly:hover td { background: rgba(225,6,0,0.13); }
-        @media (max-width: 600px) {
-            .q3-table th, .q3-table td, .wait-table th, .wait-table td { padding: 8px; font-size: 0.85rem; }
-            .q3-table .time, .wait-table .races { font-size: 1rem; }
-            .q3-table .rank, .wait-table .rank { width: 24px; }
-            .q3-table .gap { display: none; }
-            .q3-table th:nth-child(5) { display: none; }
+    <style>/* IMP:CSS:START */
+        /* Story-scoped tokens. Alpine pink is already a site token; here it is the
+           narrative accent for Gasly, with F1 red kept as the brand signal. */
+        .article-full {
+            --gas: var(--team-alpine);
+            --gas-soft: rgba(255, 135, 188, 0.16);
+            --gas-line: rgba(255, 135, 188, 0.42);
+            --rule: rgba(255, 255, 255, 0.10);
+            --ink-2: rgba(255, 255, 255, 0.72);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
         }
-    </style>
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+        /* ---------------------------------------------------------- pole slate */
+        .pole-slate {
+            display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px;
+            padding: clamp(20px, 4vw, 32px); margin: 28px 0;
+            background:
+                radial-gradient(120% 140% at 0% 0%, rgba(255, 135, 188, 0.13), transparent 60%),
+                var(--f1-dark);
+            border: 1px solid var(--gas-line); border-radius: 14px;
+        }
+        @media (min-width: 720px) { .pole-slate { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: clamp(24px, 5vw, 52px); } }
+        .ps-main { display: flex; flex-direction: column; gap: 4px; }
+        .ps-label {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.82rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gas);
+        }
+        .ps-time {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+            font-size: clamp(3.1rem, 11vw, 4.6rem); line-height: 0.92; color: var(--f1-white);
+            font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+        }
+        .ps-margin { color: var(--ink-2); font-size: 0.95rem; margin-top: 6px; }
+        .ps-facts { display: grid; gap: 0; margin: 0; }
+        .ps-facts > div {
+            display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+            padding: 11px 0; border-top: 1px solid var(--rule);
+        }
+        .ps-facts > div:first-child { border-top: 0; }
+        @media (min-width: 720px) { .ps-facts > div:first-child { border-top: 1px solid var(--rule); } }
+        .ps-facts dt { color: var(--ink-2); font-size: 0.9rem; }
+        .ps-facts dd {
+            margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+            font-size: 1.5rem; color: var(--f1-white); font-variant-numeric: tabular-nums; white-space: nowrap;
+        }
+
+        /* -------------------------------------------------------- career strip */
+        .career-strip { margin: 36px 0; padding: 0; }
+        .cs-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; padding: 0; }
+        .cs-title {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 800; text-transform: uppercase;
+            font-size: clamp(1.15rem, 3.4vw, 1.5rem); color: var(--f1-white); letter-spacing: 0.01em;
+        }
+        .cs-sub { color: var(--ink-2); font-size: 0.9rem; line-height: 1.6; max-width: 62ch; }
+        .cs-plot {
+            display: flex; align-items: flex-end; gap: clamp(0.5px, 0.22vw, 2px);
+            height: clamp(96px, 22vw, 150px); padding: 0 0 2px;
+            border-bottom: 1px solid var(--rule);
+        }
+        .tick {
+            flex: 1 1 0; min-width: 1px; height: var(--h);
+            background: rgba(255, 255, 255, 0.20); border-radius: 1px 1px 0 0;
+            transition: background 160ms var(--ease-out-quart);
+        }
+        .tick.is-podium { background: rgba(225, 6, 0, 0.85); }
+        .tick.is-win { background: var(--f1-red); box-shadow: 0 0 12px rgba(225, 6, 0, 0.55); }
+        .tick.is-pole {
+            background: var(--gas); box-shadow: 0 0 18px rgba(255, 135, 188, 0.75);
+            min-width: 3px; border-radius: 2px 2px 0 0;
+        }
+        .cs-plot:hover .tick { background: rgba(255, 255, 255, 0.12); }
+        .cs-plot:hover .tick.is-podium { background: rgba(225, 6, 0, 0.45); }
+        .cs-plot:hover .tick.is-pole { background: rgba(255, 135, 188, 0.55); }
+        .cs-plot .tick:hover, .cs-plot .tick:focus-visible {
+            background: var(--f1-white) !important; outline: none; min-width: 2px;
+        }
+        .tick:focus-visible { outline: 2px solid var(--gas); outline-offset: 3px; }
+        .cs-axis {
+            position: relative; display: flex; gap: clamp(0.5px, 0.22vw, 2px);
+            margin-top: 7px; font-size: 0.68rem; color: rgba(255, 255, 255, 0.58);
+            font-variant-numeric: tabular-nums;
+        }
+        .cs-axis .yr { flex: 1 1 0; min-width: 0; }
+        .cs-axis .yr:not(:first-child) { border-left: 1px solid var(--rule); padding-left: 3px; }
+        .cs-tip {
+            margin: 14px 0 0; min-height: 1.5em; font-size: 0.88rem; color: var(--ink-2);
+            font-variant-numeric: tabular-nums;
+        }
+        .cs-tip.is-live { color: var(--f1-white); }
+        .cs-ledger {
+            display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 16px;
+            padding-top: 16px; border-top: 1px solid var(--rule);
+            font-size: 0.9rem; color: var(--ink-2);
+        }
+        .cs-ledger .n {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.35rem;
+            color: var(--f1-white); font-variant-numeric: tabular-nums; margin-right: 5px;
+        }
+
+        /* ------------------------------------------------------------ Q3 table */
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .q3-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+        .q3-table th, .q3-table td {
+            padding: 12px 14px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            vertical-align: middle;
+        }
+        .q3-table thead th {
+            color: var(--f1-white); font-weight: 700; text-transform: uppercase; font-size: 0.72rem;
+            letter-spacing: 0.09em; border-bottom: 2px solid rgba(225, 6, 0, 0.35);
+        }
+        .q3-table tbody tr:last-child td { border-bottom: none; }
+        .q3-table .rank { color: rgba(255, 255, 255, 0.45); font-weight: 600; font-variant-numeric: tabular-nums; width: 38px; }
+        .q3-table .driver { color: var(--f1-white); font-weight: 500; white-space: nowrap; }
+        .q3-table .team { color: var(--ink-2); white-space: nowrap; }
+        .q3-table .team::before {
+            content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+            background: var(--team, var(--f1-gray)); margin-right: 8px; vertical-align: baseline;
+        }
+        .q3-table .time {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.2rem;
+            color: var(--f1-white); font-variant-numeric: tabular-nums; white-space: nowrap;
+        }
+        .q3-table .gapcell { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+        .gapbar { flex: 1 1 auto; height: 6px; background: rgba(255, 255, 255, 0.07); border-radius: 3px; overflow: hidden; }
+        .gapbar i {
+            display: block; height: 100%; width: 100%; border-radius: 3px;
+            background: var(--team, var(--f1-gray)); opacity: 0.9;
+            transform: scaleX(var(--s, 0)); transform-origin: left;
+        }
+        .gapnum { color: var(--ink-2); font-variant-numeric: tabular-nums; font-size: 0.86rem; min-width: 52px; text-align: right; }
+        .q3-table tbody tr { transition: background 160ms var(--ease-out-quart); }
+        .q3-table tbody tr:hover td { background: rgba(255, 255, 255, 0.035); }
+        .q3-table tr.is-pole td { background: var(--gas-soft); }
+        .q3-table tr.is-pole .time { color: var(--gas); }
+        .q3-table tr.is-pole:hover td { background: rgba(255, 135, 188, 0.22); }
+        .q3-table .pen {
+            display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px;
+            background: rgba(232, 200, 77, 0.14); color: var(--f1-yellow);
+            font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+            vertical-align: middle; white-space: nowrap;
+        }
+
+        /* --------------------------------------------------------- waits chart */
+        .wait-chart { list-style: none; margin: 24px 0 10px; padding: 0; display: grid; gap: 2px; }
+        .wait-row {
+            display: grid; grid-template-columns: minmax(96px, 1.1fr) minmax(0, 2.6fr) minmax(0, 1.4fr);
+            align-items: center; gap: 14px; padding: 9px 10px; border-radius: 8px;
+            transition: background 160ms var(--ease-out-quart);
+        }
+        .wait-row:hover { background: rgba(255, 255, 255, 0.035); }
+        .wait-row.is-gasly { background: var(--gas-soft); }
+        .wait-row.is-gasly:hover { background: rgba(255, 135, 188, 0.22); }
+        .w-name { color: var(--f1-white); font-size: 0.92rem; }
+        .wait-row.is-gasly .w-name { font-weight: 700; }
+        .w-track { position: relative; display: flex; align-items: center; height: 22px; }
+        .w-track i {
+            display: block; height: 10px; width: calc(100% - 46px); border-radius: 5px;
+            background: rgba(255, 255, 255, 0.22);
+            transform: scaleX(var(--s)); transform-origin: left;
+        }
+        .wait-row.is-gasly .w-track i { background: var(--gas); box-shadow: 0 0 14px rgba(255, 135, 188, 0.4); }
+        .w-num {
+            position: absolute; left: calc(var(--s) * (100% - 46px)); transform: translateX(10px);
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.05rem;
+            color: var(--f1-white); font-variant-numeric: tabular-nums; white-space: nowrap;
+        }
+        .wait-row.is-gasly .w-num { color: var(--gas); }
+        .w-where { color: rgba(255, 255, 255, 0.62); font-size: 0.82rem; text-align: right; }
+        .chart-note { color: rgba(255, 255, 255, 0.55); font-size: 0.82rem; margin: 6px 0 0; }
+        @media (max-width: 640px) {
+            .wait-row { grid-template-columns: minmax(84px, 1fr) minmax(0, 1.8fr); row-gap: 2px; }
+            .w-where { grid-column: 1 / -1; text-align: left; }
+            .w-num { font-size: 0.95rem; }
+        }
+
+        /* ------------------------------------------------------------ lights out */
+        .lights-out {
+            display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px;
+            padding: 18px 22px; margin: 4px 0 24px; border-radius: 12px;
+            background: var(--f1-dark); border: 1px solid var(--rule);
+        }
+        .lo-label {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.14em; font-size: 0.76rem; color: rgba(255, 255, 255, 0.86);
+        }
+        .lo-label::before {
+            content: ''; width: 9px; height: 9px; border-radius: 50%;
+            background: var(--f1-red); box-shadow: 0 0 8px rgba(225, 6, 0, 0.7); flex: none;
+        }
+        .lo-clock {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.5rem;
+            color: var(--f1-white); font-variant-numeric: tabular-nums;
+        }
+        .lo-grid { color: var(--ink-2); font-size: 0.86rem; }
+        .lo-grid b { color: var(--gas); font-weight: 700; }
+
+        /* ---------------------------------------------------------------- motion
+           Every element above renders at its final state by default. These rules
+           only replay it as an entrance once JS marks the block in view, so the
+           page is complete with JS off, on a hidden tab, or in a headless render. */
+        .in-view .gapbar i { animation: growX 820ms var(--ease-out-expo) both; animation-delay: calc(var(--row, 0) * 45ms); }
+        .in-view .w-track i { animation: growX 760ms var(--ease-out-expo) both; animation-delay: calc(var(--i) * 55ms); }
+        .in-view .w-num { animation: fadeUp 500ms var(--ease-out-quart) both; animation-delay: calc(var(--i) * 55ms + 220ms); }
+        .in-view .tick { animation: tickUp 620ms var(--ease-out-expo) both; animation-delay: calc(var(--i) * 3ms); }
+        @keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(var(--s)); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateX(10px) translateY(4px); } to { opacity: 1; transform: translateX(10px) translateY(0); } }
+        @keyframes tickUp { from { height: 0; opacity: 0; } to { height: var(--h); opacity: 1; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .in-view .gapbar i, .in-view .w-track i, .in-view .w-num, .in-view .tick { animation: none; }
+            .tick, .q3-table tbody tr, .wait-row { transition: none; }
+        }
+        /* --- browser-review fixes --- */
+        .cs-axis .yr { flex: var(--n, 1) 1 0; }
+        .cs-plot { padding-right: 3px; }
+        .cs-flag {
+            display: flex; justify-content: flex-end; margin: 0 0 6px;
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+            font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--gas);
+        }
+        @media (max-width: 640px) {
+            .cs-plot { gap: 0; }
+            .cs-axis { gap: 0; }
+            .tick { min-width: 0; }
+            .tick.is-pole { min-width: 2px; }
+            .cs-flag { font-size: 0.72rem; }
+        }
+        .q3-table .gapcell.is-pole-gap { justify-content: flex-end; }
+        @media (max-width: 640px) { .cs-axis .yr.is-narrow { visibility: hidden; } }
+/* IMP:CSS:END */</style>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -157,12 +360,40 @@
                     <p><strong>MONZA, September 5</strong> &mdash; Pierre Gasly has taken the first pole position of his Formula 1 career, beating George Russell by <strong>0.060s</strong> with a 1:21.786 in Q3 at the Italian Grand Prix. It is his 191st Grand Prix entry. It is also Alpine's first pole in 252 races as a constructor, the Enstone team's first since 2009, and the first by a French driver since Jean Alesi &mdash; at this same circuit &mdash; in 1997.</p>
                 </div>
 
-                <div class="quali-facts" aria-label="Key facts">
-                    <div class="quali-fact"><div class="qf-num">1:21.786</div><div class="qf-label">Gasly's pole lap &mdash; 0.060s clear of Russell</div></div>
-                    <div class="quali-fact"><div class="qf-num">190</div><div class="qf-label">Race entries before his first pole</div></div>
-                    <div class="quali-fact"><div class="qf-num">252</div><div class="qf-label">Alpine races before its first ever pole</div></div>
-                    <div class="quali-fact"><div class="qf-num">29 yrs</div><div class="qf-label">Since a French driver last took pole</div></div>
+                <!-- IMP:POLE:START -->
+                <div class="pole-slate">
+                    <div class="ps-main">
+                        <span class="ps-label">Pole position</span>
+                        <span class="ps-time">1:21.786</span>
+                        <span class="ps-margin">0.060s clear of Russell</span>
+                    </div>
+                    <dl class="ps-facts">
+                        <div><dt>Career entries before it</dt><dd>190</dd></div>
+                        <div><dt>Alpine races before its first</dt><dd>252</dd></div>
+                        <div><dt>Since a French pole</dt><dd>29 yrs</dd></div>
+                    </dl>
                 </div>
+<!-- IMP:POLE:END -->
+
+                <!-- IMP:STRIP:START -->
+                <figure class="career-strip" id="careerStrip">
+                    <figcaption class="cs-head">
+                        <span class="cs-title">Every race of Pierre Gasly's career</span>
+                        <span class="cs-sub">Bar height is his starting position &mdash; taller means further up the grid. Red marks a podium. The last bar is Monza.</span>
+                    </figcaption>
+                    <p class="cs-flag"><span>Monza &rsquo;26 &mdash; first pole <span aria-hidden="true">&darr;</span></span></p>
+                    <div class="cs-plot" role="list" aria-label="Pierre Gasly's 191 Grand Prix entries by starting position">
+                        <span class="tick" style="--h:38%;--i:0" data-label="2017 Malaysian GP - started P15, finished P14" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:1" data-label="2017 Japanese GP - started P14, finished P13" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:2" data-label="2017 Mexican GP - started P20, finished P13" aria-hidden="true"></span><span class="tick" style="--h:21%;--i:3" data-label="2017 Brazilian GP - started P19, finished P12" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:4" data-label="2017 Abu Dhabi GP - started P17, finished P16" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:5" data-label="2018 Australian GP - started P20, finished P18" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:6" data-label="2018 Bahrain GP - started P5, finished P4" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:7" data-label="2018 Chinese GP - started P17, finished P18" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:8" data-label="2018 Azerbaijan GP - started P17, finished P12" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:9" data-label="2018 Spanish GP - started P12, finished P19" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:10" data-label="2018 Monaco GP - started P10, finished P7" aria-hidden="true"></span><span class="tick" style="--h:34%;--i:11" data-label="2018 Canadian GP - started P16, finished P11" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:12" data-label="2018 French GP - started P14, finished P20" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:13" data-label="2018 Austrian GP - started P12, finished P11" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:14" data-label="2018 British GP - started P14, finished P13" aria-hidden="true"></span><span class="tick" style="--h:34%;--i:15" data-label="2018 German GP - started P16, finished P14" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:16" data-label="2018 Hungarian GP - started P6, finished P6" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:17" data-label="2018 Belgian GP - started P10, finished P9" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:18" data-label="2018 Italian GP - started P9, finished P14" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:19" data-label="2018 Singapore GP - started P15, finished P13" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:20" data-label="2018 Russian GP - started P17, finished P19" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:21" data-label="2018 Japanese GP - started P7, finished P11" aria-hidden="true"></span><span class="tick" style="--h:21%;--i:22" data-label="2018 United States GP - started P19, finished P12" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:23" data-label="2018 Mexican GP - started P20, finished P10" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:24" data-label="2018 Brazilian GP - started P9, finished P13" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:25" data-label="2018 Abu Dhabi GP - started P17, finished P16" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:26" data-label="2019 Australian GP - started P17, finished P11" aria-hidden="true"></span><span class="tick" style="--h:47%;--i:27" data-label="2019 Bahrain GP - started P13, finished P8" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:28" data-label="2019 Chinese GP - started P6, finished P6" aria-hidden="true"></span><span class="tick" style="--h:12%;--i:29" data-label="2019 Azerbaijan GP - started pit lane, finished P17" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:30" data-label="2019 Spanish GP - started P6, finished P6" aria-hidden="true"></span><span class="tick" style="--h:69%;--i:31" data-label="2019 Monaco GP - started P8, finished P5" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:32" data-label="2019 Canadian GP - started P5, finished P8" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:33" data-label="2019 French GP - started P9, finished P10" aria-hidden="true"></span><span class="tick" style="--h:69%;--i:34" data-label="2019 Austrian GP - started P8, finished P7" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:35" data-label="2019 British GP - started P5, finished P4" aria-hidden="true"></span><span class="tick" style="--h:87%;--i:36" data-label="2019 German GP - started P4, finished P14" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:37" data-label="2019 Hungarian GP - started P6, finished P6" aria-hidden="true"></span><span class="tick" style="--h:47%;--i:38" data-label="2019 Belgian GP - started P13, finished P9" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:39" data-label="2019 Italian GP - started P17, finished P11" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:40" data-label="2019 Singapore GP - started P11, finished P8" aria-hidden="true"></span><span class="tick" style="--h:34%;--i:41" data-label="2019 Russian GP - started P16, finished P14" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:42" data-label="2019 Japanese GP - started P9, finished P7" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:43" data-label="2019 Mexican GP - started P10, finished P9" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:44" data-label="2019 United States GP - started P10, finished P16" aria-hidden="true"></span><span class="tick is-podium" style="--h:78%;--i:45" data-label="2019 Brazilian GP - started P6, finished P2" tabindex="0" role="listitem" aria-label="2019 Brazilian GP - started P6, finished P2"></span><span class="tick" style="--h:56%;--i:46" data-label="2019 Abu Dhabi GP - started P11, finished P18" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:47" data-label="2020 Austrian GP - started P12, finished P7" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:48" data-label="2020 Styrian GP - started P7, finished P15" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:49" data-label="2020 Hungarian GP - started P10, finished P20" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:50" data-label="2020 British GP - started P11, finished P7" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:51" data-label="2020 70th Anniversary GP - started P7, finished P11" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:52" data-label="2020 Spanish GP - started P10, finished P9" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:53" data-label="2020 Belgian GP - started P12, finished P8" aria-hidden="true"></span><span class="tick is-win" style="--h:60%;--i:54" data-label="2020 Italian GP - started P10, finished P1" tabindex="0" role="listitem" aria-label="2020 Italian GP - started P10, finished P1"></span><span class="tick" style="--h:34%;--i:55" data-label="2020 Tuscan GP - started P16, finished P20" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:56" data-label="2020 Russian GP - started P9, finished P9" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:57" data-label="2020 Eifel GP - started P12, finished P6" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:58" data-label="2020 Portuguese GP - started P9, finished P5" aria-hidden="true"></span><span class="tick" style="--h:87%;--i:59" data-label="2020 Emilia Romagna GP - started P4, finished P20" aria-hidden="true"></span><span class="tick" style="--h:21%;--i:60" data-label="2020 Turkish GP - started P19, finished P13" aria-hidden="true"></span><span class="tick" style="--h:69%;--i:61" data-label="2020 Bahrain GP - started P8, finished P6" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:62" data-label="2020 Sakhir GP - started P9, finished P11" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:63" data-label="2020 Abu Dhabi GP - started P9, finished P8" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:64" data-label="2021 Bahrain GP - started P5, finished P17" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:65" data-label="2021 Emilia Romagna GP - started P5, finished P7" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:66" data-label="2021 Portuguese GP - started P9, finished P10" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:67" data-label="2021 Spanish GP - started P12, finished P10" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:68" data-label="2021 Monaco GP - started P6, finished P6" aria-hidden="true"></span><span class="tick is-podium" style="--h:87%;--i:69" data-label="2021 Azerbaijan GP - started P4, finished P3" tabindex="0" role="listitem" aria-label="2021 Azerbaijan GP - started P4, finished P3"></span><span class="tick" style="--h:78%;--i:70" data-label="2021 French GP - started P6, finished P7" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:71" data-label="2021 Styrian GP - started P6, finished P20" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:72" data-label="2021 Austrian GP - started P6, finished P9" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:73" data-label="2021 British GP - started P11, finished P11" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:74" data-label="2021 Hungarian GP - started P5, finished P5" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:75" data-label="2021 Belgian GP - started P6, finished P6" aria-hidden="true"></span><span class="tick" style="--h:87%;--i:76" data-label="2021 Dutch GP - started P4, finished P4" aria-hidden="true"></span><span class="tick" style="--h:12%;--i:77" data-label="2021 Italian GP - started pit lane, finished P19" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:78" data-label="2021 Russian GP - started P11, finished P13" aria-hidden="true"></span><span class="tick" style="--h:87%;--i:79" data-label="2021 Turkish GP - started P4, finished P6" aria-hidden="true"></span><span class="tick" style="--h:69%;--i:80" data-label="2021 United States GP - started P8, finished P20" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:81" data-label="2021 Mexico City GP - started P5, finished P4" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:82" data-label="2021 São Paulo GP - started P7, finished P7" aria-hidden="true"></span><span class="tick" style="--h:96%;--i:83" data-label="2021 Qatar GP - started P2, finished P11" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:84" data-label="2021 Saudi Arabian GP - started P6, finished P6" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:85" data-label="2021 Abu Dhabi GP - started P12, finished P5" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:86" data-label="2022 Bahrain GP - started P10, finished P20" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:87" data-label="2022 Saudi Arabian GP - started P9, finished P8" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:88" data-label="2022 Australian GP - started P11, finished P9" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:89" data-label="2022 Emilia Romagna GP - started P17, finished P12" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:90" data-label="2022 Miami GP - started P7, finished P18" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:91" data-label="2022 Spanish GP - started P14, finished P13" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:92" data-label="2022 Monaco GP - started P17, finished P11" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:93" data-label="2022 Azerbaijan GP - started P6, finished P5" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:94" data-label="2022 Canadian GP - started P15, finished P14" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:95" data-label="2022 British GP - started P11, finished P16" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:96" data-label="2022 Austrian GP - started P14, finished P15" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:97" data-label="2022 French GP - started P14, finished P12" aria-hidden="true"></span><span class="tick" style="--h:12%;--i:98" data-label="2022 Hungarian GP - started pit lane, finished P12" aria-hidden="true"></span><span class="tick" style="--h:12%;--i:99" data-label="2022 Belgian GP - started pit lane, finished P9" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:100" data-label="2022 Dutch GP - started P11, finished P11" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:101" data-label="2022 Italian GP - started P5, finished P8" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:102" data-label="2022 Singapore GP - started P7, finished P10" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:103" data-label="2022 Japanese GP - started P17, finished P18" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:104" data-label="2022 United States GP - started P11, finished P14" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:105" data-label="2022 Mexico City GP - started P14, finished P11" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:106" data-label="2022 São Paulo GP - started P10, finished P14" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:107" data-label="2022 Abu Dhabi GP - started P17, finished P14" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:108" data-label="2023 Bahrain GP - started P20, finished P9" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:109" data-label="2023 Saudi Arabian GP - started P9, finished P9" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:110" data-label="2023 Australian GP - started P9, finished P13" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:111" data-label="2023 Azerbaijan GP - started P17, finished P14" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:112" data-label="2023 Miami GP - started P5, finished P8" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:113" data-label="2023 Monaco GP - started P7, finished P7" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:114" data-label="2023 Spanish GP - started P10, finished P10" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:115" data-label="2023 Canadian GP - started P15, finished P12" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:116" data-label="2023 Austrian GP - started P9, finished P10" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:117" data-label="2023 British GP - started P10, finished P18" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:118" data-label="2023 Hungarian GP - started P15, finished P20" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:119" data-label="2023 Belgian GP - started P12, finished P11" aria-hidden="true"></span><span class="tick is-podium" style="--h:52%;--i:120" data-label="2023 Dutch GP - started P12, finished P3" tabindex="0" role="listitem" aria-label="2023 Dutch GP - started P12, finished P3"></span><span class="tick" style="--h:30%;--i:121" data-label="2023 Italian GP - started P17, finished P15" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:122" data-label="2023 Singapore GP - started P12, finished P6" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:123" data-label="2023 Japanese GP - started P12, finished P10" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:124" data-label="2023 Qatar GP - started P7, finished P12" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:125" data-label="2023 United States GP - started P7, finished P6" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:126" data-label="2023 Mexico City GP - started P11, finished P11" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:127" data-label="2023 São Paulo GP - started P15, finished P7" aria-hidden="true"></span><span class="tick" style="--h:87%;--i:128" data-label="2023 Las Vegas GP - started P4, finished P11" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:129" data-label="2023 Abu Dhabi GP - started P10, finished P13" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:130" data-label="2024 Bahrain GP - started P20, finished P18" aria-hidden="true"></span><span class="tick" style="--h:25%;--i:131" data-label="2024 Saudi Arabian GP - started P18, finished P20" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:132" data-label="2024 Australian GP - started P17, finished P13" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:133" data-label="2024 Japanese GP - started P17, finished P16" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:134" data-label="2024 Chinese GP - started P15, finished P13" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:135" data-label="2024 Miami GP - started P12, finished P12" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:136" data-label="2024 Emilia Romagna GP - started P15, finished P16" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:137" data-label="2024 Monaco GP - started P10, finished P10" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:138" data-label="2024 Canadian GP - started P15, finished P9" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:139" data-label="2024 Spanish GP - started P7, finished P9" aria-hidden="true"></span><span class="tick" style="--h:47%;--i:140" data-label="2024 Austrian GP - started P13, finished P10" aria-hidden="true"></span><span class="tick" style="--h:21%;--i:141" data-label="2024 British GP - started P19, finished P20" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:142" data-label="2024 Hungarian GP - started P20, finished P20" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:143" data-label="2024 Belgian GP - started P12, finished P13" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:144" data-label="2024 Dutch GP - started P9, finished P9" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:145" data-label="2024 Italian GP - started P14, finished P15" aria-hidden="true"></span><span class="tick" style="--h:25%;--i:146" data-label="2024 Azerbaijan GP - started P18, finished P12" aria-hidden="true"></span><span class="tick" style="--h:25%;--i:147" data-label="2024 Singapore GP - started P18, finished P17" aria-hidden="true"></span><span class="tick" style="--h:78%;--i:148" data-label="2024 United States GP - started P6, finished P12" aria-hidden="true"></span><span class="tick" style="--h:69%;--i:149" data-label="2024 Mexico City GP - started P8, finished P10" aria-hidden="true"></span><span class="tick is-podium" style="--h:47%;--i:150" data-label="2024 São Paulo GP - started P13, finished P3" tabindex="0" role="listitem" aria-label="2024 São Paulo GP - started P13, finished P3"></span><span class="tick" style="--h:91%;--i:151" data-label="2024 Las Vegas GP - started P3, finished P20" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:152" data-label="2024 Qatar GP - started P11, finished P5" aria-hidden="true"></span><span class="tick" style="--h:82%;--i:153" data-label="2024 Abu Dhabi GP - started P5, finished P7" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:154" data-label="2025 Australian GP - started P9, finished P11" aria-hidden="true"></span><span class="tick" style="--h:34%;--i:155" data-label="2025 Chinese GP - started P16, finished P20" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:156" data-label="2025 Japanese GP - started P11, finished P13" aria-hidden="true"></span><span class="tick" style="--h:87%;--i:157" data-label="2025 Bahrain GP - started P4, finished P7" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:158" data-label="2025 Saudi Arabian GP - started P9, finished P20" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:159" data-label="2025 Miami GP - started P20, finished P13" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:160" data-label="2025 Emilia Romagna GP - started P10, finished P13" aria-hidden="true"></span><span class="tick" style="--h:30%;--i:161" data-label="2025 Monaco GP - started P17, finished P20" aria-hidden="true"></span><span class="tick" style="--h:69%;--i:162" data-label="2025 Spanish GP - started P8, finished P8" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:163" data-label="2025 Canadian GP - started P20, finished P15" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:164" data-label="2025 Austrian GP - started P10, finished P13" aria-hidden="true"></span><span class="tick" style="--h:69%;--i:165" data-label="2025 British GP - started P8, finished P6" aria-hidden="true"></span><span class="tick" style="--h:47%;--i:166" data-label="2025 Belgian GP - started P13, finished P10" aria-hidden="true"></span><span class="tick" style="--h:34%;--i:167" data-label="2025 Hungarian GP - started P16, finished P19" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:168" data-label="2025 Dutch GP - started P14, finished P17" aria-hidden="true"></span><span class="tick" style="--h:16%;--i:169" data-label="2025 Italian GP - started P20, finished P16" aria-hidden="true"></span><span class="tick" style="--h:25%;--i:170" data-label="2025 Azerbaijan GP - started P18, finished P18" aria-hidden="true"></span><span class="tick" style="--h:21%;--i:171" data-label="2025 Singapore GP - started P19, finished P19" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:172" data-label="2025 United States GP - started P14, finished P19" aria-hidden="true"></span><span class="tick" style="--h:25%;--i:173" data-label="2025 Mexico City GP - started P18, finished P15" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:174" data-label="2025 São Paulo GP - started P9, finished P10" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:175" data-label="2025 Las Vegas GP - started P10, finished P13" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:176" data-label="2025 Qatar GP - started P9, finished P16" aria-hidden="true"></span><span class="tick" style="--h:21%;--i:177" data-label="2025 Abu Dhabi GP - started P19, finished P19" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:178" data-label="2026 Australian GP - started P14, finished P10" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:179" data-label="2026 Chinese GP - started P7, finished P6" aria-hidden="true"></span><span class="tick" style="--h:74%;--i:180" data-label="2026 Japanese GP - started P7, finished P7" aria-hidden="true"></span><span class="tick" style="--h:65%;--i:181" data-label="2026 Miami GP - started P9, finished P21" aria-hidden="true"></span><span class="tick" style="--h:43%;--i:182" data-label="2026 Canadian GP - started P14, finished P8" aria-hidden="true"></span><span class="tick is-podium" style="--h:65%;--i:183" data-label="2026 Monaco GP - started P9, finished P3" tabindex="0" role="listitem" aria-label="2026 Monaco GP - started P9, finished P3"></span><span class="tick" style="--h:43%;--i:184" data-label="2026 Barcelona GP - started P14, finished P7" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:185" data-label="2026 Austrian GP - started P11, finished P13" aria-hidden="true"></span><span class="tick" style="--h:38%;--i:186" data-label="2026 British GP - started P15, finished P10" aria-hidden="true"></span><span class="tick" style="--h:60%;--i:187" data-label="2026 Belgian GP - started P10, finished P11" aria-hidden="true"></span><span class="tick" style="--h:52%;--i:188" data-label="2026 Hungarian GP - started P12, finished P12" aria-hidden="true"></span><span class="tick" style="--h:56%;--i:189" data-label="2026 Dutch GP - started P11, finished P10" aria-hidden="true"></span><span class="tick is-pole" style="--h:100%;--i:190" tabindex="0" role="listitem" data-label="2026 Italian GP - POLE POSITION, 1:21.786" aria-label="2026 Italian Grand Prix - pole position, 1 minute 21.786"></span>
+                    </div>
+                    <div class="cs-axis" aria-hidden="true"><span class="yr is-narrow" style="--n:5">&rsquo;17</span><span class="yr" style="--n:21">&rsquo;18</span><span class="yr" style="--n:21">&rsquo;19</span><span class="yr" style="--n:17">&rsquo;20</span><span class="yr" style="--n:22">&rsquo;21</span><span class="yr" style="--n:22">&rsquo;22</span><span class="yr" style="--n:22">&rsquo;23</span><span class="yr" style="--n:24">&rsquo;24</span><span class="yr" style="--n:24">&rsquo;25</span><span class="yr" style="--n:13">&rsquo;26</span></div>
+                    <p class="cs-tip" id="csTip" role="status" aria-live="polite">Hover or focus a bar to see the race</p>
+                    <div class="cs-ledger">
+                        <span><b class="n" data-count="190">190</b> races without a pole</span>
+                        <span><b class="n">1</b> front-row start &mdash; Qatar, 2021</span>
+                        <span><b class="n">1</b> win &mdash; Monza, 2020, from P10</span>
+                    </div>
+                </figure>
+<!-- IMP:STRIP:END -->
 
                 <div class="article-section">
                     <h2>🏁 How Gasly Stole Pole at the Temple of Speed</h2>
@@ -174,23 +405,79 @@
 
                 <div class="article-section">
                     <h2>📊 Italian GP 2026 Qualifying: The Q3 Classification</h2>
-                    <table class="q3-table">
+                    <!-- IMP:Q3:START -->
+                    <div class="table-wrap">
+                    <table class="q3-table" id="q3Table">
+                        <caption class="sr-only">Q3 classification, 2026 Italian Grand Prix</caption>
                         <thead>
-                            <tr><th>Pos</th><th>Driver</th><th>Team</th><th>Q3 time</th><th>Gap</th></tr>
+                            <tr><th scope="col">Pos</th><th scope="col">Driver</th><th scope="col">Team</th><th scope="col">Q3 time</th><th scope="col">Gap to pole</th></tr>
                         </thead>
                         <tbody>
-                            <tr class="gasly"><td class="rank">1</td><td class="driver">Pierre Gasly</td><td class="team">Alpine</td><td class="time">1:21.786</td><td class="gap">&mdash;</td></tr>
-                            <tr><td class="rank">2</td><td class="driver">George Russell</td><td class="team">Mercedes</td><td class="time">1:21.846</td><td class="gap">+0.060</td></tr>
-                            <tr><td class="rank">3</td><td class="driver">Oscar Piastri</td><td class="team">McLaren</td><td class="time">1:21.966</td><td class="gap">+0.180</td></tr>
-                            <tr><td class="rank">4</td><td class="driver">Charles Leclerc</td><td class="team">Ferrari</td><td class="time">1:22.004</td><td class="gap">+0.218</td></tr>
-                            <tr><td class="rank">5</td><td class="driver">Lewis Hamilton</td><td class="team">Ferrari</td><td class="time">1:22.011</td><td class="gap">+0.225</td></tr>
-                            <tr><td class="rank">6</td><td class="driver">Max Verstappen</td><td class="team">Red Bull</td><td class="time">1:22.070</td><td class="gap">+0.284</td></tr>
-                            <tr><td class="rank">7</td><td class="driver">Kimi Antonelli <span class="note">&mdash; starts from the back</span></td><td class="team">Mercedes</td><td class="time">1:22.093</td><td class="gap">+0.307</td></tr>
-                            <tr><td class="rank">8</td><td class="driver">Franco Colapinto</td><td class="team">Alpine</td><td class="time">1:22.220</td><td class="gap">+0.434</td></tr>
-                            <tr><td class="rank">9</td><td class="driver">Lando Norris</td><td class="team">McLaren</td><td class="time">1:22.256</td><td class="gap">+0.470</td></tr>
-                            <tr><td class="rank">10</td><td class="driver">Arvid Lindblad</td><td class="team">Racing Bulls</td><td class="time">1:22.286</td><td class="gap">+0.500</td></tr>
+                            <tr class="is-pole" style="--team:var(--team-alpine)">
+                                <td class="rank">1</td>
+                                <td class="driver">Pierre Gasly</td>
+                                <td class="team">Alpine</td>
+                                <td class="time">1:21.786</td>
+                                <td class="gapcell is-pole-gap"><span class="gapnum">&mdash;</span></td>
+                            </tr><tr style="--team:var(--team-mercedes)">
+                                <td class="rank">2</td>
+                                <td class="driver">George Russell</td>
+                                <td class="team">Mercedes</td>
+                                <td class="time">1:21.846</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.12"></i></span><span class="gapnum">+0.060</span></td>
+                            </tr><tr style="--team:var(--team-mclaren)">
+                                <td class="rank">3</td>
+                                <td class="driver">Oscar Piastri</td>
+                                <td class="team">McLaren</td>
+                                <td class="time">1:21.966</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.36"></i></span><span class="gapnum">+0.180</span></td>
+                            </tr><tr style="--team:var(--team-ferrari)">
+                                <td class="rank">4</td>
+                                <td class="driver">Charles Leclerc</td>
+                                <td class="team">Ferrari</td>
+                                <td class="time">1:22.004</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.436"></i></span><span class="gapnum">+0.218</span></td>
+                            </tr><tr style="--team:var(--team-ferrari)">
+                                <td class="rank">5</td>
+                                <td class="driver">Lewis Hamilton</td>
+                                <td class="team">Ferrari</td>
+                                <td class="time">1:22.011</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.45"></i></span><span class="gapnum">+0.225</span></td>
+                            </tr><tr style="--team:var(--team-redbull)">
+                                <td class="rank">6</td>
+                                <td class="driver">Max Verstappen</td>
+                                <td class="team">Red Bull</td>
+                                <td class="time">1:22.070</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.568"></i></span><span class="gapnum">+0.284</span></td>
+                            </tr><tr style="--team:var(--team-mercedes)">
+                                <td class="rank">7</td>
+                                <td class="driver">Kimi Antonelli<span class="pen" title="Starts from the back of the grid">back of grid</span></td>
+                                <td class="team">Mercedes</td>
+                                <td class="time">1:22.093</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.614"></i></span><span class="gapnum">+0.307</span></td>
+                            </tr><tr style="--team:var(--team-alpine)">
+                                <td class="rank">8</td>
+                                <td class="driver">Franco Colapinto</td>
+                                <td class="team">Alpine</td>
+                                <td class="time">1:22.220</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.868"></i></span><span class="gapnum">+0.434</span></td>
+                            </tr><tr style="--team:var(--team-mclaren)">
+                                <td class="rank">9</td>
+                                <td class="driver">Lando Norris</td>
+                                <td class="team">McLaren</td>
+                                <td class="time">1:22.256</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:0.94"></i></span><span class="gapnum">+0.470</span></td>
+                            </tr><tr style="--team:var(--team-alphatauri)">
+                                <td class="rank">10</td>
+                                <td class="driver">Arvid Lindblad</td>
+                                <td class="team">Racing Bulls</td>
+                                <td class="time">1:22.286</td>
+                                <td class="gapcell"><span class="gapbar"><i style="--s:1.0"></i></span><span class="gapnum">+0.500</span></td>
+                            </tr>
                         </tbody>
                     </table>
+                    </div>
+<!-- IMP:Q3:END -->
                     <p>Championship leader <strong>Kimi Antonelli</strong> qualified seventh but starts from the back of the grid: he took a fifth Mercedes power unit of the season, a penalty confirmed before the weekend. Alex Albon and Liam Lawson are also reported to be taking power-unit penalties. With Antonelli demoted, everyone behind him on this list moves up a place for Sunday.</p>
                     <p>Note the spread. The entire Q3 top ten is covered by half a second, and the top seven by three tenths &mdash; which is exactly what happens when a low-drag circuit, active aero and a well-timed tow collapse the field together.</p>
                 </div>
@@ -199,23 +486,52 @@
                     <h2>⏳ 190 Races: One of the Longest Waits in F1 History</h2>
                     <p>This is the number that makes the story. Before Monza, Gasly had entered <strong>190 Grands Prix</strong> since his debut at the 2017 Malaysian Grand Prix without once qualifying on pole. In all that time his best starting slot was <strong>second</strong>, at the 2021 Qatar Grand Prix. He had one win, six podiums, and a nine-year drought at the very front of a grid.</p>
                     <p>Measured against Formula 1's other famous late bloomers, only Sergio P&eacute;rez has waited longer for a maiden pole:</p>
-                    <table class="wait-table">
-                        <thead>
-                            <tr><th>#</th><th>Driver</th><th>Races before first pole</th><th>Maiden pole</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td class="rank">1</td><td class="driver">Sergio P&eacute;rez</td><td class="races">216</td><td class="where">2022 Saudi Arabian GP</td></tr>
-                            <tr class="gasly"><td class="rank">2</td><td class="driver">Pierre Gasly</td><td class="races">190</td><td class="where">2026 Italian GP</td></tr>
-                            <tr><td class="rank">3</td><td class="driver">Carlos Sainz</td><td class="races">150</td><td class="where">2022 British GP</td></tr>
-                            <tr><td class="rank">4</td><td class="driver">Mark Webber</td><td class="races">131</td><td class="where">2009 German GP</td></tr>
-                            <tr><td class="rank">5</td><td class="driver">Jarno Trulli</td><td class="races">118</td><td class="where">2004 Monaco GP</td></tr>
-                            <tr><td class="rank">6</td><td class="driver">Nick Heidfeld</td><td class="races">90</td><td class="where">2005 European GP</td></tr>
-                            <tr><td class="rank">7</td><td class="driver">Valtteri Bottas</td><td class="races">80</td><td class="where">2017 Bahrain GP</td></tr>
-                            <tr><td class="rank">8</td><td class="driver">Jenson Button</td><td class="races">70</td><td class="where">2004 San Marino GP</td></tr>
-                            <tr><td class="rank">9</td><td class="driver">Felipe Massa</td><td class="races">66</td><td class="where">2006 Turkish GP</td></tr>
-                            <tr><td class="rank">10</td><td class="driver">Giancarlo Fisichella</td><td class="races">34</td><td class="where">1998 Austrian GP</td></tr>
-                        </tbody>
-                    </table>
+                    <!-- IMP:WAITS:START -->
+                    <ol class="wait-chart" id="waitChart" role="list" aria-label="Longest waits to a maiden pole position, in race entries">
+                        <li class="wait-row" style="--s:1.0;--i:0">
+                            <span class="w-name">Sergio P&eacute;rez</span>
+                            <span class="w-track"><i></i><b class="w-num">216</b></span>
+                            <span class="w-where">2022 Saudi Arabian GP</span>
+                        </li><li class="wait-row is-gasly" style="--s:0.8796;--i:1">
+                            <span class="w-name">Pierre Gasly</span>
+                            <span class="w-track"><i></i><b class="w-num">190</b></span>
+                            <span class="w-where">2026 Italian GP</span>
+                        </li><li class="wait-row" style="--s:0.6944;--i:2">
+                            <span class="w-name">Carlos Sainz</span>
+                            <span class="w-track"><i></i><b class="w-num">150</b></span>
+                            <span class="w-where">2022 British GP</span>
+                        </li><li class="wait-row" style="--s:0.6065;--i:3">
+                            <span class="w-name">Mark Webber</span>
+                            <span class="w-track"><i></i><b class="w-num">131</b></span>
+                            <span class="w-where">2009 German GP</span>
+                        </li><li class="wait-row" style="--s:0.5463;--i:4">
+                            <span class="w-name">Jarno Trulli</span>
+                            <span class="w-track"><i></i><b class="w-num">118</b></span>
+                            <span class="w-where">2004 Monaco GP</span>
+                        </li><li class="wait-row" style="--s:0.4167;--i:5">
+                            <span class="w-name">Nick Heidfeld</span>
+                            <span class="w-track"><i></i><b class="w-num">90</b></span>
+                            <span class="w-where">2005 European GP</span>
+                        </li><li class="wait-row" style="--s:0.3704;--i:6">
+                            <span class="w-name">Valtteri Bottas</span>
+                            <span class="w-track"><i></i><b class="w-num">80</b></span>
+                            <span class="w-where">2017 Bahrain GP</span>
+                        </li><li class="wait-row" style="--s:0.3241;--i:7">
+                            <span class="w-name">Jenson Button</span>
+                            <span class="w-track"><i></i><b class="w-num">70</b></span>
+                            <span class="w-where">2004 San Marino GP</span>
+                        </li><li class="wait-row" style="--s:0.3056;--i:8">
+                            <span class="w-name">Felipe Massa</span>
+                            <span class="w-track"><i></i><b class="w-num">66</b></span>
+                            <span class="w-where">2006 Turkish GP</span>
+                        </li><li class="wait-row" style="--s:0.1574;--i:9">
+                            <span class="w-name">Giancarlo Fisichella</span>
+                            <span class="w-track"><i></i><b class="w-num">34</b></span>
+                            <span class="w-where">1998 Austrian GP</span>
+                        </li>
+                    </ol>
+                    <p class="chart-note">Race entries before a first pole position. Bar length is proportional to the wait.</p>
+<!-- IMP:WAITS:END -->
                     <p>There is a neatness to where it finally happened. Gasly's only Grand Prix victory, in six seasons of trying, came at <strong>Monza in 2020</strong> with AlphaTauri. The one circuit that had ever given him a headline gave him the second one too.</p>
                 </div>
 
@@ -236,12 +552,17 @@
 
                 <div class="article-section">
                     <h2>🔮 What It Means for Sunday</h2>
+                    <!-- IMP:CD:START -->
+                    <div class="lights-out" id="lightsOut" data-start="2026-09-06T13:00:00Z">
+                        <span class="lo-label">Lights out at Monza</span>
+                        <span class="lo-clock" id="loClock">Sunday, September 6 &mdash; 15:00 local</span>
+                        <span class="lo-grid"><b>P1</b> Gasly &middot; <b>P2</b> Russell &middot; <b>P3</b> Piastri</span>
+                    </div>
+<!-- IMP:CD:END -->
                     <p>Pole at Monza is not the fortress it is elsewhere. The run to Turn 1 is long, the tow is enormous, and the driver leading into the first braking zone is often not the one who started there &mdash; which is the whole reason Mercedes was comfortable sending its championship leader to the back. Gasly will start ahead of a Mercedes, two Ferraris, a McLaren and a Red Bull, in a car that is sixth-fastest on merit over a season. Holding position into Turn 1 is a genuine question.</p>
                     <p>Behind him, the race has two separate plots. Russell needs points on Hamilton and Antonelli in a three-way fight for second in the championship, where he and Hamilton are dead level on 183. And Antonelli, 59 points clear at the top, has to carve through the field at a circuit his own engineers picked precisely because it can be carved through &mdash; at his home race, in front of a crowd that would happily have adopted him.</p>
                     <p>The <strong>2026 Italian Grand Prix</strong> starts at Monza on <strong>Sunday, September 6</strong>. Live timing and results as they land are on our <a href="race-hub.html">Race Hub</a>, the self-updating standings are on the <a href="championship.html">championship page</a>, and the rest of the season is on the <a href="calendar.html">2026 calendar</a>. Whatever happens on Sunday, one line in the record book is already written: after 190 races, Pierre Gasly finally has a pole position.</p>
                 </div>
-
-                <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; font-style: italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">Qualifying times and session narrative from Crash.net, PlanetF1, GPFans and Pit Debrief; Monaco appeal detail from the FIA International Court of Appeal ruling as reported by Formula1.com, ESPN, The Race and Motorsport.com. Career, constructor and historical pole statistics computed from the Jolpica/Ergast F1 API, where a "pole" is measured as a start from grid position one and Gasly's count is correct through Round 12. Driver quotes were not yet published at the time of writing and have deliberately been left out rather than paraphrased. Grid penalties for Albon and Lawson are reported, not yet officially confirmed.</p>
 
                 <!-- Share Section -->
                 <div class="article-share">
@@ -350,7 +671,6 @@
     </footer>
 
     <script src="script.js?v=20260811f"></script>
-    <script>/* Defer Instagram embed loader until idle */(function(){var f=function(){var s=document.createElement('script');s.async=true;s.src='https://www.instagram.com/embed.js';document.head.appendChild(s);};if(window.requestIdleCallback){window.requestIdleCallback(f,{timeout:3000});}else{window.addEventListener('load',f);}})();</script>
     <style>
         .article-full { max-width: 900px; margin: 0 auto; }
         .article-hero { position: relative; padding: 60px 0 40px; margin-bottom: 40px; overflow: hidden; }
@@ -379,5 +699,88 @@
         .share-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); }
         @media (max-width: 768px) { .article-title-full { font-size: 1.5rem; } }
     </style>
+    <script>/* IMP:JS:START */
+    (function () {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        /* Entrance replay. Content is already at its final state; this only
+           re-runs it as an animation when the block scrolls into view. */
+        var blocks = [document.getElementById('careerStrip'),
+                      document.getElementById('q3Table'),
+                      document.getElementById('waitChart')].filter(Boolean);
+        document.querySelectorAll('#q3Table tbody tr').forEach(function (tr, i) {
+            tr.style.setProperty('--row', i);
+        });
+        if (!reduce.matches && 'IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (!e.isIntersecting) return;
+                    e.target.classList.add('in-view');
+                    io.unobserve(e.target);
+                    if (e.target.id === 'careerStrip') countUp(e.target);
+                });
+            }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+            blocks.forEach(function (b) { io.observe(b); });
+        }
+
+        /* Count-up on the headline stat only. Falls back to the printed number. */
+        function countUp(scope) {
+            var el = scope.querySelector('.n[data-count]');
+            if (!el) return;
+            var target = parseInt(el.getAttribute('data-count'), 10);
+            if (!target) return;
+            var t0 = null, dur = 1100;
+            function step(ts) {
+                if (t0 === null) t0 = ts;
+                var p = Math.min((ts - t0) / dur, 1);
+                el.textContent = Math.round(target * (1 - Math.pow(1 - p, 4)));
+                if (p < 1) requestAnimationFrame(step);
+                else el.textContent = target;
+            }
+            requestAnimationFrame(step);
+        }
+
+        /* Career strip readout. Pointer and keyboard both drive the same live region. */
+        var plot = document.querySelector('.cs-plot');
+        var tip = document.getElementById('csTip');
+        if (plot && tip) {
+            var idle = tip.textContent;
+            var show = function (t) {
+                if (!t || !t.dataset || !t.dataset.label) return;
+                tip.textContent = t.dataset.label;
+                tip.classList.add('is-live');
+            };
+            var clear = function () { tip.textContent = idle; tip.classList.remove('is-live'); };
+            plot.addEventListener('pointerover', function (e) { show(e.target.closest('.tick')); });
+            plot.addEventListener('pointerleave', clear);
+            plot.addEventListener('focusin', function (e) { show(e.target.closest('.tick')); });
+            plot.addEventListener('focusout', clear);
+        }
+
+        /* Countdown to lights out. The static local time stays as the fallback. */
+        var lo = document.getElementById('lightsOut');
+        var clock = document.getElementById('loClock');
+        if (lo && clock) {
+            var start = new Date(lo.getAttribute('data-start')).getTime();
+            if (!isNaN(start)) {
+                var tick = function () {
+                    var d = start - Date.now();
+                    if (d <= 0) {
+                        clock.textContent = d > -2 * 3600 * 1000 ? 'Race under way' : 'Race finished';
+                        return;
+                    }
+                    var h = Math.floor(d / 3600000),
+                        m = Math.floor(d / 60000) % 60,
+                        sec = Math.floor(d / 1000) % 60;
+                    clock.textContent = (h > 24)
+                        ? Math.floor(h / 24) + 'd ' + (h % 24) + 'h to lights out'
+                        : h + 'h ' + ('0' + m).slice(-2) + 'm ' + ('0' + sec).slice(-2) + 's to lights out';
+                    setTimeout(tick, 1000);
+                };
+                tick();
+            }
+        }
+    })();
+/* IMP:JS:END */</script>
 </body>
 </html>
